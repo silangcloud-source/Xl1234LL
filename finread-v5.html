@@ -1308,6 +1308,11 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
     <label>长文分块阈值（字符数）</label>
     <input type="number" id="chunkThresholdInput" value="8000" min="2000" max="20000" step="500" />
     <div style="font-size:11px;color:var(--text-muted);margin-top:-10px;margin-bottom:14px;font-family:monospace;">超过此长度自动按段落切分</div>
+    <label>朗读声音 (TTS Voice)</label>
+    <select id="voiceSelect">
+      <option value="">自动（优先级智能匹配）</option>
+    </select>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:-10px;margin-bottom:14px;font-family:monospace;" id="voiceHint"></div>
     <div class="modal-actions">
       <button class="btn-base" id="btnSettingsCancel">取消</button>
       <button class="btn-primary" id="btnSettingsSave" style="padding:8px 24px;">保存</button>
@@ -1376,6 +1381,7 @@ const STORE = {
   chunkThreshold: 'finread:chunkThreshold',
   notion: 'finread:notion',
   studyMode: 'finread:studyMode',
+  voice: 'finread:voice',
 };
 
 const PROPER_TYPE_LABELS = {
@@ -1399,6 +1405,7 @@ let state = {
   sideTab: 'pattern', customAddTier: 'vocab',
   currentSelection: { text: '', context: '' },
   parseSession: null, notionTab: 'config',
+  selectedVoice: '',
 };
 
 const $ = (s) => document.querySelector(s);
@@ -1427,6 +1434,10 @@ if ('speechSynthesis' in window) {
 }
 function pickVoice(lang) {
   if (!_voicesCache.length) _voicesCache = speechSynthesis.getVoices();
+  if (state.selectedVoice) {
+    const manual = _voicesCache.find(v => v.name === state.selectedVoice);
+    if (manual) return manual;
+  }
   const isZh = lang.startsWith('zh');
   const enPriority = [
     /Microsoft .+ Online \(Natural\)/i,  // Windows Neural TTS — highest quality on Windows
@@ -3018,6 +3029,7 @@ function openSettings() {
   $('#apiKeyInput').value = state.apiKey;
   $('#streamingSelect').value = String(state.streaming);
   $('#chunkThresholdInput').value = state.chunkThreshold;
+  populateVoiceSelect();
   show('#settingsModal');
 }
 function closeSettings() { hide('#settingsModal'); }
@@ -3030,6 +3042,39 @@ function updatePricingHint() {
   const list = MODELS[state.provider] || [];
   const m = list.find(x => x.id === $('#modelSelect').value);
   $('#pricingHint').textContent = m ? m.cost : '';
+}
+function populateVoiceSelect() {
+  const sel = $('#voiceSelect');
+  if (!sel) return;
+  const voices = speechSynthesis.getVoices();
+  if (voices.length) _voicesCache = voices;
+  const all = _voicesCache;
+  const grouped = {};
+  all.forEach(v => { (grouped[v.lang] = grouped[v.lang] || []).push(v); });
+  let html = '<option value="">自动（优先级智能匹配）</option>';
+  Object.keys(grouped).sort().forEach(lang => {
+    html += `<optgroup label="${escapeHtml(lang)}">`;
+    grouped[lang].forEach(v => {
+      html += `<option value="${escapeHtml(v.name)}">${escapeHtml(v.name)}</option>`;
+    });
+    html += '</optgroup>';
+  });
+  sel.innerHTML = html;
+  sel.value = state.selectedVoice;
+  updateVoiceHint();
+}
+function updateVoiceHint() {
+  const hint = $('#voiceHint');
+  if (!hint) return;
+  const sel = $('#voiceSelect');
+  if (sel && sel.value) {
+    hint.textContent = '';
+  } else {
+    const total = _voicesCache.length;
+    hint.textContent = total
+      ? `系统共检测到 ${total} 个声音，留空则按平台优先级自动匹配`
+      : '声音列表加载中，请稍后重新打开配置...';
+  }
 }
 function onProviderChange() {
   state.provider = $('#providerSelect').value;
@@ -3044,11 +3089,13 @@ function saveSettings() {
   state.apiKey = $('#apiKeyInput').value.trim();
   state.streaming = $('#streamingSelect').value === 'true';
   state.chunkThreshold = parseInt($('#chunkThresholdInput').value) || DEFAULT_CHUNK_THRESHOLD;
+  state.selectedVoice = $('#voiceSelect').value;
   localStorage.setItem(STORE.provider, state.provider);
   localStorage.setItem(STORE.model, state.model);
   localStorage.setItem(STORE.apiKey, state.apiKey);
   localStorage.setItem(STORE.streaming, String(state.streaming));
   localStorage.setItem(STORE.chunkThreshold, String(state.chunkThreshold));
+  localStorage.setItem(STORE.voice, state.selectedVoice);
   renderModelBadge();
   closeSettings();
   toast('已保存', 'success');
@@ -3200,6 +3247,7 @@ function bindEvents() {
   $('#btnSettingsSave').addEventListener('click', saveSettings);
   $('#providerSelect').addEventListener('change', onProviderChange);
   $('#modelSelect').addEventListener('change', updatePricingHint);
+  $('#voiceSelect').addEventListener('change', updateVoiceHint);
   $('#btnClearAll').addEventListener('click', () => {
     if (!confirm('清除全部本地数据不可恢复，包括卡组、文章、Notion 配置。继续？')) return;
     Object.values(STORE).forEach(k => localStorage.removeItem(k));
@@ -3326,6 +3374,7 @@ function init() {
   state.model = localStorage.getItem(STORE.model) || 'deepseek/deepseek-chat-v3.1';
   state.streaming = localStorage.getItem(STORE.streaming) !== 'false';
   state.chunkThreshold = parseInt(localStorage.getItem(STORE.chunkThreshold)) || DEFAULT_CHUNK_THRESHOLD;
+  state.selectedVoice = localStorage.getItem(STORE.voice) || '';
   state.studyMode = localStorage.getItem(STORE.studyMode) || 'en2zh';
   const savedTheme = localStorage.getItem(STORE.theme);
   if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
