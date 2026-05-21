@@ -1429,13 +1429,16 @@ function pickVoice(lang) {
   if (!_voicesCache.length) _voicesCache = speechSynthesis.getVoices();
   const isZh = lang.startsWith('zh');
   const enPriority = [
-    /Microsoft .+ Online \(Natural\)/i, /Google US English/i,
-    /Samantha/i, /Daniel/i, /Karen/i, /Moira/i, /Tessa/i,
+    /Microsoft .+ Online \(Natural\)/i,  // Windows Neural TTS — highest quality on Windows
+    /\(Enhanced\)/i,                     // macOS / iOS Enhanced voices — highest quality on Apple
+    /Google US English/i,
+    /Samantha/i, /Nicky/i, /Daniel/i, /Karen/i, /Moira/i, /Tessa/i,
     /Google UK English/i, /Alex/i, /Fred/i,
     /en-US/i, /en-GB/i, /en-AU/i, /en/i,
   ];
   const zhPriority = [
-    /Microsoft .+ Online \(Natural\)/i,
+    /Microsoft .+ Online \(Natural\)/i,  // Windows Neural TTS — e.g. Xiaoxiao, Yunxi
+    /\(Enhanced\)/i,                     // macOS / iOS Enhanced — e.g. Tingting Enhanced
     /Tingting/i, /Mei-Jia/i, /Sin-ji/i,
     /Google 普通话/i, /Google .*Chinese/i,
     /zh-CN/i, /zh-TW/i, /zh-HK/i, /zh/i,
