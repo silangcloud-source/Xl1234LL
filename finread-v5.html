@@ -8,7 +8,7 @@
 <!-- ① Tailwind CSS via CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
-  tailwind.config = {
+  if (typeof tailwind !== 'undefined') tailwind.config = {
     theme: {
       extend: {
         fontFamily: {
@@ -206,16 +206,22 @@ main { max-width: 1280px; margin: 0 auto; padding: 56px 32px 96px; }
 /* Tier intro */
 .tier-intro { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 32px; }
 .tier-card {
-  padding: 16px 18px; background: var(--bg-card);
+  padding: 20px 18px; background: var(--bg-card);
   border: 1px solid var(--border); border-radius: var(--r-md); border-left: 3px solid;
+  transition: box-shadow .2s, transform .2s, border-color .2s;
 }
+.tier-card:hover { transform:translateY(-2px); box-shadow: var(--shadow-md); }
 .tier-card.t-pattern { border-left-color: var(--pattern-color); }
 .tier-card.t-phrase  { border-left-color: var(--phrase-color); }
 .tier-card.t-proper  { border-left-color: var(--proper-color); }
 .tier-card.t-vocab   { border-left-color: var(--vocab-color); }
+.tier-card.t-pattern:hover { border-color: var(--pattern-color); }
+.tier-card.t-phrase:hover  { border-color: var(--phrase-color); }
+.tier-card.t-proper:hover  { border-color: var(--proper-color); }
+.tier-card.t-vocab:hover   { border-color: var(--vocab-color); }
 .tier-card .label {
   font-family: 'JetBrains Mono', monospace; font-size: 10px;
-  letter-spacing: .08em; text-transform: uppercase; font-weight: 600; margin-bottom: 6px;
+  letter-spacing: .08em; text-transform: uppercase; font-weight: 600; margin-bottom: 8px;
 }
 .tier-card.t-pattern .label { color: var(--pattern-color); }
 .tier-card.t-phrase  .label { color: var(--phrase-color); }
@@ -223,9 +229,9 @@ main { max-width: 1280px; margin: 0 auto; padding: 56px 32px 96px; }
 .tier-card.t-vocab   .label { color: var(--vocab-color); }
 .tier-card .title {
   font-family: 'Fraunces', Georgia, serif;
-  font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 5px;
+  font-size: 20px; font-weight: 700; color: var(--text-main); margin-bottom: 6px;
 }
-.tier-card .desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.tier-card .desc { font-size: 12px; color: var(--text-muted); line-height: 1.55; }
 
 /* ================================================================
    INPUT BOX
@@ -573,7 +579,8 @@ aside.sticky::-webkit-scrollbar-thumb { background: var(--border); border-radius
 .vocab-head h1 { font-family:'Fraunces',Georgia,serif; font-size:38px; font-weight:700; margin:0; color: var(--text-main); }
 .vocab-head h1 .num { font-family:'JetBrains Mono',monospace; font-size:22px; color: var(--accent); }
 .tier-stats { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:28px; }
-.tier-stat { background: var(--bg-card); border:1px solid var(--border); border-left:3px solid; padding:16px 18px; border-radius: var(--r-md); }
+.tier-stat { background: var(--bg-card); border:1px solid var(--border); border-left:3px solid; padding:18px; border-radius: var(--r-md); transition:box-shadow .2s,transform .2s; }
+.tier-stat:hover { transform:translateY(-1px); box-shadow: var(--shadow-sm); }
 .tier-stat.t-pattern { border-left-color: var(--pattern-color); }
 .tier-stat.t-phrase  { border-left-color: var(--phrase-color); }
 .tier-stat.t-proper  { border-left-color: var(--proper-color); }
@@ -609,13 +616,14 @@ aside.sticky::-webkit-scrollbar-thumb { background: var(--border); border-radius
 /* ================================================================
    FLASHCARD  — ★ serif English front / sans-serif Chinese back
    ================================================================ */
-.flip-card { perspective:1200px; height:380px; margin-bottom:16px; }
+.flip-card { perspective:1200px; height:440px; margin-bottom:16px; }
 .flip-inner { position:relative; width:100%; height:100%; transition:transform .55s cubic-bezier(.4,.2,.2,1); transform-style:preserve-3d; cursor:pointer; }
 .flip-inner.flipped { transform:rotateY(180deg); }
-.flip-front, .flip-back { position:absolute; inset:0; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:32px; text-align:center; border-radius: var(--r-xl); box-shadow: var(--shadow-md); overflow:hidden; }
-.flip-front { background:linear-gradient(135deg, #1E293B, #0F172A); color: var(--bg-card); border:1px solid #334155; }
-[data-theme="dark"] .flip-front { background:linear-gradient(135deg, #1E293B, #0B1120); }
-.flip-back { background: var(--bg-card); color: var(--text-main); transform:rotateY(180deg); border:1px solid var(--border); overflow-y:auto; }
+.flip-front, .flip-back { position:absolute; inset:0; backface-visibility:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:36px 32px; text-align:center; border-radius: var(--r-xl); box-shadow: var(--shadow-md); overflow:hidden; }
+.flip-front { background:linear-gradient(150deg, #1e2d4f 0%, #111827 55%, #080d16 100%); color: var(--bg-card); border:1px solid #1e2d4f; }
+.flip-front::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(79,70,229,.18) 0%, transparent 70%); pointer-events:none; }
+[data-theme="dark"] .flip-front { background:linear-gradient(150deg, #1a2540 0%, #0B1120 55%, #050a12 100%); }
+.flip-back { background: var(--bg-card); color: var(--text-main); transform:rotateY(180deg); border:1px solid var(--border); overflow-y:auto; padding-bottom:28px; }
 .flip-tier-mark { position:absolute; top:16px; left:16px; font-family:'JetBrains Mono',monospace; font-size:10px; padding:3px 8px; border-radius:4px; letter-spacing:.08em; }
 .flip-mode-mark { position:absolute; top:16px; right:16px; font-family:'JetBrains Mono',monospace; font-size:10px; padding:3px 8px; border-radius:4px; letter-spacing:.08em; background:rgba(255,255,255,0.12); color:rgba(255,255,255,.8); }
 .flip-back .flip-mode-mark { background: var(--accent-light); color: var(--accent); }
@@ -638,15 +646,15 @@ aside.sticky::-webkit-scrollbar-thumb { background: var(--border); border-radius
 .flip-example-box { width:100%; margin-top:16px; background: var(--bg-soft); padding:14px; border-radius: var(--r-md); text-align:left; font-family:'Noto Sans SC',system-ui,sans-serif; font-size:13px; line-height:1.65; border:1px solid var(--border); }
 .flip-example-box .ex-history { font-family:'JetBrains Mono',monospace; font-size:9px; color: var(--text-muted); margin-top:6px; }
 .flip-hint { font-family:'JetBrains Mono',monospace; font-size:11px; opacity:.4; margin-top:18px; letter-spacing:.05em; }
-.srs-rating { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:12px; }
-.srs-btn { padding:10px 4px; border:1px solid var(--border); background: var(--bg-card); border-radius: var(--r-md); cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:11px; color: var(--text-muted); transition:all .12s; display:flex; flex-direction:column; align-items:center; gap:2px; }
+.srs-rating { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:14px; }
+.srs-btn { padding:12px 4px; border:1px solid var(--border); background: var(--bg-card); border-radius: var(--r-md); cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:11px; color: var(--text-muted); transition:all .15s; display:flex; flex-direction:column; align-items:center; gap:3px; }
 .srs-btn:hover { transform:translateY(-2px); box-shadow: var(--shadow-sm); }
-.srs-btn strong { font-family:'Fraunces',Georgia,serif; font-size:16px; font-weight:700; }
+.srs-btn strong { font-family:'Fraunces',Georgia,serif; font-size:17px; font-weight:700; line-height:1; }
 .srs-btn.again { color: var(--bear); } .srs-btn.again:hover { background: var(--bear-light); border-color: var(--bear); }
 .srs-btn.hard  { color: var(--warn); } .srs-btn.hard:hover  { background: var(--warn-light); border-color: var(--warn); }
 .srs-btn.good  { color: var(--accent); } .srs-btn.good:hover { background: var(--accent-light); border-color: var(--accent); }
 .srs-btn.easy  { color: var(--bull); } .srs-btn.easy:hover  { background: var(--bull-light); border-color: var(--bull); }
-.srs-interval { font-size:10px; opacity:.7; }
+.srs-interval { font-size:9px; opacity:.65; }
 .flip-progress { text-align:center; margin-top:12px; font-family:'JetBrains Mono',monospace; font-size:11px; color: var(--text-muted); display:flex; justify-content:space-between; padding:0 4px; }
 .flip-mode-toggle { display:flex; gap:3px; background: var(--bg-soft); padding:3px; border-radius:9px; border:1px solid var(--border); margin-bottom:14px; }
 .flip-mode-toggle button { flex:1; background:transparent; border:none; cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; color: var(--text-muted); padding:6px 5px; border-radius:7px; transition:all .15s; }
@@ -786,6 +794,7 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
   .tier-stats { grid-template-columns:repeat(2,1fr); }
   .tier-radio-group { grid-template-columns:repeat(2,1fr); }
   .vocab-card .word { font-size:24px; }
+  .flip-card { height:400px; }
   .flip-word { font-size:34px; }
   #wordTooltip { position:fixed !important; bottom:0; left:0 !important; top:auto !important; width:100% !important; border-radius: var(--r-xl) var(--r-xl) 0 0; transform:translateY(100%); }
   #wordTooltip.visible { transform:translateY(0); }
@@ -795,6 +804,7 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
   .hero-title { font-size:28px; }
   .tier-intro { grid-template-columns:1fr; }
   .vocab-head h1 { font-size:28px; }
+  .flip-card { height:360px; }
   .flip-word { font-size:28px; }
   .vocab-card { padding:18px; }
   .modal { padding:24px; }
@@ -815,7 +825,7 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
     <div class="brand">
       <div class="logo">FinRead<span class="dot">.</span></div>
       <span class="ver">v5</span>
-      <div class="tag">3-Tier Engine</div>
+      <div class="tag">4-Tier Engine</div>
     </div>
     <div class="nav-controls">
       <nav class="tabs">
@@ -1036,7 +1046,8 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
         <div class="vocab-list" id="vocabGrid"></div>
       </div>
       <aside class="sticky">
-        <div class="side-title">闪卡复习 · SRS</div>
+        <div class="kicker" style="margin-bottom:6px;">Spaced Repetition · SM-2</div>
+        <div class="side-title" style="margin-bottom:16px;">闪卡复习</div>
         <div class="flip-mode-toggle">
           <button class="active" data-mode="en2zh">🇺🇸 → 🇨🇳 看英猜中</button>
           <button data-mode="zh2en">🇨🇳 → 🇺🇸 中译英</button>
