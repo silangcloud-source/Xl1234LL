@@ -7,8 +7,13 @@ const BYPASS = [
   'allorigins.win', 'corsproxy.io', 'rsshub', 'jin10',
 ];
 
+// 接收主页面发来的跳过等待指令
+self.addEventListener('message', e => {
+  if (e.data?.type === 'SKIP_WAITING') self.skipWaiting();
+});
+
 self.addEventListener('install', e => {
-  self.skipWaiting();
+  // 不在 install 里 skipWaiting，由主页面触发，避免打断用户操作
   e.waitUntil(
     caches.open(APP_CACHE)
       .then(c => c.add('./finread-v5.html'))

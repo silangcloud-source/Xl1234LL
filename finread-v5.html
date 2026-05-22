@@ -3770,7 +3770,23 @@ init();
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      // 检测到新 SW 安装时，让它立即跳过等待
+      reg.addEventListener('updatefound', () => {
+        const next = reg.installing;
+        next.addEventListener('statechange', () => {
+          if (next.state === 'installed' && navigator.serviceWorker.controller) {
+            next.postMessage({ type: 'SKIP_WAITING' });
+          }
+        });
+      });
+    }).catch(() => {});
+
+    // 新 SW 接管后自动刷新页面，拿到最新 HTML
+    let reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!reloading) { reloading = true; location.reload(); }
+    });
   });
 }
 </script>
