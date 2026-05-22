@@ -151,6 +151,43 @@ nav.tabs button .count {
 .icon-toggle.notion-btn { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; }
 .icon-toggle.synced { color: var(--bull); }
 .icon-toggle.syncing { color: var(--warn); animation: spin 1s linear infinite; }
+/* utility buttons added to masthead */
+.hdr-util { width: auto; padding: 0 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: .03em; }
+
+/* version tooltip */
+.brand .ver { cursor: help; position: relative; }
+.brand .ver::after {
+  content: attr(data-tip);
+  display: none;
+  position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  background: var(--bg-card); color: var(--text-soft);
+  border: 1px solid var(--border); border-radius: var(--r);
+  padding: 8px 14px; font-size: 11px; font-weight: 400; letter-spacing: 0;
+  font-family: 'JetBrains Mono', monospace; line-height: 1.65;
+  white-space: nowrap; z-index: 200; box-shadow: var(--shadow-md); pointer-events: none;
+}
+.brand .ver:hover::after { display: block; }
+
+/* minimal single-column input view */
+.hero-layout { max-width: 780px; margin: 0 auto; padding: 48px 0 72px; }
+.guide-strip {
+  margin-bottom: 22px;
+  border: 1px solid var(--border); border-radius: var(--r-xl);
+  background: var(--bg-card); overflow: hidden;
+}
+.guide-strip > summary {
+  list-style: none; outline: none;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted);
+  user-select: none; transition: background .15s;
+}
+.guide-strip > summary:hover { background: var(--bg-soft); }
+.guide-strip > summary::-webkit-details-marker { display: none; }
+.guide-strip > summary::after { content: '▾'; display: inline-block; transition: transform .25s; }
+.guide-strip[open] > summary::after { transform: rotate(-180deg); }
+.guide-strip .steps { padding: 4px 20px 20px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .meta-bar {
@@ -907,7 +944,7 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
   <div class="masthead-inner">
     <div class="brand">
       <div class="logo">FinRead<span class="dot">.</span></div>
-      <span class="ver">v5</span>
+      <span class="ver" id="verBadge">v5</span>
       <div class="tag">4-Tier Engine</div>
     </div>
     <div class="nav-controls">
@@ -918,6 +955,9 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
         <button data-view="history">档案 <span class="count" id="articleCount">0</span></button>
         <button data-view="stats">统计</button>
       </nav>
+      <button class="icon-toggle hdr-util" id="btnImport" title="导入 JSON">↑ 导入</button>
+      <button class="icon-toggle hdr-util" id="btnSettings" title="引擎配置">⚙ 配置</button>
+      <button class="icon-toggle hdr-util" id="btnClearAll" title="清空全部缓存">⊘ 清空</button>
       <button class="icon-toggle notion-btn" id="notionBtn" title="Notion 同步">N</button>
       <button class="icon-toggle" id="themeToggle" title="主题切换">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -948,82 +988,11 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
 
   <!-- ── INPUT VIEW ── -->
   <section id="viewInput">
-    <div class="grid-layout">
-      <div>
-        <h1 class="hero-title">将枯燥的财经新闻<br/>转换为<em>结构化精读教材</em></h1>
-        <p class="hero-sub">四层词库分类引擎：句式 / 短语 / 专名 / 词汇 + SM-2 间隔重复 + 中英双向训练 + Notion 云端归档。</p>
-        <div class="feature-badges">
-          <span class="feature-badge new">流式渐进解析</span>
-          <span class="feature-badge new">长文自动分块</span>
-          <span class="feature-badge new">历史例句聚合</span>
-          <span class="feature-badge new">中译英反向训练</span>
-          <span class="feature-badge new">Notion 双向同步</span>
-        </div>
-        <div class="tier-intro">
-          <div class="tier-card t-pattern">
-            <div class="label">Tier 1 · Pattern</div>
-            <div class="title">句式</div>
-            <div class="desc">含占位符的可复用结构。60-80 个覆盖 80% 财经新闻。</div>
-          </div>
-          <div class="tier-card t-phrase">
-            <div class="label">Tier 2 · Phrase</div>
-            <div class="title">短语</div>
-            <div class="desc">无占位符固定搭配。in response to / pave the way for。</div>
-          </div>
-          <div class="tier-card t-proper">
-            <div class="label">Tier 3 · Proper</div>
-            <div class="title">专名</div>
-            <div class="desc">机构、人物、指数、货币。理解类，知是什么。</div>
-          </div>
-          <div class="tier-card t-vocab">
-            <div class="label">Tier 4 · Vocab</div>
-            <div class="title">词汇</div>
-            <div class="desc">CET-4 以上金融/学术高频词。配 SM-2 + 同义辨析。</div>
-          </div>
-        </div>
+    <div class="hero-layout">
+      <h1 class="hero-title">将枯燥的财经新闻<br/>转换为<em>结构化精读教材</em></h1>
 
-        <div class="input-box">
-          <div class="input-head">
-            <div class="input-label">Source Text</div>
-            <div style="display:flex;gap:8px;">
-              <button class="btn-base" id="btnPaste">📋 粘贴</button>
-              <button class="btn-base" id="btnSample">✦ 示例</button>
-              <button class="btn-base hidden" id="btnClear">✕ 清空</button>
-            </div>
-          </div>
-          <textarea id="newsInput" placeholder="贴入路透/彭博/华尔街日报英文原文，或财新/第一财经中文报道。超过 1500 词将自动分块处理..."></textarea>
-          <div class="input-foot">
-            <div class="word-count">
-              <strong id="wordCount">0</strong> chars ·
-              <span id="lang-detect">--</span> ·
-              预估 <strong id="estTime">--</strong>
-              <span id="chunkWarn" class="chunk-warn hidden">将分 N 块</span>
-            </div>
-            <button class="btn-primary" id="btnAnalyze" disabled>启动引擎 →</button>
-          </div>
-        </div>
-
-        <div id="progressBox" class="progress-box hidden">
-          <div class="progress-head">
-            <span class="progress-label" id="progressLabel">解析中...</span>
-            <span class="word-count" id="progressPct">0%</span>
-          </div>
-          <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
-          <div class="progress-meta">
-            <span id="progressDetail">建立连接...</span>
-            <span id="progressTokens">--</span>
-          </div>
-          <div class="progress-chunks hidden" id="chunkIndicator"></div>
-          <div class="progress-actions">
-            <button class="btn-base" id="btnGotoAnalysis">实时查看 →</button>
-            <button class="btn-base btn-danger" id="btnCancel">中止</button>
-          </div>
-        </div>
-        <div id="errBox" class="err-box hidden"></div>
-      </div>
-
-      <aside>
-        <div class="side-title">使用指南</div>
+      <details class="guide-strip">
+        <summary>使用指南</summary>
         <ol class="steps">
           <li><span class="n">1</span> 贴入待读文本（中英皆可），引擎自动识别语言并解析。</li>
           <li><span class="n">2</span> 长文章会自动按段落切分多块并行解析，逐句流式渲染。</li>
@@ -1034,7 +1003,46 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
           <li><span class="n">7</span> 顶部 <kbd>N</kbd> 按钮配置 Notion 同步，跨设备永久保存。</li>
           <li><span class="n">8</span> 闪卡快捷键：<kbd>Space</kbd> 翻面 · <kbd>1-4</kbd> 评分</li>
         </ol>
-      </aside>
+      </details>
+
+      <div class="input-box">
+        <div class="input-head">
+          <div class="input-label">Source Text</div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-base" id="btnPaste">📋 粘贴</button>
+            <button class="btn-base" id="btnSample">✦ 示例</button>
+            <button class="btn-base hidden" id="btnClear">✕ 清空</button>
+          </div>
+        </div>
+        <textarea id="newsInput" placeholder="贴入路透/彭博/华尔街日报英文原文，或财新/第一财经中文报道。超过 1500 词将自动分块处理..."></textarea>
+        <div class="input-foot">
+          <div class="word-count">
+            <strong id="wordCount">0</strong> chars ·
+            <span id="lang-detect">--</span> ·
+            预估 <strong id="estTime">--</strong>
+            <span id="chunkWarn" class="chunk-warn hidden">将分 N 块</span>
+          </div>
+          <button class="btn-primary" id="btnAnalyze" disabled>启动引擎 →</button>
+        </div>
+      </div>
+
+      <div id="progressBox" class="progress-box hidden">
+        <div class="progress-head">
+          <span class="progress-label" id="progressLabel">解析中...</span>
+          <span class="word-count" id="progressPct">0%</span>
+        </div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+        <div class="progress-meta">
+          <span id="progressDetail">建立连接...</span>
+          <span id="progressTokens">--</span>
+        </div>
+        <div class="progress-chunks hidden" id="chunkIndicator"></div>
+        <div class="progress-actions">
+          <button class="btn-base" id="btnGotoAnalysis">实时查看 →</button>
+          <button class="btn-base btn-danger" id="btnCancel">中止</button>
+        </div>
+      </div>
+      <div id="errBox" class="err-box hidden"></div>
     </div>
   </section>
 
@@ -1406,12 +1414,7 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
 <!-- ── FOOTER ── -->
 <footer>
   <div class="footer-inner">
-    <span>FINREAD v5 · 三层词库 · 双向训练 · Notion 同步</span>
-    <div style="display:flex;gap:24px;">
-      <button id="btnImport">导入 JSON</button>
-      <button id="btnSettings">⚙ 配置</button>
-      <button id="btnClearAll">清空缓存</button>
-    </div>
+    <span id="footerBrand">FINREAD · 四层词库 · 双向训练 · Notion 同步</span>
   </div>
 </footer>
 
@@ -1424,6 +1427,14 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
  * ============================================================ */
 
 const SAMPLE = `The Federal Reserve held interest rates steady on Wednesday, signaling a more cautious approach as policymakers grapple with persistent inflation and a softening labor market. Chair Jerome Powell emphasized that the central bank's decisions would remain data-dependent, with markets now pricing in only one rate cut by year-end. The yield on the 10-year U.S. Treasury note climbed 8 basis points to 4.32%, while the S&P 500 pared earlier gains to close marginally lower. European Central Bank officials are expected to follow suit, maintaining their hawkish stance amid rising commodity prices.`;
+
+const VERSION_CONFIG = {
+  current: 'v5.1',
+  changelog: [
+    '2026-05-22  v5.1  首屏极简主义重构，优化视觉重心',
+    '2026-05-22  v5.0  深度学习模块 · 考点标签 · TTS 语音选择器',
+  ],
+};
 
 const PATTERN_GOAL = 80;
 const PHRASE_GOAL = 150;
@@ -3534,6 +3545,12 @@ function init() {
   const savedTheme = localStorage.getItem(STORE.theme);
   if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
   else if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme', 'dark');
+  const verEl = $('#verBadge');
+  if (verEl) {
+    verEl.textContent = VERSION_CONFIG.current;
+    verEl.dataset.tip = VERSION_CONFIG.changelog.join('\n');
+  }
+  $('#footerBrand').textContent = `FINREAD ${VERSION_CONFIG.current} · 四层词库 · 双向训练 · Notion 同步`;
   $('#dateLabel').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase();
   $$('.flip-mode-toggle button').forEach(b => b.classList.toggle('active', b.dataset.mode === state.studyMode));
   updateAllCounts();
