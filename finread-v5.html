@@ -624,6 +624,22 @@ h1.title {
 .srs-badge.mature  { background: var(--bull-light); color: var(--bull); }
 .srs-badge.due     { background: var(--bear-light); color: var(--bear); animation: pulse 1.5s infinite; }
 
+/* exam-tag badges — CET-4 / CET-6 / 考研 / 雅思 */
+.exam-tag {
+  display:inline-flex; align-items:center; gap:3px;
+  font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700;
+  padding:2px 7px; border-radius:10px; letter-spacing:.02em;
+}
+.exam-tag.cet4   { background:rgba(16,185,129,.13); color:#059669; }
+.exam-tag.cet6   { background:rgba(59,130,246,.13);  color:#2563eb; }
+.exam-tag.kaoyan { background:rgba(139,92,246,.13);  color:#7c3aed; }
+.exam-tag.ielts  { background:rgba(245,158,11,.13);  color:#d97706; }
+.exam-tag.other  { background: var(--bg-soft); color: var(--text-muted); }
+[data-theme="dark"] .exam-tag.cet4   { background:rgba(16,185,129,.18); color:#34d399; }
+[data-theme="dark"] .exam-tag.cet6   { background:rgba(59,130,246,.18);  color:#60a5fa; }
+[data-theme="dark"] .exam-tag.kaoyan { background:rgba(139,92,246,.18);  color:#a78bfa; }
+[data-theme="dark"] .exam-tag.ielts  { background:rgba(245,158,11,.18);  color:#fbbf24; }
+
 /* ================================================================
    STICKY SIDEBAR
    ================================================================ */
@@ -1677,8 +1693,11 @@ ${chunkNote}
 ▎Tier 2 · 短语 (phrases) — 两词及以上的固定搭配／词组，无占位符变量
 · 必须是 2 个或以上真实词语构成的固定搭配，整体作为语义单元使用
 · 禁止：单个词进入此层（单词归 vocab）；含变量的骨架进入此层（归 patterns）
-对每个必须给 collocations（高频搭配示例）和 similar（近义短语+辨析）
+对每个必须给 collocations（高频搭配示例）和 similar（近义短语+辨析），并评估备考价值：
+  · examTags: 从 ["CET-4","CET-6","考研","雅思"] 中选适用标签，无考点价值则留空数组
+  · freq: "高频"/"中频"/"低频"，无把握则省略此字段
 { "phrase": "in response to", "type": "介词短语", "translation": "为回应；针对", "note": "...",
+  "examTags": ["CET-6"], "freq": "高频",
   "collocations": ["in response to criticism", "..."],
   "similar": [{"phrase":"in reply to","diff":"更书面"}, ...],
   "examples": [{"en":"...","zh":"..."}] }
@@ -1692,8 +1711,11 @@ ${chunkNote}
 · 必须是单个词（含连字符合成词如 risk-averse），不可是短语或句型
 · 仅收录文本中实际出现、具有学习价值的专业词，不得凑数
 · 禁止：多词短语进入此层（归 phrases）；专有名词进入此层（归 properNouns）
-对每个必须给 synonyms 数组（近义词附 Collins 风格辨析）及 deep_analysis（词根分析或深度语境解析，1-2 句）
+对每个必须给 synonyms 数组（近义词附 Collins 风格辨析）、deep_analysis（词根分析或深度语境解析，1-2 句），并评估备考价值：
+  · examTags: 从 ["CET-4","CET-6","考研","雅思"] 中选适用标签，无考点价值则留空数组
+  · freq: "高频"/"中频"/"低频"，无把握则省略此字段
 { "word": "hawkish", "phonetic": "/.../", "pos": "adj.", "translation": "...", "note": "...",
+  "examTags": ["CET-6", "考研"], "freq": "中频",
   "replacements": "aggressive, hardline",
   "synonyms": [{"word":"aggressive","zh":"激进的","diff":"语气更强"}, ...],
   "examples": [{"en":"...","zh":"..."}],
@@ -2295,12 +2317,20 @@ function buildVocabCardHTML(w, isSaved, showSrs = false, showHistory = false) {
     const hist = getWordHistory(w);
     if (hist.length > 0) historyBadgeHtml = `<span class="history-badge" data-act="show-history">📚 ${hist.length}</span>`;
   }
+  const TAG_CLASS = { 'CET-4': 'cet4', 'CET-6': 'cet6', '考研': 'kaoyan', '雅思': 'ielts' };
+  const FREQ_ICON = { '高频': '⭐', '中频': '★', '低频': '' };
+  const examTagsArr = Array.isArray(w.examTags) ? w.examTags : (w.examTags ? [w.examTags] : []);
+  const freqIcon = FREQ_ICON[w.freq] ?? '';
+  const freqLabel = w.freq ? ` ${w.freq}考点` : '';
+  const examTagsHtml = examTagsArr.map(tag =>
+    `<span class="exam-tag ${TAG_CLASS[tag] || 'other'}">${freqIcon} ${escapeHtml(tag)}${freqLabel}</span>`
+  ).join('');
   const actionLabel = isSaved ? '已存入' : '+ 收藏';
   return `<div class="row">
     <div class="main">
       <div class="head">
         <div class="word" style="font-size:${wordFontSize};">${escapeHtml(w.word)}</div>
-        ${phoneticHtml} ${posHtml} ${srsBadgeHtml} ${historyBadgeHtml}
+        ${phoneticHtml} ${posHtml} ${srsBadgeHtml} ${historyBadgeHtml} ${examTagsHtml}
       </div>
       <div class="zh">${escapeHtml(w.translation || '')}</div>
       ${w.deep_analysis ? `<div class="deep-analysis"><span class="deep-analysis-label">DEEP</span>${escapeHtml(w.deep_analysis)}</div>` : ''}
