@@ -4243,6 +4243,45 @@
       .modal {
         padding: 24px;
       }
+
+      /* ── 6. Tightest-space overrides (merged from later block) ── */
+      #btnImport { display: none; }
+
+      .meta-bar {
+        padding: 6px 14px;
+        font-size: 10px;
+      }
+
+      .hero-title { font-size: 30px; }
+
+      .vocab-head h1 { font-size: 28px; }
+
+      .flip-card { height: 380px; }
+
+      .flip-word { font-size: 32px; }
+
+      .wc-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 16px 18px;
+      }
+
+      .wc-header-actions { justify-content: stretch; }
+
+      .wc-header-actions .btn-base,
+      .wc-header-actions .btn-primary { flex: 1; }
+
+      .wc-body { padding: 18px; }
+
+      .goals-banner { padding: 14px 18px; }
+
+      .dialog-box {
+        padding: 24px 22px 20px;
+        border-radius: 20px;
+      }
+
+      .sent-actions { opacity: 0.7; }
     }
 
     /* ================================================================
@@ -5740,68 +5779,6 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    @media (max-width: 480px) {
-
-      /* hide more utilities for tightest space */
-      #btnImport {
-        display: none;
-      }
-
-      .meta-bar {
-        padding: 6px 14px;
-        font-size: 10px;
-      }
-
-      .hero-title {
-        font-size: 30px;
-      }
-
-      .vocab-head h1 {
-        font-size: 28px;
-      }
-
-      .flip-card {
-        height: 380px;
-      }
-
-      .flip-word {
-        font-size: 32px;
-      }
-
-      .wc-header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-        padding: 16px 18px;
-      }
-
-      .wc-header-actions {
-        justify-content: stretch;
-      }
-
-      .wc-header-actions .btn-base,
-      .wc-header-actions .btn-primary {
-        flex: 1;
-      }
-
-      .wc-body {
-        padding: 18px;
-      }
-
-      .goals-banner {
-        padding: 14px 18px;
-      }
-
-      .dialog-box {
-        padding: 24px 22px 20px;
-        border-radius: 20px;
-      }
-
-      /* always-visible sentence actions on small screens */
-      .sent-actions {
-        opacity: 0.7;
-      }
-    }
   </style>
 </head>
 
