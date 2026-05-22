@@ -183,14 +183,24 @@
     }
 
     .masthead-inner {
-      max-width: 1280px;
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 11px 32px;
+      padding: 10px 40px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
+      gap: 14px;
+      flex-wrap: nowrap;
+    }
+
+    /* nav-controls becomes a single flex row; tabs stay centered while utilities sit at the right edge */
+    .nav-controls {
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    nav.tabs {
+      margin-right: auto;
     }
 
     .brand {
@@ -243,7 +253,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
     }
 
     nav.tabs {
@@ -432,7 +442,7 @@
     }
 
     .meta-bar {
-      max-width: 1280px;
+      max-width: 1440px;
       margin: 0 auto;
       padding: 7px 32px;
       display: flex;
@@ -486,15 +496,15 @@
    MAIN
    ================================================================ */
     main {
-      max-width: 1280px;
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 56px 32px 96px;
+      padding: 48px 40px 96px;
     }
 
     .grid-layout {
       display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 56px;
+      grid-template-columns: minmax(0, 1fr) 420px;
+      gap: 48px;
     }
 
     /* ================================================================
@@ -2333,9 +2343,9 @@
    ================================================================ */
     aside.sticky {
       position: sticky;
-      top: 92px;
+      top: 88px;
       align-self: flex-start;
-      max-height: calc(100vh - 120px);
+      max-height: calc(100vh - 110px);
       overflow-y: auto;
       padding-right: 8px;
     }
@@ -3383,8 +3393,8 @@
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
       margin-bottom: 32px;
     }
 
@@ -3668,7 +3678,7 @@
     }
 
     .footer-inner {
-      max-width: 1280px;
+      max-width: 1440px;
       margin: 0 auto;
       padding: 20px 32px;
       display: flex;
@@ -4131,6 +4141,31 @@
     /* ================================================================
    RESPONSIVE
    ================================================================ */
+    /* ── Tablet / narrow desktop polish ── */
+    @media (max-width: 1180px) {
+      main { padding: 40px 28px 80px; }
+      .masthead-inner { padding: 10px 28px; gap: 10px; }
+      .grid-layout { grid-template-columns: minmax(0, 1fr) 360px; gap: 32px; }
+
+      /* Collapse utility-button labels — keep icons only */
+      .hdr-util { padding: 0 9px; font-size: 0; gap: 0; min-width: 34px; }
+      .hdr-util::first-letter { font-size: 13px; }
+      #btnImport { font-size: 0; }
+      #btnImport::before { content: '↑'; font-size: 13px; font-weight: 700; }
+      #btnSettings { font-size: 0; }
+      #btnSettings::before { content: '⚙'; font-size: 14px; }
+      #btnClearAll { font-size: 0; }
+      #btnClearAll::before { content: '⊘'; font-size: 14px; }
+      #btnShortcuts { font-size: 0; }
+      #btnShortcuts::before { content: '⌨'; font-size: 13px; }
+    }
+
+    /* ── Stats grid breakpoints: 5 → 3 cols at desktop, 2 at tablet ── */
+    @media (max-width: 1100px) {
+      .tier-stats { grid-template-columns: repeat(3, 1fr); }
+      .tier-stat.t-due { grid-column: span 3; }
+    }
+
     @media (max-width: 900px) {
       .grid-layout {
         grid-template-columns: 1fr;
@@ -4161,13 +4196,14 @@
 
       .masthead-inner {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+        align-items: stretch;
+        gap: 10px;
       }
 
       nav.tabs {
         width: 100%;
         overflow-x: auto;
+        margin-right: 0;
       }
 
       nav.tabs button {
@@ -4176,18 +4212,19 @@
       }
 
       main {
-        padding: 32px 20px 64px;
+        padding: 28px 18px 64px;
       }
+
+      .tier-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .tier-stat.t-due { grid-column: span 2; }
 
       h1.title {
         font-size: 30px;
       }
 
       .tier-intro {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .tier-stats {
         grid-template-columns: repeat(2, 1fr);
       }
 
@@ -4230,8 +4267,39 @@
 
       /* ── 1. 全局导航与顶栏 ── */
       .masthead-inner {
-        padding: 10px 14px;
+        padding: 9px 12px;
         gap: 8px;
+      }
+
+      main {
+        padding: 22px 14px 56px;
+      }
+
+      .tier-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+
+      .tier-stat {
+        padding: 12px 14px;
+      }
+
+      .tier-stat .value {
+        font-size: 24px;
+      }
+
+      .stat-block {
+        padding: 16px 18px;
+      }
+
+      .stat-block .big {
+        font-size: 30px;
+      }
+
+      .stats-grid {
+        gap: 10px;
+        grid-template-columns: 1fr 1fr;
       }
 
       /* 横向平滑滚动，隐藏滚动条 */
