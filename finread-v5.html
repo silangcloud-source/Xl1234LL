@@ -1942,6 +1942,8 @@ nav.tabs button:active { transform: scale(.95); }
   .flip-word { font-size: 38px; }
   /* article body */
   .article-body { font-size: 16px; line-height: 1.8; }
+  /* on touch / mobile: always show the TTS + expand buttons (no hover state) */
+  .sent-actions { opacity: 0.65; }
 }
 
 @media (max-width: 480px) {
@@ -1958,6 +1960,8 @@ nav.tabs button:active { transform: scale(.95); }
   .wc-body { padding: 18px; }
   .goals-banner { padding: 14px 18px; }
   .dialog-box { padding: 24px 22px 20px; border-radius: 20px; }
+  /* always-visible sentence actions on small screens */
+  .sent-actions { opacity: 0.7; }
 }
 </style>
 </head>
@@ -3570,8 +3574,13 @@ function highlightSentenceHTML(s, a) {
   ctx.sortedPhrases.forEach(p => {
     const isSaved = ctx.savedPhrase.has(p.phrase.toLowerCase());
     const safe = p.phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`(?<![\\w])(${safe})(?![\\w])`, 'gi');
-    textHtml = textHtml.replace(regex, (match) => {
+    let phraseRe;
+    try {
+      phraseRe = new RegExp(`(?<![\\w])(${safe})(?![\\w])`, 'gi');
+    } catch (e) {
+      phraseRe = new RegExp(`\\b(${safe})\\b`, 'gi');
+    }
+    textHtml = textHtml.replace(phraseRe, (match) => {
       const placeholder = `§PHRASE§${phraseSlots.length}§`;
       phraseSlots.push(`<span class="hover-phrase${isSaved ? ' saved' : ''}" data-ph-idx="${p.originalIndex}">${match}</span>`);
       return placeholder;
@@ -3665,7 +3674,7 @@ function renderSentences() {
     const row = document.createElement('div');
     row.className = 'sent' + (state.activeId === s.id ? ' active' : '');
     row.dataset.sid = s.id;
-    row.innerHTML = buildSentenceHTML(s, a);
+    try { row.innerHTML = buildSentenceHTML(s, a); } catch (e) { row.innerHTML = `<div class="sent-inner"><span class="sent-num">${s.id}</span><div class="sent-body"><span class="sent-en">${escapeHtml(s.original || '')}</span></div></div>`; }
     attachSentenceEvents(row, s);
     frag.appendChild(row);
   });
