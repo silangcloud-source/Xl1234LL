@@ -6808,7 +6808,8 @@
         <div style="margin-top:18px;padding:14px 16px;background:var(--warn-light);border:1px solid var(--warn);border-radius:var(--r-md);">
           <div style="font-size:12px;font-weight:600;color:var(--warn);margin-bottom:8px;">🔄 从历史备份恢复</div>
           <div style="font-size:12px;color:var(--text-soft);margin-bottom:10px;line-height:1.6;">
-            如果 Gist 被覆盖了旧数据，把旧版本的 Raw URL 粘贴到下方，点击恢复即可找回。
+            如果 Gist 被覆盖了旧数据，把旧版本的 Raw URL 粘贴到下方，点击恢复即可找回。<br>
+            <span style="color:var(--warn);font-weight:600;">需先在「配置」填好 Token，且 URL 必须包含版本 SHA（带 /raw/abc123…/ 的完整地址）。</span>
           </div>
           <input id="gistRawUrlInput" type="url"
             placeholder="https://gist.githubusercontent.com/.../raw/.../finread-data.json"
@@ -9766,26 +9767,28 @@ ${wordList}
       if (!url.startsWith('https://gist.githubusercontent.com/')) {
         toast('URL 格式不对，需以 https://gist.githubusercontent.com/ 开头', 'error', 4000); return;
       }
-      gistLog(`开始从历史 URL 恢复: ${url.slice(0, 60)}...`);
+      // Parse: https://gist.githubusercontent.com/{user}/{gistId}/raw/{sha}/{filename}
+      const m = url.match(/gist\.githubusercontent\.com\/[^/]+\/([0-9a-f]+)\/raw\/([0-9a-f]+)\/(.+)/);
+      if (!m) { toast('URL 格式无法解析，请检查是否完整', 'error', 4000); return; }
+      const [, gistId, sha, filename] = m;
+      if (!state.gist.token) { toast('需先在「配置」里填入 GitHub Token 才能恢复', 'error', 4000); return; }
+      gistLog(`解析 Gist: ${gistId.slice(0,8)}… 版本: ${sha.slice(0,8)}…`);
       const btn = $('#gistRestoreBtn');
       btn.disabled = true;
       btn.textContent = '恢复中…';
       try {
-        // Raw revision URLs are public; Authorization header triggers CORS preflight
-        // which gist.githubusercontent.com rejects — so try anonymous first,
-        // fall back to token only if needed.
-        let res;
-        try {
-          res = await fetch(url);
-        } catch (_) {}
-        if (!res || !res.ok) {
-          if (state.gist.token) {
-            try {
-              res = await fetch(url, { headers: { Authorization: `Bearer ${state.gist.token}` } });
-            } catch (_) {}
-          }
+        // Use GitHub API (CORS-safe, token-auth) to fetch the specific revision
+        const res = await gistFetch(`/gists/${gistId}/${sha}`);
+        if (!res.ok) throw new Error(`GitHub API 返回 ${res.status}`);
+        const gist = await res.json();
+        const file = gist.files?.[filename] || Object.values(gist.files || {})[0];
+        if (!file) throw new Error('该版本中未找到数据文件');
+        let content = file.content;
+        if (file.truncated && file.raw_url) {
+          gistLog('内容被截断，从 raw_url 补全…');
+          content = await (await fetch(file.raw_url)).text();
         }
-        if (!res || !res.ok) throw new Error(`无法访问该 URL (HTTP ${res?.status ?? 'network error'})`);
+        const remote = JSON.parse(content);
         const remote = await res.json();
         if (!remote.vocab && !remote.articles) {
           gistLog('此快照不含词卡或文章数据，已跳过');
