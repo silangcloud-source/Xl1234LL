@@ -1569,6 +1569,10 @@ section[id^="view"] {
           </div>
           <button class="btn-primary" id="btnAnalyze" disabled>启动引擎 →</button>
         </div>
+        <div id="urlHint" class="hidden" style="margin-top:10px;padding:10px 14px;background:var(--warn-light);border:1px solid var(--warn);border-radius:var(--r-md);font-size:13px;color:var(--text-soft);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+          <span>🔗 检测到网址 — 直接解析网址通常无效，请点击右侧按钮自动抓取文章正文</span>
+          <button class="btn-base" id="urlHintFetch" style="white-space:nowrap;background:var(--warn);color:white;border-color:var(--warn);">用 🔗 链接 抓取 →</button>
+        </div>
       </div>
 
       <div id="progressBox" class="progress-box hidden">
@@ -2047,8 +2051,9 @@ section[id^="view"] {
 const SAMPLE = `The Federal Reserve held interest rates steady on Wednesday, signaling a more cautious approach as policymakers grapple with persistent inflation and a softening labor market. Chair Jerome Powell emphasized that the central bank's decisions would remain data-dependent, with markets now pricing in only one rate cut by year-end. The yield on the 10-year U.S. Treasury note climbed 8 basis points to 4.32%, while the S&P 500 pared earlier gains to close marginally lower. European Central Bank officials are expected to follow suit, maintaining their hawkish stance amid rising commodity prices.`;
 
 const VERSION_CONFIG = {
-  current: 'v5.4',
+  current: 'v5.5',
   changelog: [
+    '2026-05-22  v5.5  连接等待计时器 · URL自动识别 · 链接按钮从URL中提取地址',
     '2026-05-22  v5.4  统一弹窗 · 撤销删除 · ESC关闭 · 快捷键面板(?) · 目标庆祝 · 90天热力图 · 分页 · 防抖搜索',
     '2026-05-22  v5.3  连续打卡 · 每日目标 · 草稿保存 · 单词联动 · 历史搜索 · 一键复制 · AI记忆法',
     '2026-05-22  v5.2  词族网络 · AI写作评批 · Anki导出 · 复习通知',
@@ -2748,22 +2753,42 @@ async function processChunk(idx, controller) {
   if (dot) dot.classList.add('processing');
   $('#progressLabel').textContent = total > 1 ? `解析第 ${idx + 1}/${total} 块` : '解析中';
   $('#progressDetail').textContent = '建立连接...';
+
+  // 连接等待计时器 — 若超过 12s 未收到第一个 token，更新提示
+  let _firstChunk = false;
+  const _connStart = Date.now();
+  const _connTimer = setInterval(() => {
+    if (_firstChunk) { clearInterval(_connTimer); return; }
+    const s = Math.floor((Date.now() - _connStart) / 1000);
+    if (s < 12) { $('#progressDetail').textContent = `建立连接... (${s}s)`; return; }
+    if (s < 35) { $('#progressDetail').textContent = `模型正在思考，请稍候… (${s}s)`; return; }
+    $('#progressDetail').textContent = `响应较慢 (${s}s)，可点击【中止】后重试`;
+  }, 1000);
+
   const prompt = buildPrompt(ct, isChunk, { idx, total });
   let rawText = '';
   if (state.streaming && state.provider !== 'anthropic') {
-    rawText = await streamRequestProgressive(prompt, controller, (partial) => {
-      processStreamPartial(partial, idx);
-      const pct = Math.min(85, 10 + (partial.length / Math.max(2000, ct.length * 4)) * 70);
-      $('#progressFill').style.width = pct + '%';
-      $('#progressPct').textContent = Math.floor(pct) + '%';
-      $('#progressTokens').textContent = `~${partial.length} chars`;
-    });
+    try {
+      rawText = await streamRequestProgressive(prompt, controller, (partial) => {
+        if (!_firstChunk) { _firstChunk = true; clearInterval(_connTimer); }
+        processStreamPartial(partial, idx);
+        const pct = Math.min(85, 10 + (partial.length / Math.max(2000, ct.length * 4)) * 70);
+        $('#progressFill').style.width = pct + '%';
+        $('#progressPct').textContent = Math.floor(pct) + '%';
+        $('#progressTokens').textContent = `~${partial.length} chars`;
+      });
+    } catch(e) { clearInterval(_connTimer); throw e; }
   } else {
     $('#progressFill').style.width = '40%';
     $('#progressPct').textContent = '40%';
-    rawText = await regularRequest(prompt, controller);
+    try {
+      rawText = await regularRequest(prompt, controller);
+    } finally {
+      clearInterval(_connTimer);
+    }
     $('#progressFill').style.width = '85%';
   }
+  clearInterval(_connTimer);
   sessionStorage.setItem('finread:lastRawOutput', rawText);
   const parsed = robustJsonParse(rawText);
   if (parsed.coreVocab && !parsed.vocab) parsed.vocab = parsed.coreVocab;
@@ -2901,8 +2926,13 @@ function onInputChange() {
   $('#wordCount').textContent = v.length;
   $('#btnAnalyze').disabled = !v;
   $('#btnClear').classList.toggle('hidden', !v);
-  if (!v) { $('#lang-detect').textContent = '--'; $('#estTime').textContent = '--'; $('#chunkWarn').classList.add('hidden'); }
-  else {
+  // 检测 URL — 显示抓取提示
+  const looksLikeUrl = isUrl(v) || /^https?:\/\//i.test(v);
+  $('#urlHint').classList.toggle('hidden', !looksLikeUrl);
+  if (!v) {
+    $('#lang-detect').textContent = '--'; $('#estTime').textContent = '--';
+    $('#chunkWarn').classList.add('hidden');
+  } else {
     $('#lang-detect').textContent = hasChinese(v) ? '中文 → 英' : 'English → 中';
     const seconds = Math.max(8, Math.ceil(v.length / (state.streaming ? 80 : 40)));
     $('#estTime').textContent = seconds + 's';
@@ -4629,7 +4659,10 @@ function bindEvents() {
   });
   $('#btnFetchLink').addEventListener('click', async () => {
     const raw = $('#newsInput').value.trim();
-    if (!isUrl(raw)) {
+    // 优先从文本中提取第一个 URL（兼容前后有 UTM 参数、换行等情况）
+    const urlMatch = raw.match(/https?:\/\/[^\s"'<>]+/i);
+    const targetUrl = urlMatch ? urlMatch[0] : raw;
+    if (!isUrl(targetUrl)) {
       toast('请先在输入框中粘贴文章链接（以 http 开头）', 'error');
       $('#newsInput').focus();
       return;
@@ -4650,7 +4683,7 @@ function bindEvents() {
       let html = null;
       for (const mkProxy of PROXIES) {
         try {
-          const res = await fetchTO(mkProxy(raw));
+          const res = await fetchTO(mkProxy(targetUrl));
           if (res.ok) { html = await res.text(); break; }
         } catch {}
       }
@@ -4667,6 +4700,7 @@ function bindEvents() {
       btn.textContent = '🔗 链接';
     }
   });
+  $('#urlHintFetch').addEventListener('click', () => $('#btnFetchLink').click());
   $('#btnClear').addEventListener('click', () => { $('#newsInput').value = ''; onInputChange(); });
   $('#btnAnalyze').addEventListener('click', doAnalyze);
   $('#btnCancel').addEventListener('click', cancelAnalyze);
