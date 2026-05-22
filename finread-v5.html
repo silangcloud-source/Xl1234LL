@@ -1663,33 +1663,45 @@ ${chunkNote}
 
 1. 侦测语言并互译。
 2. 给出【全文翻译】(fullTranslation)。
-3. 按句切分原文（引号内不切）。原文中所有专有名词必须在 sentences[].original 字段中用 ** 完整包裹。
+3. 按句切分原文（引号内不切）。先识别文中所有专有名词，在 sentences[].original 中用 ** 完整包裹对应词语，再将其提取到 properNouns 列表——先标注、后提取，方向不可倒置。
 4. 每句精准互译 (translation)。
 5. 每句结构化语法分析 grammar: { skeleton, notes, rule_summary }。notes 必须用【时态/语态】、【非谓语】、【三大从句】等【中括号标签】开头。rule_summary 用 1-2 句概括该句最核心的语法亮点。
 
-▎Tier 1 · 句式 (patterns) — 2-5 个含占位符的可复用结构
+【四层分类排他性约束 — 严格遵守，不得跨层污染】
+
+▎Tier 1 · 句式 (patterns) — 含变量占位符的可复用句型骨架
+· 必须含至少一个变量占位符（如 [index]、X%、[subject]），体现结构中可替换的位置
+· 禁止：不含占位符的固定搭配、单个词汇、专有名词进入此层
 { "pattern": "[index] climbed/fell X basis points to Y%", "meaning": "...", "example": "原句", "translation": "原译" }
 
-▎Tier 2 · 短语 (phrases) — 3-8 个固定搭配
-对每个必须给 collocations (3-6 个高频搭配) 和 similar (2-4 个近义短语+辨析)
+▎Tier 2 · 短语 (phrases) — 两词及以上的固定搭配／词组，无占位符变量
+· 必须是 2 个或以上真实词语构成的固定搭配，整体作为语义单元使用
+· 禁止：单个词进入此层（单词归 vocab）；含变量的骨架进入此层（归 patterns）
+对每个必须给 collocations（高频搭配示例）和 similar（近义短语+辨析）
 { "phrase": "in response to", "type": "介词短语", "translation": "为回应；针对", "note": "...",
   "collocations": ["in response to criticism", "..."],
   "similar": [{"phrase":"in reply to","diff":"更书面"}, ...],
   "examples": [{"en":"...","zh":"..."}] }
 
-▎Tier 3 · 专名 (properNouns) — 提取文中所有 ** 包裹的
-type 必须是 organization/person/place/index/event/currency/instrument/company/country/other
+▎Tier 3 · 专名 (properNouns) — 文中已被 ** 标注的专有名词
+· type 必须是 organization/person/place/index/event/currency/instrument/company/country/other
+· 禁止：普通词汇、固定短语、句式进入此层
 { "name": "Federal Reserve", "type": "organization", "translation": "美联储", "note": "..." }
 
-▎Tier 4 · 词汇 (vocab) — 5-12 个 CET-4 以上金融/学术单词
-对每个必须给 synonyms 数组 (2-4 个近义词附 Collins 风格辨析)，以及 deep_analysis（词根分析或深度语境解析，1-2 句）
+▎Tier 4 · 词汇 (vocab) — CET-4 以上的单个金融／学术词汇
+· 必须是单个词（含连字符合成词如 risk-averse），不可是短语或句型
+· 仅收录文本中实际出现、具有学习价值的专业词，不得凑数
+· 禁止：多词短语进入此层（归 phrases）；专有名词进入此层（归 properNouns）
+对每个必须给 synonyms 数组（近义词附 Collins 风格辨析）及 deep_analysis（词根分析或深度语境解析，1-2 句）
 { "word": "hawkish", "phonetic": "/.../", "pos": "adj.", "translation": "...", "note": "...",
   "replacements": "aggressive, hardline",
   "synonyms": [{"word":"aggressive","zh":"激进的","diff":"语气更强"}, ...],
   "examples": [{"en":"...","zh":"..."}],
   "deep_analysis": "词根 hawk（鹰）+ -ish，引申为鹰派立场；金融语境中常指倾向加息的货币政策态度。" }
 
-▎易混淆词汇对比 (comparative_analysis) — 根节点数组，2-4 组，选取本文出现的近义/易混词
+【宁缺毋滥原则】各层提取数量不设上下限，完全由文本实际词汇密度决定。文中若无合格素材，对应数组可为空，严禁为凑数而降低标准或跨层混入。
+
+▎易混淆词汇对比 (comparative_analysis) — 根节点数组，选取本文出现的近义／易混词对（无则留空数组）
 { "word_a": "...", "translation_a": "...", "word_b": "...", "translation_b": "...", "difference": "辨析说明" }
 
 ▎商业情境翻译练习 (exercise) — 根节点对象，基于本文主题出一道英译中或中译英练习
