@@ -1993,6 +1993,7 @@ nav.tabs button:active { transform: scale(.95); }
       <button class="icon-toggle hdr-util" id="btnSettings" title="引擎配置">⚙ 配置</button>
       <button class="icon-toggle hdr-util" id="btnClearAll" title="清空全部缓存">⊘ 清空</button>
       <button class="icon-toggle notion-btn" id="notionBtn" title="Notion 同步">N</button>
+      <button class="icon-toggle notion-btn" id="gistBtn" title="GitHub Gist 同步">G</button>
       <button class="icon-toggle" id="themeToggle" title="主题切换">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="5"/>
@@ -2517,10 +2518,88 @@ nav.tabs button:active { transform: scale(.95); }
   </div>
 </div>
 
+<div id="gistModal" class="modal-bg hidden">
+  <div class="modal">
+    <h2>GitHub Gist 同步</h2>
+    <p class="modal-sub">把卡组、档案、复习日志同步到一份 private gist。无需服务器，无 CORS 限制，电脑/手机即时双向同步。</p>
+    <div class="notion-status-row" id="gistStatusRow">
+      <span class="dot"></span>
+      <span id="gistStatusText">未连接</span>
+      <span class="meta" id="gistStatusMeta"></span>
+    </div>
+    <div class="modal-tabs">
+      <button class="active" data-modal-tab="config">配置</button>
+      <button data-modal-tab="sync">同步</button>
+      <button data-modal-tab="help">说明</button>
+    </div>
+    <div id="gistTabConfig">
+      <label>GitHub Personal Access Token</label>
+      <input type="password" id="gistTokenInput" placeholder="ghp_... 或 github_pat_..." autocomplete="off" />
+      <label>Gist ID (留空则首次推送时自动创建)</label>
+      <input type="text" id="gistIdInput" placeholder="例: 1a2b3c4d5e..." />
+      <label>文件名</label>
+      <input type="text" id="gistFilenameInput" placeholder="finread-data.json" />
+      <label>自动同步</label>
+      <select id="gistAutoSync">
+        <option value="off">关闭（仅手动）</option>
+        <option value="onChange">数据变化时 4 秒防抖推送</option>
+        <option value="onStartup">应用启动时拉取</option>
+        <option value="both">启动拉取 + 变化推送 (推荐)</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn-base" id="gistTestBtn">测试连接</button>
+        <button class="btn-primary" id="gistSaveBtn" style="padding:8px 24px;">保存配置</button>
+      </div>
+    </div>
+    <div id="gistTabSync" class="hidden">
+      <div class="info-box" id="gistSyncInfo">配置 Token 后启用同步</div>
+      <div style="display:flex;gap:10px;flex-direction:column;">
+        <button class="btn-primary" id="gistPushBtn" disabled>⬆ 推送本地 → Gist (全量覆盖)</button>
+        <button class="btn-base"    id="gistPullBtn" disabled>⬇ 拉取 Gist → 本地 (智能合并)</button>
+      </div>
+      <div style="margin-top:20px;">
+        <label>同步日志</label>
+        <textarea id="gistSyncLog" rows="6" readonly style="background:var(--bg-soft);font-family:monospace;font-size:11px;"></textarea>
+      </div>
+    </div>
+    <div id="gistTabHelp" class="hidden">
+      <div class="info-box">
+        <b>3 步完成配置</b>
+      </div>
+      <label>① 创建 GitHub Personal Access Token</label>
+      <div class="info-box" style="line-height:1.7;">
+        1. 访问 <code>https://github.com/settings/tokens</code><br/>
+        2. 推荐 <b>Fine-grained token</b>：Generate new token → 仅勾选 <code>Gists: Read and write</code><br/>
+        　或经典 token：Generate new token (classic) → 仅勾选 <code>gist</code> 一个 scope<br/>
+        3. 复制生成的 token (<code>ghp_...</code> 或 <code>github_pat_...</code>) 填到上方
+      </div>
+      <label>② Gist ID (可选)</label>
+      <div class="info-box" style="line-height:1.7;">
+        留空：首次推送时自动创建一个 private gist 并把 ID 记下。<br/>
+        已有：从 gist URL 复制 ID（URL 倒数第二段，类似 <code>a1b2c3d4...</code>）。<br/>
+        多设备同步：第一台设备推送后，把 Gist ID 抄到其它设备的配置里。
+      </div>
+      <label>③ 多设备同步流程</label>
+      <div class="info-box" style="line-height:1.7;">
+        电脑端：配置 → 测试连接 → 同步页 → 推送本地 → Gist (记下 Gist ID)<br/>
+        手机端：粘贴同一 Token + 抄上 Gist ID → 拉取 Gist → 本地<br/>
+        之后把「自动同步」设为「启动拉取 + 变化推送」即可全自动。
+      </div>
+      <label>安全提示</label>
+      <div class="info-box" style="line-height:1.7;">
+        Token 仅存于本地 localStorage；建议使用 fine-grained token 并只授予 gist 权限，最坏情况下也只能读写你的 gists。Gist 设置为 private (即非 public)，仅你和持有 token 的人可见。
+      </div>
+    </div>
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn-base" id="gistCloseBtn">关闭</button>
+    </div>
+  </div>
+</div>
+
 <div id="settingsModal" class="modal-bg hidden">
   <div class="modal">
     <h2>引擎配置</h2>
-    <p class="modal-sub">所有数据存于本地 localStorage。Notion 配置请通过头部 N 按钮。</p>
+    <p class="modal-sub">所有数据存于本地 localStorage。云同步：N (Notion) 或 G (Gist) 按钮。</p>
     <div class="warn">⚠️ API Key 明文存于本地。仅供个人开发测试。</div>
     <label>驱动节点 (Provider)</label>
     <select id="providerSelect">
@@ -2601,8 +2680,9 @@ nav.tabs button:active { transform: scale(.95); }
 const SAMPLE = `The Federal Reserve held interest rates steady on Wednesday, signaling a more cautious approach as policymakers grapple with persistent inflation and a softening labor market. Chair Jerome Powell emphasized that the central bank's decisions would remain data-dependent, with markets now pricing in only one rate cut by year-end. The yield on the 10-year U.S. Treasury note climbed 8 basis points to 4.32%, while the S&P 500 pared earlier gains to close marginally lower. European Central Bank officials are expected to follow suit, maintaining their hawkish stance amid rising commodity prices.`;
 
 const VERSION_CONFIG = {
-  current: 'v5.9',
+  current: 'v6.0',
   changelog: [
+    '2026-05-22  v6.0  GitHub Gist 跨设备同步：卡组/档案/复习日志 · 智能合并 · 启动拉取+变化推送',
     '2026-05-22  v5.9  修复电脑/手机精读空白：两处lookbehind正则兼容旧Safari · finalizeAnalysis容错保护',
     '2026-05-22  v5.8  AI造句：自动将10个词编成金融英语例句 · 词语高亮 · 一键重新生成',
     '2026-05-22  v5.7  Premium iOS质感：暖色调 · Inter字体 · 大圆角 · 底部TabBar · 按压反馈 · 光泽按钮',
@@ -2654,6 +2734,7 @@ const STORE = {
   streaming: 'finread:streaming',
   chunkThreshold: 'finread:chunkThreshold',
   notion: 'finread:notion',
+  gist: 'finread:gist',
   studyMode: 'finread:studyMode',
   voice: 'finread:voice',
   reminderTime: 'finread:reminderTime',
@@ -2674,6 +2755,7 @@ let state = {
   apiKey: '', provider: 'openrouter', model: 'deepseek/deepseek-chat-v3.1',
   streaming: true, chunkThreshold: DEFAULT_CHUNK_THRESHOLD,
   notion: { token: '', pageId: '', parentId: NOTION_PARENT_DEFAULT, proxyUrl: '', autoSync: 'off', lastSync: 0 },
+  gist: { token: '', gistId: '', filename: 'finread-data.json', autoSync: 'off', lastSync: 0 },
   studyMode: 'en2zh',
   activeId: null, flipIdx: 0, flipped: false,
   showZh: true, showGr: false, showFullTrans: false,
@@ -2971,20 +3053,25 @@ function persistVocab() {
   updateAllCounts();
   invalidateHighlightCache();
   if (state.notion.autoSync === 'onChange') notionPushDebounced();
+  if (state.gist.autoSync === 'onChange' || state.gist.autoSync === 'both') gistPushDebounced();
 }
 function persistArticles() {
   localStorage.setItem(STORE.articles, JSON.stringify(state.articles));
   $('#articleCount').textContent = state.articles.length;
+  if (state.gist.autoSync === 'onChange' || state.gist.autoSync === 'both') gistPushDebounced();
 }
 function persistWordHistory() {
   localStorage.setItem(STORE.wordHistory, JSON.stringify(state.wordHistory));
+  if (state.gist.autoSync === 'onChange' || state.gist.autoSync === 'both') gistPushDebounced();
 }
 function persistReviewLog() {
   const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
   state.reviewLog = state.reviewLog.filter(r => r.ts > cutoff);
   localStorage.setItem(STORE.reviewLog, JSON.stringify(state.reviewLog));
+  if (state.gist.autoSync === 'onChange' || state.gist.autoSync === 'both') gistPushDebounced();
 }
 function persistNotion() { localStorage.setItem(STORE.notion, JSON.stringify(state.notion)); }
+function persistGist() { localStorage.setItem(STORE.gist, JSON.stringify(state.gist)); }
 
 function countByTier(tier) { return state.vocab.filter(v => v.tier === tier).length; }
 function getReviewPool() { return state.vocab.filter(v => !v.lastReview || v.due <= Date.now()); }
@@ -4829,6 +4916,236 @@ function updateNotionStatus(connected) {
   }
 }
 
+/* ============================================================
+ *  GITHUB GIST SYNC — cross-device storage, no proxy needed
+ * ============================================================ */
+function gistLog(msg) {
+  const ta = $('#gistSyncLog');
+  if (!ta) return;
+  const ts = new Date().toLocaleTimeString();
+  ta.value = `[${ts}] ${msg}\n` + ta.value;
+}
+
+async function gistFetch(endpoint, opts = {}) {
+  const token = state.gist.token;
+  if (!token) throw new Error('未配置 GitHub Token');
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+    ...(opts.body ? { 'Content-Type': 'application/json' } : {}),
+    ...(opts.headers || {}),
+  };
+  return fetch('https://api.github.com' + endpoint, { ...opts, headers });
+}
+
+async function gistTestConnection() {
+  if (!state.gist.token) { toast('请先填入 Token', 'error'); return; }
+  gistLog('测试连接...');
+  try {
+    const res = await gistFetch('/user');
+    if (!res.ok) throw new Error(`HTTP ${res.status} ${(await res.text()).slice(0, 120)}`);
+    const user = await res.json();
+    gistLog(`✓ 已登录: ${user.login}`);
+    if (state.gist.gistId) {
+      const gres = await gistFetch(`/gists/${state.gist.gistId}`);
+      if (gres.ok) {
+        gistLog(`✓ 找到 gist (${state.gist.gistId.slice(0, 8)}...)`);
+      } else gistLog(`⚠ gist 不存在或无权限: ${gres.status}`);
+    } else gistLog('未填写 gistId — 推送时将自动创建');
+    toast(`已连接 · ${user.login}`, 'success');
+    updateGistStatus(true);
+  } catch (e) {
+    gistLog(`✗ 连接失败: ${e.message}`);
+    toast('连接失败: ' + e.message.slice(0, 80), 'error', 4000);
+  }
+}
+
+function gistBuildPayload() {
+  return {
+    version: 5.9, updatedAt: Date.now(),
+    stats: {
+      vocab: state.vocab.length,
+      articles: state.articles.length,
+      wordHistoryKeys: Object.keys(state.wordHistory).length,
+      reviewLog: state.reviewLog.length,
+    },
+    vocab: state.vocab,
+    articles: state.articles.map(a => ({ ...a, raw: a.raw.slice(0, 1500) })),
+    wordHistory: state.wordHistory,
+    reviewLog: state.reviewLog.slice(-500),
+  };
+}
+
+async function gistEnsureExists() {
+  if (state.gist.gistId) return state.gist.gistId;
+  gistLog('未配置 gistId, 正在创建新 gist...');
+  const filename = state.gist.filename || 'finread-data.json';
+  const initial = { version: 5.9, init: true, createdAt: Date.now() };
+  const res = await gistFetch('/gists', {
+    method: 'POST',
+    body: JSON.stringify({
+      description: 'FinRead · 跨设备同步数据 (vocab / articles / reviewLog)',
+      public: false,
+      files: { [filename]: { content: JSON.stringify(initial, null, 2) } },
+    }),
+  });
+  if (!res.ok) throw new Error(`创建 gist 失败: ${res.status} ${(await res.text()).slice(0, 120)}`);
+  const data = await res.json();
+  state.gist.gistId = data.id;
+  persistGist();
+  gistLog(`✓ 已创建 gist ${data.id.slice(0, 8)}...`);
+  return data.id;
+}
+
+async function gistPush() {
+  if (!state.gist.token) { toast('Token 未配置', 'error'); return; }
+  gistLog('开始推送...');
+  try {
+    const gistId = await gistEnsureExists();
+    const filename = state.gist.filename || 'finread-data.json';
+    const payload = gistBuildPayload();
+    const content = JSON.stringify(payload);
+    gistLog(`数据大小: ${(content.length / 1024).toFixed(1)} KB`);
+    const res = await gistFetch(`/gists/${gistId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ files: { [filename]: { content } } }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status} ${(await res.text()).slice(0, 120)}`);
+    state.gist.lastSync = Date.now();
+    persistGist();
+    gistLog(`✓ 推送成功 · ${state.vocab.length} 卡 · ${state.articles.length} 文章 · ${state.reviewLog.length} 复习`);
+    toast('已推送到 Gist ✓', 'success');
+    updateGistStatus(true);
+  } catch (e) {
+    gistLog(`✗ 推送失败: ${e.message}`);
+    toast('推送失败: ' + e.message.slice(0, 80), 'error', 4000);
+  }
+}
+
+async function gistPull() {
+  if (!state.gist.token || !state.gist.gistId) { toast('需先设置 Token 和 Gist ID', 'error'); return; }
+  gistLog('开始拉取...');
+  try {
+    const res = await gistFetch(`/gists/${state.gist.gistId}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const gist = await res.json();
+    const filename = state.gist.filename || 'finread-data.json';
+    const file = gist.files[filename] || Object.values(gist.files)[0];
+    if (!file) throw new Error('gist 中未找到数据文件');
+    let content = file.content;
+    if (file.truncated && file.raw_url) {
+      gistLog('内容被截断, 从 raw_url 重新拉取...');
+      content = await (await fetch(file.raw_url)).text();
+    }
+    const remote = JSON.parse(content);
+    if (remote.init && !remote.vocab) {
+      gistLog('远端为初始化空文件, 跳过合并');
+      toast('远端无数据', 'warning'); return;
+    }
+    gistLog(`远端: ${remote.vocab?.length || 0} 卡 · ${remote.articles?.length || 0} 文章 · 更新于 ${new Date(remote.updatedAt).toLocaleString()}`);
+    // smart merge — same strategy as notionPull
+    const localMap = new Map(state.vocab.map(v => [`${v.tier}::${v.word}`, v]));
+    let added = 0, updated = 0;
+    (remote.vocab || []).forEach(rv => {
+      const k = `${rv.tier}::${rv.word}`;
+      const lv = localMap.get(k);
+      if (!lv) { state.vocab.push(rv); added++; }
+      else if ((rv.lastReview || 0) > (lv.lastReview || 0)) { Object.assign(lv, rv); updated++; }
+    });
+    const articleIds = new Set(state.articles.map(a => a.id));
+    let articleAdded = 0;
+    (remote.articles || []).forEach(ra => { if (!articleIds.has(ra.id)) { state.articles.push(ra); articleAdded++; } });
+    state.articles.sort((a, b) => b.addedAt - a.addedAt);
+    Object.entries(remote.wordHistory || {}).forEach(([k, v]) => {
+      if (!state.wordHistory[k]) state.wordHistory[k] = [];
+      v.forEach(rh => {
+        if (!state.wordHistory[k].find(lh => lh.articleId === rh.articleId && lh.sentenceId === rh.sentenceId)) {
+          state.wordHistory[k].push(rh);
+        }
+      });
+    });
+    const tsSet = new Set(state.reviewLog.map(r => r.ts));
+    (remote.reviewLog || []).forEach(r => { if (!tsSet.has(r.ts)) state.reviewLog.push(r); });
+    state.reviewLog.sort((a, b) => a.ts - b.ts);
+    persistVocab(); persistArticles(); persistWordHistory(); persistReviewLog();
+    state.gist.lastSync = Date.now();
+    persistGist();
+    gistLog(`✓ 合并完成 · 新增 ${added} 卡 · 更新 ${updated} 卡 · 新增 ${articleAdded} 文章`);
+    toast(`已合并: +${added} 卡, +${articleAdded} 文章`, 'success');
+    updateGistStatus(true);
+    if (state.view === 'vocab') renderVocabBook();
+    else if (state.view === 'history') renderHistoryView();
+    else if (state.view === 'stats') renderStatsView();
+  } catch (e) {
+    gistLog(`✗ 拉取失败: ${e.message}`);
+    toast('拉取失败: ' + e.message.slice(0, 80), 'error', 4000);
+  }
+}
+
+let _gistPushTimer = null;
+function gistPushDebounced() {
+  if (!state.gist.token) return;
+  if (state.gist.autoSync !== 'onChange' && state.gist.autoSync !== 'both') return;
+  clearTimeout(_gistPushTimer);
+  _gistPushTimer = setTimeout(() => { gistPush().catch(e => console.warn('gist auto-sync failed', e)); }, 4000);
+}
+
+function updateGistStatus(connected) {
+  const row = $('#gistStatusRow');
+  if (!row) return;
+  const txt = $('#gistStatusText');
+  const meta = $('#gistStatusMeta');
+  if (connected) {
+    row.classList.add('connected');
+    txt.textContent = '已连接';
+    if (state.gist.lastSync) {
+      const ago = Date.now() - state.gist.lastSync;
+      const min = Math.round(ago / 60000);
+      meta.textContent = ago < 60000 ? '刚刚同步' : `${min} 分钟前同步`;
+    } else meta.textContent = '尚未同步';
+    $('#gistPushBtn').disabled = false;
+    $('#gistPullBtn').disabled = !state.gist.gistId;
+    $('#gistSyncInfo').textContent = state.gist.gistId
+      ? `已连接到 gist ${state.gist.gistId.slice(0, 12)}...`
+      : '已连接 · 首次推送将自动创建 gist';
+    $('#gistBtn').classList.add('synced');
+  } else {
+    row.classList.remove('connected');
+    txt.textContent = '未连接';
+    meta.textContent = '';
+    $('#gistPushBtn').disabled = true;
+    $('#gistPullBtn').disabled = true;
+    $('#gistBtn').classList.remove('synced');
+  }
+}
+
+function openGistModal() {
+  $('#gistTokenInput').value = state.gist.token;
+  $('#gistIdInput').value = state.gist.gistId;
+  $('#gistFilenameInput').value = state.gist.filename || 'finread-data.json';
+  $('#gistAutoSync').value = state.gist.autoSync;
+  switchGistTab(state.gistTab || 'config');
+  updateGistStatus(!!(state.gist.token && state.gist.lastSync));
+  show('#gistModal');
+}
+function closeGistModal() { hide('#gistModal'); }
+function switchGistTab(tab) {
+  state.gistTab = tab;
+  $$('#gistModal .modal-tabs button').forEach(b => b.classList.toggle('active', b.dataset.modalTab === tab));
+  hide('#gistTabConfig'); hide('#gistTabSync'); hide('#gistTabHelp');
+  show('#gistTab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+}
+function saveGistConfig() {
+  state.gist.token = $('#gistTokenInput').value.trim();
+  state.gist.gistId = $('#gistIdInput').value.trim();
+  state.gist.filename = $('#gistFilenameInput').value.trim() || 'finread-data.json';
+  state.gist.autoSync = $('#gistAutoSync').value;
+  persistGist();
+  toast('Gist 配置已保存', 'success');
+  if (state.gist.token) gistTestConnection();
+}
+
 function notionCopyJson() {
   const payload = {
     version: 5, exportedAt: Date.now(),
@@ -5514,6 +5831,13 @@ function bindEvents() {
   $('#notionPushBtn').addEventListener('click', notionPush);
   $('#notionPullBtn').addEventListener('click', notionPull);
   $('#notionExportBtn').addEventListener('click', notionCopyJson);
+  $('#gistBtn').addEventListener('click', openGistModal);
+  $('#gistCloseBtn').addEventListener('click', closeGistModal);
+  $$('#gistModal .modal-tabs button').forEach(b => { b.addEventListener('click', () => switchGistTab(b.dataset.modalTab)); });
+  $('#gistTestBtn').addEventListener('click', gistTestConnection);
+  $('#gistSaveBtn').addEventListener('click', saveGistConfig);
+  $('#gistPushBtn').addEventListener('click', gistPush);
+  $('#gistPullBtn').addEventListener('click', gistPull);
   $('#historySearch').addEventListener('input', debounce((e) => {
     state.historySearch = e.target.value;
     renderHistoryView();
@@ -5580,6 +5904,7 @@ function bindKeyboard() {
       if ($('#wordDetailPopup').classList.contains('visible')) { closeWordDetailPopup(); return; }
       if (!$('#settingsModal').classList.contains('hidden')) { closeSettings(); return; }
       if (!$('#notionModal').classList.contains('hidden')) { closeNotionModal(); return; }
+      if (!$('#gistModal').classList.contains('hidden')) { closeGistModal(); return; }
       if (!$('#customAddModal').classList.contains('hidden')) { hide('#customAddModal'); return; }
     }
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
@@ -5650,6 +5975,10 @@ function init() {
     const n = JSON.parse(localStorage.getItem(STORE.notion) || '{}');
     state.notion = { ...state.notion, ...n };
   } catch {}
+  try {
+    const g = JSON.parse(localStorage.getItem(STORE.gist) || '{}');
+    state.gist = { ...state.gist, ...g };
+  } catch {}
   state.apiKey = localStorage.getItem(STORE.apiKey) || '';
   state.provider = localStorage.getItem(STORE.provider) || 'openrouter';
   state.model = localStorage.getItem(STORE.model) || 'deepseek/deepseek-chat-v3.1';
@@ -5681,9 +6010,15 @@ function init() {
   updateStreakBadge();
   updateGoalsBanner();
   updateNotionStatus(!!(state.notion.token && state.notion.lastSync));
+  updateGistStatus(!!(state.gist.token && state.gist.lastSync));
   bindEvents();
   bindKeyboard();
   if (!state.apiKey) openSettings();
+
+  // 启动时拉取 gist (若已配置)
+  if (state.gist.token && state.gist.gistId && (state.gist.autoSync === 'onStartup' || state.gist.autoSync === 'both')) {
+    setTimeout(() => { gistPull().catch(e => console.warn('startup gist pull failed', e)); }, 800);
+  }
 
   // 复习提醒通知
   if ('Notification' in window) {
