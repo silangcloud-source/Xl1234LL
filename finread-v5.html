@@ -1120,6 +1120,96 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
   .vocab-card { padding:18px; }
   .modal { padding:24px; }
 }
+
+/* ================================================================
+   NEW FEATURES v5.3
+   ================================================================ */
+/* ── Streak badge ── */
+.streak-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700;
+  color: #F97316; background: rgba(249,115,22,.12);
+  padding: 2px 8px; border-radius: 5px;
+  border: 1px solid rgba(249,115,22,.25);
+  cursor: help; white-space: nowrap;
+}
+.streak-badge.streak-0 { opacity: .45; }
+
+/* ── Daily goals banner ── */
+.goals-banner {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 14px 18px;
+  margin-bottom: 22px; display: grid;
+  grid-template-columns: 1fr 1fr; gap: 12px 20px;
+}
+.goals-item { display: flex; flex-direction: column; gap: 5px; }
+.goals-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
+  color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em;
+  display: flex; justify-content: space-between;
+}
+.goals-label span { color: var(--text-soft); font-weight: 700; }
+.goals-progress { height: 5px; background: var(--bg-soft); border-radius: 3px; overflow: hidden; }
+.goals-bar { height: 100%; background: var(--accent); border-radius: 3px; transition: width .45s cubic-bezier(.4,0,.2,1); }
+.goals-bar.done { background: var(--bull); }
+
+/* ── History search ── */
+.history-search-wrap { margin-bottom: 16px; }
+.history-search-wrap input {
+  width: 100%; padding: 10px 14px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r-md); font-size: 14px; color: var(--text-main);
+  font-family: inherit; outline: none; transition: border-color .18s, box-shadow .18s;
+}
+.history-search-wrap input::placeholder { color: var(--text-faint); }
+.history-search-wrap input:focus { border-color: var(--accent); box-shadow: var(--shadow-glow); }
+
+/* ── Word detail popup ── */
+#wordDetailPopup {
+  position: fixed; z-index: 300;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 20px 20px 16px;
+  box-shadow: var(--shadow-xl);
+  max-width: 360px; width: calc(100vw - 32px);
+  display: none; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+#wordDetailPopup.visible { display: block; animation: popIn .18s cubic-bezier(.34,1.56,.64,1); }
+@keyframes popIn { from { opacity:0; transform:translate(-50%,-52%) scale(.96); } to { opacity:1; transform:translate(-50%,-50%) scale(1); } }
+#wordDetailOverlay { display:none; position:fixed; inset:0; z-index:299; background:rgba(0,0,0,.3); }
+#wordDetailOverlay.visible { display:block; }
+.wdp-close {
+  position: absolute; top: 10px; right: 12px;
+  background: none; border: none; cursor: pointer;
+  font-size: 18px; color: var(--text-muted); padding: 4px 6px; line-height: 1;
+}
+.wdp-close:hover { color: var(--bear); }
+.wdp-tier { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+.wdp-word { font-size: 24px; font-weight: 700; color: var(--text-main); line-height: 1.2; }
+.wdp-phonetic { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.wdp-zh { font-size: 15px; color: var(--text-soft); margin: 10px 0 6px; line-height: 1.5; }
+.wdp-note { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+.wdp-ex { font-size: 12px; color: var(--text-muted); font-style: italic; margin-top: 8px; line-height: 1.5; border-left: 2px solid var(--border); padding-left: 10px; }
+.wdp-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+
+/* ── Mnemonic box ── */
+.mnemonic-box {
+  margin-top: 10px; padding: 10px 12px;
+  background: var(--accent-pale); border: 1px solid var(--accent-light);
+  border-radius: var(--r); font-size: 13px; line-height: 1.65;
+  color: var(--text-soft);
+}
+.mnemonic-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
+  letter-spacing: .08em; color: var(--accent); margin-bottom: 6px;
+  text-transform: uppercase; display: flex; align-items: center; gap: 6px;
+}
+.mnemonic-content { white-space: pre-wrap; }
+.btn-mnemonic { font-size: 10px; padding: 3px 8px; }
+
+@media (max-width: 600px) {
+  .goals-banner { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -1134,6 +1224,7 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
     <div class="brand">
       <div class="logo">FinRead<span class="dot">.</span></div>
       <span class="ver" id="verBadge">v5</span>
+      <span class="streak-badge streak-0" id="streakBadge" title="连续打卡天数">🔥 0天</span>
       <div class="tag">4-Tier Engine</div>
     </div>
     <div class="nav-controls">
@@ -1193,6 +1284,17 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
           <li><span class="n">8</span> 闪卡快捷键：<kbd>Space</kbd> 翻面 · <kbd>1-4</kbd> 评分</li>
         </ol>
       </details>
+
+      <div class="goals-banner" id="goalsBanner">
+        <div class="goals-item">
+          <div class="goals-label">今日复习 <span id="goalsReviewVal">0/20</span></div>
+          <div class="goals-progress"><div class="goals-bar" id="goalsReviewBar" style="width:0%"></div></div>
+        </div>
+        <div class="goals-item">
+          <div class="goals-label">今日精读 <span id="goalsArticleVal">0/1</span></div>
+          <div class="goals-progress"><div class="goals-bar" id="goalsArticleBar" style="width:0%"></div></div>
+        </div>
+      </div>
 
       <div class="input-box">
         <div class="input-head">
@@ -1379,6 +1481,9 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
       </div>
       <div class="word-count">所有已解析文章自动归档，词汇出现位置自动追踪</div>
     </div>
+    <div class="history-search-wrap">
+      <input type="search" id="historySearch" placeholder="搜索标题、摘要或正文内容..." />
+    </div>
     <div id="historyEmpty" class="empty hidden">
       <div class="em">尚无归档文章</div>
       <div>解析第一篇文章后将自动加入</div>
@@ -1406,6 +1511,19 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
   </section>
 
 </main>
+
+<!-- ── WORD DETAIL POPUP ── -->
+<div id="wordDetailOverlay"></div>
+<div id="wordDetailPopup">
+  <button class="wdp-close" id="wdpClose">✕</button>
+  <div class="wdp-tier" id="wdpTier"></div>
+  <div class="wdp-word" id="wdpWord"></div>
+  <div class="wdp-phonetic" id="wdpPhonetic"></div>
+  <div class="wdp-zh" id="wdpZh"></div>
+  <div class="wdp-note" id="wdpNote"></div>
+  <div class="wdp-ex" id="wdpEx"></div>
+  <div class="wdp-actions" id="wdpActions"></div>
+</div>
 
 <!-- ── FLOATING ELEMENTS ── -->
 <div id="wordTooltip" class="hidden"></div>
@@ -1624,8 +1742,9 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
 const SAMPLE = `The Federal Reserve held interest rates steady on Wednesday, signaling a more cautious approach as policymakers grapple with persistent inflation and a softening labor market. Chair Jerome Powell emphasized that the central bank's decisions would remain data-dependent, with markets now pricing in only one rate cut by year-end. The yield on the 10-year U.S. Treasury note climbed 8 basis points to 4.32%, while the S&P 500 pared earlier gains to close marginally lower. European Central Bank officials are expected to follow suit, maintaining their hawkish stance amid rising commodity prices.`;
 
 const VERSION_CONFIG = {
-  current: 'v5.2',
+  current: 'v5.3',
   changelog: [
+    '2026-05-22  v5.3  连续打卡 · 每日目标 · 草稿保存 · 单词联动 · 历史搜索 · 一键复制 · AI记忆法',
     '2026-05-22  v5.2  词族网络 · AI写作评批 · Anki导出 · 复习通知',
     '2026-05-22  v5.1  首屏极简主义重构，优化视觉重心',
     '2026-05-22  v5.0  深度学习模块 · 考点标签 · TTS 语音选择器',
@@ -1673,6 +1792,8 @@ const STORE = {
   studyMode: 'finread:studyMode',
   voice: 'finread:voice',
   reminderTime: 'finread:reminderTime',
+  draft: 'finread:draft',
+  dailyGoals: 'finread:dailyGoals',
 };
 
 const PROPER_TYPE_LABELS = {
@@ -1698,6 +1819,8 @@ let state = {
   parseSession: null, notionTab: 'config',
   selectedVoice: '',
   reminderTime: '09:00',
+  dailyGoals: { reviewTarget: 20, articleTarget: 1 },
+  historySearch: '',
 };
 
 const $ = (s) => document.querySelector(s);
@@ -2284,6 +2407,8 @@ function archiveArticle(rawText, analysis) {
   state.articles.unshift(article);
   if (state.articles.length > 200) state.articles = state.articles.slice(0, 200);
   persistArticles();
+  localStorage.removeItem(STORE.draft);
+  updateGoalsBanner();
 }
 
 function updateWordHistoryFromAnalysis(articleId, analysis) {
@@ -2330,18 +2455,27 @@ function properToVocab(pn) { return { tier: 'proper', word: pn.name, pos: PROPER
 function vocabToCard(v) { return { tier: 'vocab', ...v, sourceArticleId: state.currentArticleId, addedAt: Date.now() }; }
 function addVocabInternal(card) { state.vocab.push({ ...card, due: Date.now(), interval: 0, easeFactor: 2.5, reps: 0 }); }
 
+let _draftTimer = null;
 function onInputChange() {
   const v = $('#newsInput').value.trim();
   $('#wordCount').textContent = v.length;
   $('#btnAnalyze').disabled = !v;
   $('#btnClear').classList.toggle('hidden', !v);
-  if (!v) { $('#lang-detect').textContent = '--'; $('#estTime').textContent = '--'; $('#chunkWarn').classList.add('hidden'); return; }
-  $('#lang-detect').textContent = hasChinese(v) ? '中文 → 英' : 'English → 中';
-  const seconds = Math.max(8, Math.ceil(v.length / (state.streaming ? 80 : 40)));
-  $('#estTime').textContent = seconds + 's';
-  const chunks = chunkText(v, state.chunkThreshold);
-  if (chunks.length > 1) { $('#chunkWarn').textContent = `将分 ${chunks.length} 块`; $('#chunkWarn').classList.remove('hidden'); }
-  else { $('#chunkWarn').classList.add('hidden'); }
+  if (!v) { $('#lang-detect').textContent = '--'; $('#estTime').textContent = '--'; $('#chunkWarn').classList.add('hidden'); }
+  else {
+    $('#lang-detect').textContent = hasChinese(v) ? '中文 → 英' : 'English → 中';
+    const seconds = Math.max(8, Math.ceil(v.length / (state.streaming ? 80 : 40)));
+    $('#estTime').textContent = seconds + 's';
+    const chunks = chunkText(v, state.chunkThreshold);
+    if (chunks.length > 1) { $('#chunkWarn').textContent = `将分 ${chunks.length} 块`; $('#chunkWarn').classList.remove('hidden'); }
+    else { $('#chunkWarn').classList.add('hidden'); }
+  }
+  clearTimeout(_draftTimer);
+  _draftTimer = setTimeout(() => {
+    const raw = $('#newsInput').value;
+    if (raw.length > 10) localStorage.setItem(STORE.draft, raw);
+    else localStorage.removeItem(STORE.draft);
+  }, 800);
 }
 
 function setView(name) {
@@ -2451,7 +2585,24 @@ function attachSentenceEvents(row, s) {
       const cleanText = getEnText(s.original.replace(/\*\*/g, ''), s.translation);
       speak(cleanText, 0.9, btn);
     } else if (act === 'toggle' || !act) {
-      if (e.target.classList.contains('hover-word') || e.target.classList.contains('hover-phrase') || e.target.classList.contains('proper-noun')) return;
+      const tgt = e.target;
+      if (tgt.classList.contains('hover-word') && tgt.classList.contains('saved')) {
+        const idx = tgt.dataset.idx;
+        const vocabEntry = state.analysis?.vocab?.[idx];
+        if (vocabEntry) {
+          const savedCard = state.vocab.find(v => v.tier === 'vocab' && v.word.toLowerCase() === vocabEntry.word.toLowerCase());
+          if (savedCard) { showWordDetailPopup(savedCard); return; }
+        }
+      }
+      if (tgt.classList.contains('hover-phrase') && tgt.classList.contains('saved')) {
+        const idx = tgt.dataset.phIdx;
+        const phraseEntry = state.analysis?.phrases?.[idx];
+        if (phraseEntry) {
+          const savedCard = state.vocab.find(v => v.tier === 'phrase' && v.word.toLowerCase() === phraseEntry.phrase.toLowerCase());
+          if (savedCard) { showWordDetailPopup(savedCard); return; }
+        }
+      }
+      if (tgt.classList.contains('hover-word') || tgt.classList.contains('hover-phrase') || tgt.classList.contains('proper-noun')) return;
       state.activeId = state.activeId === s.id ? null : s.id;
       renderSentences();
     }
@@ -2544,6 +2695,31 @@ async function streamWritingFeedback(question, referenceAnswer, userAnswer, outp
     });
   } catch (e) {
     outputEl.textContent = '评批失败：' + e.message;
+  }
+}
+
+async function streamMnemonic(w, card) {
+  if (!state.apiKey) { toast('请先配置 API Key', 'error'); return; }
+  let box = card.querySelector('.mnemonic-box');
+  if (!box) {
+    box = document.createElement('div');
+    box.className = 'mnemonic-box';
+    box.innerHTML = '<span class="mnemonic-label">💡 AI 记忆法</span><div class="mnemonic-content">生成中...</div>';
+    card.querySelector('.main')?.appendChild(box);
+  }
+  const contentEl = box.querySelector('.mnemonic-content');
+  contentEl.textContent = '生成中...';
+  const prompt = `为英语单词「${w.word}」设计一个中文记忆法（助记技巧）。
+单词信息：词性 ${w.pos || ''}，中文释义：${w.translation || ''}。
+要求：
+- 使用谐音、词根拆解、场景联想或故事等方法
+- 中文描述，生动有趣，100字以内
+- 直接给出记忆法，不要任何前缀或解释`;
+  const ctrl = new AbortController();
+  try {
+    await streamRequestProgressive(prompt, ctrl, full => { contentEl.textContent = full; });
+  } catch (e) {
+    contentEl.textContent = '生成失败：' + e.message;
   }
 }
 
@@ -2664,6 +2840,8 @@ function buildVocabCardHTML(w, isSaved, showSrs = false, showHistory = false) {
     <div class="actions">
       <button class="btn-base" data-act="save">${actionLabel}</button>
       <button class="btn-base" data-act="tts">🔊</button>
+      <button class="btn-base" data-act="copy" title="复制单词信息">📋</button>
+      ${isSaved ? `<button class="btn-base btn-mnemonic" data-act="mnemonic" title="AI记忆法">💡</button>` : ''}
       ${isSaved && showSrs ? `<button class="btn-base" data-act="delete" style="color:var(--bear);">✕</button>` : ''}
     </div>
   </div>`;
@@ -2693,7 +2871,21 @@ function bindVocabEvents(card, w, mode) {
           toast(`已收藏 「${w.word}」`, 'success');
         }
       } else if (act === 'tts') { speak(w.word, 0.9, btn); }
-      else if (act === 'delete') {
+      else if (act === 'copy') {
+        const parts = [w.word];
+        if (w.phonetic) parts.push(`[${w.phonetic}]`);
+        if (w.pos) parts.push(`(${w.pos})`);
+        parts.push(w.translation || '');
+        if (w.note) parts.push(w.note);
+        const text = parts.filter(Boolean).join('  ');
+        navigator.clipboard.writeText(text).then(() => {
+          btn.textContent = '✓';
+          setTimeout(() => { btn.textContent = '📋'; }, 1500);
+          toast('已复制到剪贴板', 'success');
+        }).catch(() => toast('复制失败', 'error'));
+      } else if (act === 'mnemonic') {
+        streamMnemonic(w, card);
+      } else if (act === 'delete') {
         if (confirm(`确认删除「${w.word}」？复习进度也会一并删除。`)) {
           state.vocab = state.vocab.filter(v => !(v.tier === w.tier && v.word === w.word));
           persistVocab();
@@ -2733,6 +2925,40 @@ function showHistoryPopup(w) {
   if (!hist.length) return toast('暂无历史出现记录');
   const msg = hist.slice(-5).reverse().map((h, i) => `${i + 1}. 「${h.articleTitle}」\n   ${h.sentence.slice(0, 100)}${h.sentence.length > 100 ? '...' : ''}`).join('\n\n');
   alert(`「${w.word}」共出现 ${hist.length} 次：\n\n${msg}`);
+}
+
+function showWordDetailPopup(savedCard) {
+  const TIER_LABEL = { vocab: '词汇', pattern: '句式', phrase: '短语', proper: '专名' };
+  const TIER_COLOR = { vocab: 'var(--vocab-color)', pattern: 'var(--pattern-color)', phrase: 'var(--phrase-color)', proper: 'var(--proper-color)' };
+  $('#wdpTier').textContent = TIER_LABEL[savedCard.tier] || savedCard.tier;
+  $('#wdpTier').style.color = TIER_COLOR[savedCard.tier] || 'var(--accent)';
+  $('#wdpWord').textContent = savedCard.word;
+  $('#wdpPhonetic').textContent = savedCard.phonetic ? `[${savedCard.phonetic}]` : '';
+  $('#wdpZh').textContent = savedCard.translation || '';
+  $('#wdpNote').textContent = savedCard.note || '';
+  const ex = savedCard.examples?.[0];
+  $('#wdpEx').textContent = ex ? `${ex.en}${ex.zh ? '\n' + ex.zh : ''}` : '';
+  $('#wdpEx').classList.toggle('hidden', !ex);
+  const actionsEl = $('#wdpActions');
+  actionsEl.innerHTML = '';
+  const ttsBtn = document.createElement('button');
+  ttsBtn.className = 'btn-base'; ttsBtn.textContent = '🔊 朗读';
+  ttsBtn.addEventListener('click', () => speak(savedCard.word, 0.9, ttsBtn));
+  actionsEl.appendChild(ttsBtn);
+  const copyBtn = document.createElement('button');
+  copyBtn.className = 'btn-base'; copyBtn.textContent = '📋 复制';
+  copyBtn.addEventListener('click', () => {
+    const t = [savedCard.word, savedCard.phonetic ? `[${savedCard.phonetic}]` : '', savedCard.translation].filter(Boolean).join('  ');
+    navigator.clipboard.writeText(t).then(() => { copyBtn.textContent = '✓ 已复制'; setTimeout(() => { copyBtn.textContent = '📋 复制'; }, 1500); });
+  });
+  actionsEl.appendChild(copyBtn);
+  $('#wordDetailPopup').classList.add('visible');
+  $('#wordDetailOverlay').classList.add('visible');
+}
+
+function closeWordDetailPopup() {
+  $('#wordDetailPopup').classList.remove('visible');
+  $('#wordDetailOverlay').classList.remove('visible');
 }
 
 function renderSidebars() {
@@ -2893,20 +3119,76 @@ function reviewCard(quality) {
   persistReviewLog(); persistVocab();
   state.flipIdx = (state.flipIdx + 1) % pool.length;
   renderFlipCard(); renderVocabBook();
+  updateStreakBadge(); updateGoalsBanner();
   const labels = { 0: 'Again', 3: 'Hard', 4: 'Good', 5: 'Easy' };
   toast(`${labels[quality]} · 下次 ${previewInterval(w, quality)}`, quality < 3 ? 'warning' : 'success');
 }
 function nextCard() { const pool = getFlipPool(); if (!pool.length) return; state.flipIdx = (state.flipIdx + 1) % pool.length; renderFlipCard(); }
 function prevCard() { const pool = getFlipPool(); if (!pool.length) return; state.flipIdx = (state.flipIdx - 1 + pool.length) % pool.length; renderFlipCard(); }
 
+function calculateStreak() {
+  const reviewDays = new Set(state.reviewLog.map(r => {
+    const d = new Date(r.ts); d.setHours(0, 0, 0, 0); return d.getTime();
+  }));
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let streak = 0;
+  let cur = today.getTime();
+  while (reviewDays.has(cur)) { streak++; cur -= 86400000; }
+  return streak;
+}
+
+function updateGoalsBanner() {
+  const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
+  const ts = todayStart.getTime();
+  const reviewsToday = state.reviewLog.filter(r => r.ts >= ts).length;
+  const articlesToday = state.articles.filter(a => a.addedAt >= ts).length;
+  const rTarget = state.dailyGoals.reviewTarget;
+  const aTarget = state.dailyGoals.articleTarget;
+  const rPct = Math.min(100, Math.round(reviewsToday / rTarget * 100));
+  const aPct = Math.min(100, Math.round(articlesToday / aTarget * 100));
+  const rBar = $('#goalsReviewBar'); const aBar = $('#goalsArticleBar');
+  if (!rBar) return;
+  rBar.style.width = rPct + '%';
+  rBar.classList.toggle('done', rPct >= 100);
+  aBar.style.width = aPct + '%';
+  aBar.classList.toggle('done', aPct >= 100);
+  $('#goalsReviewVal').textContent = `${reviewsToday}/${rTarget}`;
+  $('#goalsArticleVal').textContent = `${articlesToday}/${aTarget}`;
+}
+
+function updateStreakBadge() {
+  const streak = calculateStreak();
+  const el = $('#streakBadge');
+  if (!el) return;
+  el.textContent = `🔥 ${streak}天`;
+  el.title = streak > 0 ? `连续打卡 ${streak} 天！` : '今天还没有复习，加油！';
+  el.classList.toggle('streak-0', streak === 0);
+}
+
 function renderHistoryView() {
   const total = state.articles.length;
   $('#articleTotal').textContent = total;
   if (!total) { show('#historyEmpty'); $('#historyGrid').innerHTML = ''; return; }
+  const q = state.historySearch.trim().toLowerCase();
+  let articles = state.articles;
+  if (q) {
+    articles = articles.filter(a =>
+      (a.title || '').toLowerCase().includes(q) ||
+      (a.preview || '').toLowerCase().includes(q) ||
+      (a.raw || '').toLowerCase().includes(q)
+    );
+  }
+  if (!articles.length) {
+    show('#historyEmpty');
+    $('#historyEmpty').querySelector('.em').textContent = `无匹配结果：「${q}」`;
+    $('#historyGrid').innerHTML = '';
+    return;
+  }
+  $('#historyEmpty').querySelector('.em').textContent = '尚无归档文章';
   hide('#historyEmpty');
   const grid = $('#historyGrid');
   grid.innerHTML = '';
-  state.articles.forEach(a => {
+  articles.forEach(a => {
     const date = new Date(a.addedAt);
     const dateStr = date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }) + ' ' + date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
     const card = document.createElement('div');
@@ -2959,7 +3241,11 @@ function renderStatsView() {
   const retention = totalReviews > 0 ? Math.round(state.reviewLog.filter(r => r.quality >= 3).length / totalReviews * 100) : 0;
   const totalArticles = state.articles.length;
   const totalHistoryEntries = Object.values(state.wordHistory).reduce((a, b) => a + b.length, 0);
+  const streak = calculateStreak();
+  const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
+  const reviewsToday = state.reviewLog.filter(r => r.ts >= todayStart.getTime()).length;
   const blocks = [
+    { label: '🔥 连续打卡', value: streak + ' 天', sub: streak > 0 ? `今日已复习 ${reviewsToday} 张` : '今天还未打卡', subClass: streak > 0 ? 'up' : 'down' },
     { label: '卡片总量', value: total, sub: `+${newCards} 新卡` },
     { label: '今日待复习', value: due, sub: due > 0 ? '⏰ 立即开始' : '✓ 已清空', subClass: due > 0 ? 'down' : 'up' },
     { label: '熟练卡', value: mature, sub: `${Math.round(mature / Math.max(1, total) * 100)}% of total` },
@@ -3908,6 +4194,12 @@ function bindEvents() {
   $('#notionPushBtn').addEventListener('click', notionPush);
   $('#notionPullBtn').addEventListener('click', notionPull);
   $('#notionExportBtn').addEventListener('click', notionCopyJson);
+  $('#historySearch').addEventListener('input', (e) => {
+    state.historySearch = e.target.value;
+    renderHistoryView();
+  });
+  $('#wdpClose').addEventListener('click', closeWordDetailPopup);
+  $('#wordDetailOverlay').addEventListener('click', closeWordDetailPopup);
   setupSelectionListener();
   $('#selectionAdd').addEventListener('click', (e) => { e.stopPropagation(); openCustomAddModal(); });
   $$('.tier-radio').forEach(r => r.addEventListener('click', () => setCustomAddTier(r.dataset.tier)));
@@ -4023,6 +4315,12 @@ function init() {
   state.selectedVoice = localStorage.getItem(STORE.voice) || '';
   state.studyMode = localStorage.getItem(STORE.studyMode) || 'en2zh';
   state.reminderTime = localStorage.getItem(STORE.reminderTime) || '09:00';
+  try { const g = JSON.parse(localStorage.getItem(STORE.dailyGoals) || '{}'); state.dailyGoals = { ...state.dailyGoals, ...g }; } catch {}
+  const savedDraft = localStorage.getItem(STORE.draft);
+  if (savedDraft) {
+    $('#newsInput').value = savedDraft;
+    onInputChange();
+  }
   const savedTheme = localStorage.getItem(STORE.theme);
   if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
   else if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme', 'dark');
@@ -4037,6 +4335,8 @@ function init() {
   updateAllCounts();
   $('#articleCount').textContent = state.articles.length;
   renderModelBadge();
+  updateStreakBadge();
+  updateGoalsBanner();
   updateNotionStatus(!!(state.notion.token && state.notion.lastSync));
   bindEvents();
   bindKeyboard();
