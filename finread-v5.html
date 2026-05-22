@@ -2601,8 +2601,9 @@ nav.tabs button:active { transform: scale(.95); }
 const SAMPLE = `The Federal Reserve held interest rates steady on Wednesday, signaling a more cautious approach as policymakers grapple with persistent inflation and a softening labor market. Chair Jerome Powell emphasized that the central bank's decisions would remain data-dependent, with markets now pricing in only one rate cut by year-end. The yield on the 10-year U.S. Treasury note climbed 8 basis points to 4.32%, while the S&P 500 pared earlier gains to close marginally lower. European Central Bank officials are expected to follow suit, maintaining their hawkish stance amid rising commodity prices.`;
 
 const VERSION_CONFIG = {
-  current: 'v5.8',
+  current: 'v5.9',
   changelog: [
+    '2026-05-22  v5.9  修复电脑/手机精读空白：两处lookbehind正则兼容旧Safari · finalizeAnalysis容错保护',
     '2026-05-22  v5.8  AI造句：自动将10个词编成金融英语例句 · 词语高亮 · 一键重新生成',
     '2026-05-22  v5.7  Premium iOS质感：暖色调 · Inter字体 · 大圆角 · 底部TabBar · 按压反馈 · 光泽按钮',
     '2026-05-22  v5.6  词汇写作挑战：随机抽10词 · 实时高亮已用词 · AI流式点评打分',
@@ -3388,9 +3389,9 @@ function processStreamPartial(text, chunkIdx) {
 
 function finalizeAnalysis() {
   const session = state.parseSession;
-  state.analysis = mergeAnalyses(session.completed);
-  archiveArticle(session.raw, state.analysis);
-  updateWordHistoryFromAnalysis(state.currentArticleId, state.analysis);
+  try { state.analysis = mergeAnalyses(session.completed); } catch (e) { console.warn('mergeAnalyses:', e); }
+  try { archiveArticle(session.raw, state.analysis); } catch (e) { console.warn('archiveArticle:', e); }
+  try { updateWordHistoryFromAnalysis(state.currentArticleId, state.analysis); } catch (e) { console.warn('wordHistory:', e); }
   $('#progressFill').style.width = '100%';
   $('#progressPct').textContent = '100%';
   $('#progressLabel').textContent = '完成';
@@ -3452,7 +3453,12 @@ function updateWordHistoryFromAnalysis(articleId, analysis) {
     allTerms.forEach(term => {
       if (term.abstract) return;
       const safeWord = term.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const re = new RegExp(`(?<![\\w])${safeWord}(?![\\w])`, 'i');
+      let re;
+      try {
+        re = new RegExp(`(?<![\\w])${safeWord}(?![\\w])`, 'i');
+      } catch (e) {
+        re = new RegExp(`\\b${safeWord}\\b`, 'i');
+      }
       if (re.test(cleanOrig)) {
         const key = term.tier + '::' + term.word;
         if (!state.wordHistory[key]) state.wordHistory[key] = [];
