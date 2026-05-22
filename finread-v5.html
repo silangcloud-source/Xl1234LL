@@ -31,7 +31,7 @@
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Newsreader:opsz,wght@6..72,400&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Inter:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet" />
 
 <style>
 /* ================================================================
@@ -1560,6 +1560,432 @@ section[id^="view"] {
   font-size: 11px; color: var(--text-muted);
   margin: 0 10px;
 }
+
+/* ================================================================
+   v5.7 — PREMIUM APP-LIKE POLISH
+   ================================================================ */
+
+/* ── Refined warmer palette overrides ── */
+:root {
+  --bg-main:       #FAF7F2;     /* warm off-white */
+  --bg-card:       #FFFFFF;
+  --bg-soft:       #F1ECE2;     /* warm beige */
+  --bg-nav:        rgba(250,247,242,0.82);
+  --bg-elevated:   #FFFFFF;
+  --text-main:     #16161A;     /* deep ink with warmth */
+  --text-soft:     #3A3A45;
+  --text-muted:    #7A7A85;
+  --text-faint:    #A8A8B2;
+  --border:        #E8E2D4;     /* warm border */
+  --border-strong: #D4CDB8;
+  --accent:        #6366F1;     /* keep indigo, brighter */
+  --accent-hover:  #4F46E5;
+  --accent-light:  #EEF0FF;
+  --accent-pale:   #F6F4FF;
+  --gold:          #C9A961;     /* premium gold accent */
+  --gold-light:    #F5EFE0;
+  /* refined deeper shadows */
+  --shadow-xs: 0 1px 1px rgba(22,22,26,.04);
+  --shadow-sm: 0 1px 2px rgba(22,22,26,.05), 0 1px 3px rgba(22,22,26,.04);
+  --shadow-md: 0 4px 12px rgba(22,22,26,.07), 0 2px 4px rgba(22,22,26,.04);
+  --shadow-lg: 0 12px 32px rgba(22,22,26,.10), 0 4px 10px rgba(22,22,26,.06);
+  --shadow-xl: 0 24px 64px rgba(22,22,26,.14), 0 8px 22px rgba(22,22,26,.07);
+  --shadow-glow: 0 0 0 4px rgba(99,102,241,.14), 0 4px 16px rgba(99,102,241,.18);
+  --r-sm: 8px; --r-md: 12px; --r-lg: 18px; --r-xl: 24px; --r-2xl: 32px;
+  --press-scale: scale(.97);
+  --ease-out: cubic-bezier(.22,.61,.36,1);
+  --ease-spring: cubic-bezier(.34,1.56,.64,1);
+}
+[data-theme="dark"] {
+  --bg-main:       #0A0A0F;     /* near-black warm */
+  --bg-card:       #15151D;
+  --bg-soft:       #1E1E28;
+  --bg-nav:        rgba(10,10,15,0.88);
+  --bg-elevated:   #1A1A24;
+  --text-main:     #F5F1E8;     /* cream — like the reference */
+  --text-soft:     #C9C5B8;
+  --text-muted:    #8A867A;
+  --text-faint:    #5E5B52;
+  --border:        #25252F;
+  --border-strong: #34343F;
+  --accent:        #818CF8;
+  --accent-hover:  #6366F1;
+  --accent-light:  rgba(129,140,248,.16);
+  --accent-pale:   rgba(129,140,248,.08);
+  --gold:          #D4B36A;
+  --gold-light:    rgba(212,179,106,.15);
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.4);
+  --shadow-sm: 0 2px 6px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.3);
+  --shadow-md: 0 8px 24px rgba(0,0,0,.55), 0 3px 8px rgba(0,0,0,.35);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,.6), 0 6px 16px rgba(0,0,0,.4);
+  --shadow-xl: 0 32px 80px rgba(0,0,0,.7), 0 12px 30px rgba(0,0,0,.45);
+}
+
+/* ── Inter as the primary sans font for better app feel ── */
+html, body {
+  font-family: 'Inter', 'Noto Sans SC', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
+}
+
+/* ── App-like masthead refinements ── */
+header.masthead {
+  box-shadow: 0 1px 0 var(--border);
+}
+.masthead-inner { padding: 13px 32px; }
+.brand .logo {
+  font-size: 24px; letter-spacing: -.028em;
+  background: linear-gradient(135deg, var(--text-main) 35%, var(--accent) 100%);
+  -webkit-background-clip: text; background-clip: text;
+}
+nav.tabs {
+  padding: 4px; border-radius: 14px;
+  background: var(--bg-soft);
+  border: 1px solid transparent;
+}
+nav.tabs button {
+  padding: 7px 16px; font-size: 12px;
+  border-radius: 10px;
+  transition: all .25s var(--ease-out);
+}
+nav.tabs button.active {
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm), 0 0 0 1px var(--border);
+  transform: translateY(-.5px);
+}
+.icon-toggle {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  transition: all .2s var(--ease-out);
+}
+.icon-toggle:active { transform: var(--press-scale); }
+nav.tabs button:active { transform: scale(.95); }
+
+/* ── Premium cards everywhere ── */
+.vocab-card, .tier-card, .article-card, .stat-block,
+.tier-stat, .full-translation-box, .comparative-panel,
+.exercise-panel, .chart-block, .heatmap-block,
+.guide-strip, .goals-banner, .wc-panel,
+.input-box, .progress-box {
+  border-radius: var(--r-xl);
+  transition: transform .25s var(--ease-out), box-shadow .25s var(--ease-out);
+}
+.vocab-card, .article-card, .stat-block, .tier-stat {
+  box-shadow: var(--shadow-sm);
+}
+.vocab-card:hover, .article-card:hover, .stat-block:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ── Premium buttons ── */
+.btn-primary {
+  font-weight: 600;
+  letter-spacing: -.005em;
+  padding: 11px 24px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(99,102,241,.30),
+              0 1px 3px rgba(99,102,241,.20),
+              inset 0 1px 0 rgba(255,255,255,.15);
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-hover) 100%);
+  transition: all .2s var(--ease-out);
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(99,102,241,.36),
+              0 2px 5px rgba(99,102,241,.24),
+              inset 0 1px 0 rgba(255,255,255,.2);
+}
+.btn-primary:active:not(:disabled) {
+  transform: var(--press-scale);
+  box-shadow: 0 1px 3px rgba(99,102,241,.2);
+}
+.btn-base {
+  transition: all .18s var(--ease-out);
+  border-radius: 10px;
+}
+.btn-base:active:not(:disabled) { transform: var(--press-scale); }
+
+/* ── Refined inputs & textarea ── */
+#newsInput, .modal input, .modal select, .modal textarea,
+#searchInput, .wc-textarea, .history-search-wrap input,
+#historySearch {
+  border-radius: 14px;
+  font-family: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+.input-box { box-shadow: var(--shadow-sm); }
+.input-box:focus-within {
+  box-shadow: var(--shadow-md), 0 0 0 4px rgba(99,102,241,.10);
+}
+
+/* ── Editorial hero — bigger, more breathing ── */
+.hero-title {
+  font-size: 52px; line-height: 1.08;
+  letter-spacing: -.032em;
+  font-weight: 700;
+}
+.hero-sub { font-size: 17px; line-height: 1.7; }
+.hero-layout { padding: 56px 0 88px; }
+
+/* ── Vocab head — iOS large title ── */
+.vocab-head h1 {
+  font-size: 42px; letter-spacing: -.028em; font-weight: 700;
+}
+.vocab-head h1 .num {
+  font-size: 24px;
+  font-feature-settings: 'tnum';
+}
+
+/* ── Flip card more premium ── */
+.flip-card { height: 480px; }
+.flip-front, .flip-back { border-radius: var(--r-2xl); }
+.flip-word {
+  font-size: 46px; font-family: 'Fraunces', Georgia, serif;
+  letter-spacing: -.02em;
+}
+
+/* ── Tier intro cards: more app-like ── */
+.tier-intro { gap: 14px; margin-bottom: 36px; }
+.tier-card {
+  padding: 24px 20px 24px 26px;
+  border-left: 0;
+  position: relative;
+  overflow: hidden;
+}
+.tier-card::before {
+  content: ''; position: absolute; inset: 0 auto 0 0; width: 4px;
+  border-radius: var(--r-xl) 0 0 var(--r-xl);
+}
+.tier-card.t-pattern::before { background: var(--pattern-color); }
+.tier-card.t-phrase::before  { background: var(--phrase-color); }
+.tier-card.t-proper::before  { background: var(--proper-color); }
+.tier-card.t-vocab::before   { background: var(--vocab-color); }
+
+/* ── Vocab cards: premium iOS feel ── */
+.vocab-card {
+  padding: 22px;
+  position: relative;
+}
+.vocab-card .word {
+  font-family: 'Fraunces', Georgia, serif;
+  letter-spacing: -.015em;
+}
+
+/* ── Filter pills more modern ── */
+.filter-pill {
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-weight: 500;
+  letter-spacing: .02em;
+}
+
+/* ── Streak badge more premium ── */
+.streak-badge {
+  background: linear-gradient(135deg, rgba(249,115,22,.12), rgba(234,88,12,.08));
+  border: 1px solid rgba(249,115,22,.32);
+  padding: 3px 10px;
+  border-radius: 7px;
+  font-size: 10px;
+}
+
+/* ── Goals banner refined ── */
+.goals-banner {
+  padding: 18px 22px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  background:
+    linear-gradient(135deg, rgba(99,102,241,.04) 0%, transparent 50%),
+    var(--bg-card);
+}
+.goals-bar {
+  background: linear-gradient(90deg, var(--accent) 0%, #8B5CF6 100%);
+  box-shadow: 0 0 8px rgba(99,102,241,.4);
+}
+.goals-bar.done {
+  background: linear-gradient(90deg, var(--bull) 0%, #34D399 100%);
+  box-shadow: 0 0 8px rgba(16,185,129,.4);
+}
+
+/* ── Writing challenge: editorial flair ── */
+.wc-header {
+  padding: 20px 24px;
+  background:
+    linear-gradient(135deg, rgba(99,102,241,.06) 0%, transparent 60%),
+    linear-gradient(180deg, var(--bg-card) 0%, var(--bg-card) 100%);
+}
+.wc-title { font-size: 20px; }
+.wc-body { padding: 24px; }
+.wc-textarea {
+  font-size: 16px; line-height: 1.8; min-height: 140px;
+  border-radius: 16px;
+}
+.wc-chip {
+  border-radius: 12px;
+  padding: 8px 14px;
+  box-shadow: var(--shadow-xs);
+}
+
+/* ── Article body typography refined ── */
+.article-body {
+  font-family: 'Newsreader', 'Fraunces', Georgia, serif;
+  font-size: 18px; line-height: 1.85;
+  letter-spacing: -.005em;
+}
+.sent {
+  padding: 18px 22px;
+  border-radius: var(--r-md);
+  transition: background .2s var(--ease-out);
+}
+.sent:hover { background: var(--bg-soft); }
+.sent.active {
+  background: var(--accent-pale);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+/* ── Toast & dialog iOS feel ── */
+#toast {
+  border-radius: 16px;
+  padding: 13px 22px;
+  font-weight: 500;
+  box-shadow: var(--shadow-xl);
+  backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(22,22,26,.92);
+}
+.dialog-box {
+  border-radius: 24px;
+  padding: 32px 28px 24px;
+}
+.dialog-btn {
+  border-radius: 12px;
+  padding: 11px 22px;
+  font-weight: 500;
+  transition: all .18s var(--ease-out);
+}
+.dialog-btn:active { transform: var(--press-scale); }
+
+/* ── Modals iOS-style sheet ── */
+.modal { border-radius: 28px; padding: 36px; }
+.modal h2 { font-size: 28px; letter-spacing: -.022em; }
+
+/* ── Reading progress bar more refined ── */
+.reading-progress {
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, #8B5CF6 50%, #EC4899 100%);
+  box-shadow: 0 1px 6px rgba(99,102,241,.45);
+}
+
+/* ── Meta bar more subdued ── */
+.meta-bar {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-main);
+  padding: 8px 32px;
+}
+
+/* ── Confetti more colors ── */
+.confetti-piece { border-radius: 2px; }
+
+/* ================================================================
+   v5.7 — iOS BOTTOM TAB BAR (mobile only)
+   ================================================================ */
+.bottom-tabbar {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 90;
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+  background: var(--bg-nav);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -1px 0 var(--border), 0 -4px 14px rgba(0,0,0,.04);
+}
+.bottom-tabbar-inner {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.bt-btn {
+  background: none; border: none;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 3px; padding: 8px 4px 6px;
+  cursor: pointer; color: var(--text-muted);
+  border-radius: 12px;
+  transition: all .25s var(--ease-out);
+  position: relative;
+  font-family: inherit;
+}
+.bt-btn:active { transform: scale(.92); background: var(--bg-soft); }
+.bt-icon { font-size: 20px; line-height: 1; }
+.bt-label {
+  font-size: 10.5px; font-weight: 500;
+  letter-spacing: -.005em;
+  line-height: 1;
+}
+.bt-btn.active { color: var(--accent); }
+.bt-btn.active .bt-icon { transform: scale(1.08); }
+.bt-badge {
+  position: absolute; top: 4px; right: calc(50% - 18px);
+  min-width: 16px; height: 16px;
+  background: var(--bear); color: white;
+  font-size: 9px; font-weight: 700;
+  border-radius: 8px; padding: 0 4px;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--bg-nav);
+}
+
+/* ── Responsive: activate bottom bar on mobile, hide top tabs ── */
+@media (max-width: 900px) {
+  .bottom-tabbar { display: block; }
+  nav.tabs { display: none; }
+  body { padding-bottom: calc(70px + env(safe-area-inset-bottom)); }
+  footer { display: none; }
+  /* compact masthead — only brand + utility icons */
+  .masthead-inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 16px;
+  }
+  .brand .logo { font-size: 20px; }
+  .brand .tag { display: none; }
+  .nav-controls { gap: 4px; }
+  .icon-toggle.hdr-util { padding: 0 8px; font-size: 9.5px; height: 30px; }
+  /* hide some lesser utilities to free space */
+  #btnShortcuts, #btnClearAll { display: none; }
+  /* main padding */
+  main { padding: 28px 18px 32px; }
+  /* bigger touch targets */
+  .btn-base { padding: 10px 14px; min-height: 38px; }
+  /* hero a bit smaller */
+  .hero-title { font-size: 36px; letter-spacing: -.026em; }
+  .hero-sub { font-size: 15px; }
+  .vocab-head h1 { font-size: 32px; }
+  /* flip card refined */
+  .flip-card { height: 420px; }
+  .flip-word { font-size: 38px; }
+  /* article body */
+  .article-body { font-size: 16px; line-height: 1.8; }
+}
+
+@media (max-width: 480px) {
+  /* hide more utilities for tightest space */
+  #btnImport { display: none; }
+  .meta-bar { padding: 6px 14px; font-size: 10px; }
+  .hero-title { font-size: 30px; }
+  .vocab-head h1 { font-size: 28px; }
+  .flip-card { height: 380px; }
+  .flip-word { font-size: 32px; }
+  .wc-header { flex-direction: column; align-items: stretch; gap: 10px; padding: 16px 18px; }
+  .wc-header-actions { justify-content: stretch; }
+  .wc-header-actions .btn-base, .wc-header-actions .btn-primary { flex: 1; }
+  .wc-body { padding: 18px; }
+  .goals-banner { padding: 14px 18px; }
+  .dialog-box { padding: 24px 22px 20px; border-radius: 20px; }
+}
 </style>
 </head>
 <body>
@@ -2166,6 +2592,33 @@ section[id^="view"] {
   </div>
 </div>
 
+<!-- ── BOTTOM TAB BAR (mobile only) ── -->
+<nav class="bottom-tabbar" id="bottomTabbar" role="navigation" aria-label="主导航">
+  <div class="bottom-tabbar-inner">
+    <button class="bt-btn active" data-view="input">
+      <span class="bt-icon">✎</span>
+      <span class="bt-label">新读</span>
+    </button>
+    <button class="bt-btn hidden" data-view="analysis" id="btTabAnalysis">
+      <span class="bt-icon">⊟</span>
+      <span class="bt-label">精读</span>
+    </button>
+    <button class="bt-btn" data-view="vocab">
+      <span class="bt-icon">◆</span>
+      <span class="bt-label">卡组</span>
+      <span class="bt-badge hidden" id="btVocabBadge">0</span>
+    </button>
+    <button class="bt-btn" data-view="history">
+      <span class="bt-icon">⎙</span>
+      <span class="bt-label">档案</span>
+    </button>
+    <button class="bt-btn" data-view="stats">
+      <span class="bt-icon">◷</span>
+      <span class="bt-label">统计</span>
+    </button>
+  </div>
+</nav>
+
 <!-- ── FOOTER ── -->
 <footer>
   <div class="footer-inner">
@@ -2184,8 +2637,9 @@ section[id^="view"] {
 const SAMPLE = `The Federal Reserve held interest rates steady on Wednesday, signaling a more cautious approach as policymakers grapple with persistent inflation and a softening labor market. Chair Jerome Powell emphasized that the central bank's decisions would remain data-dependent, with markets now pricing in only one rate cut by year-end. The yield on the 10-year U.S. Treasury note climbed 8 basis points to 4.32%, while the S&P 500 pared earlier gains to close marginally lower. European Central Bank officials are expected to follow suit, maintaining their hawkish stance amid rising commodity prices.`;
 
 const VERSION_CONFIG = {
-  current: 'v5.6',
+  current: 'v5.7',
   changelog: [
+    '2026-05-22  v5.7  Premium iOS质感：暖色调 · Inter字体 · 大圆角 · 底部TabBar · 按压反馈 · 光泽按钮',
     '2026-05-22  v5.6  词汇写作挑战：随机抽10词 · 实时高亮已用词 · AI流式点评打分',
     '2026-05-22  v5.5  连接等待计时器 · URL自动识别 · 链接按钮从URL中提取地址',
     '2026-05-22  v5.4  统一弹窗 · 撤销删除 · ESC关闭 · 快捷键面板(?) · 目标庆祝 · 90天热力图 · 分页 · 防抖搜索',
@@ -2572,7 +3026,14 @@ function updateAllCounts() {
   const total = state.vocab.length;
   $('#vocabCount').textContent = total;
   $('#vocabTotal').textContent = total;
-  $('#dueToday').textContent = getReviewPool().length;
+  const due = getReviewPool().length;
+  $('#dueToday').textContent = due;
+  // Bottom tab bar due badge
+  const badge = $('#btVocabBadge');
+  if (badge) {
+    if (due > 0) { badge.textContent = due > 99 ? '99+' : due; badge.classList.remove('hidden'); }
+    else badge.classList.add('hidden');
+  }
   const pCount = countByTier('pattern');
   const phCount = countByTier('phrase');
   $('#headerPatternCount').textContent = pCount;
@@ -2857,7 +3318,7 @@ async function doAnalyze() {
     finalizeAnalysis();
     setTimeout(() => {
       hide('#progressBox');
-      $('#tabAnalysis').classList.remove('hidden');
+      $('#tabAnalysis').classList.remove('hidden'); $('#btTabAnalysis').classList.remove('hidden');
       if (state.view !== 'analysis') setView('analysis');
     }, 400);
   } catch (e) {
@@ -3086,6 +3547,7 @@ function setView(name) {
   state.view = name;
   hide('#viewInput'); hide('#viewAnalysis'); hide('#viewVocab'); hide('#viewHistory'); hide('#viewStats');
   $$('nav.tabs button').forEach(b => b.classList.toggle('active', b.dataset.view === name));
+  $$('.bottom-tabbar .bt-btn').forEach(b => b.classList.toggle('active', b.dataset.view === name));
   if (name === 'input') { show('#viewInput'); if (!state.currentRequest) hide('#progressBox'); }
   else if (name === 'analysis') { show('#viewAnalysis'); renderAnalysis(); }
   else if (name === 'vocab') { show('#viewVocab'); renderVocabBook(); }
@@ -4864,6 +5326,7 @@ function saveNotionConfig() {
  * ============================================================ */
 function bindEvents() {
   $$('nav.tabs button').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
+  $$('.bottom-tabbar .bt-btn').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
   $('#newsInput').addEventListener('input', onInputChange);
   $('#btnPaste').addEventListener('click', async () => {
     try { $('#newsInput').value = await navigator.clipboard.readText(); onInputChange(); }
@@ -4987,7 +5450,7 @@ function bindEvents() {
   $('#btnClear').addEventListener('click', () => { $('#newsInput').value = ''; onInputChange(); });
   $('#btnAnalyze').addEventListener('click', doAnalyze);
   $('#btnCancel').addEventListener('click', cancelAnalyze);
-  $('#btnGotoAnalysis').addEventListener('click', () => { $('#tabAnalysis').classList.remove('hidden'); setView('analysis'); });
+  $('#btnGotoAnalysis').addEventListener('click', () => { $('#tabAnalysis').classList.remove('hidden'); $('#btTabAnalysis').classList.remove('hidden'); setView('analysis'); });
   $('#btnBack').addEventListener('click', () => setView('input'));
   $('#btnReadAll').addEventListener('click', (e) => {
     if (state.analysis) {
