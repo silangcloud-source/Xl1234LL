@@ -684,6 +684,18 @@ h1.title {
 [data-theme="dark"] .exam-tag.kaoyan { background:rgba(139,92,246,.18);  color:#a78bfa; }
 [data-theme="dark"] .exam-tag.ielts  { background:rgba(245,158,11,.18);  color:#fbbf24; }
 
+/* ── Vocab 词组搭配（含例句）── */
+.vocab-colloc-block { margin:10px 0; }
+.vocab-colloc-head { font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.08em; color:var(--accent); font-weight:700; text-transform:uppercase; margin-bottom:8px; }
+.vocab-colloc-count { background:rgba(99,102,241,.1); color:var(--accent); padding:1px 5px; border-radius:8px; font-size:9px; margin-left:4px; font-weight:700; }
+.vocab-colloc-item { margin-bottom:8px; padding:9px 11px; background:var(--bg-soft); border-radius:var(--r); border-left:2px solid var(--accent); }
+.vocab-colloc-item:last-child { margin-bottom:0; }
+.vocab-colloc-phrase { font-family:'Fraunces',Georgia,serif; font-size:14px; font-weight:700; color:var(--text-main); }
+.vocab-colloc-meaning { font-size:12px; color:var(--text-muted); margin-left:8px; }
+.vocab-colloc-example { font-size:12.5px; color:var(--text-soft); margin-top:5px; line-height:1.55; font-style:italic; }
+.vocab-colloc-example em { font-style:normal; font-weight:600; color:var(--accent); }
+.vocab-colloc-example-zh { font-size:11.5px; color:var(--text-muted); margin-top:3px; line-height:1.5; }
+
 /* ── 词根/词族网络 ── */
 .word-family { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
 .wf-chip { display:inline-flex; align-items:center; gap:3px; font-family:'JetBrains Mono',monospace; font-size:10px; padding:3px 8px; border-radius:6px; background:rgba(99,102,241,.09); color:var(--accent); border:1px solid rgba(99,102,241,.18); cursor:default; user-select:none; }
@@ -1837,13 +1849,18 @@ ${chunkNote}
   · examTags: 从 ["CET-4","CET-6","考研","雅思"] 中选适用标签，无考点价值则留空数组
   · freq: "高频"/"中频"/"低频"，无把握则省略此字段
   · wordFamily: 同根词数组，每项 {"word":"...","pos":"..."}，最多 4 个，仅列真实存在的英语词（如 regulate→regulation/regulatory/deregulate）
-{ "word": "hawkish", "phonetic": "/.../", "pos": "adj.", "translation": "...", "note": "...",
-  "examTags": ["CET-6", "考研"], "freq": "中频",
-  "replacements": "aggressive, hardline",
-  "synonyms": [{"word":"aggressive","zh":"激进的","diff":"语气更强"}, ...],
-  "examples": [{"en":"...","zh":"..."}],
-  "wordFamily": [{"word":"hawk","pos":"n."},{"word":"hawkishness","pos":"n."}],
-  "deep_analysis": "词根 hawk（鹰）+ -ish，引申为鹰派立场；金融语境中常指倾向加息的货币政策态度。" }
+  · collocations: 若该词为动词，列出 2-4 个常见动词短语或固定搭配，每项必须含地道例句（宁缺毋滥，非动词可省略）
+    格式：{"phrase":"read out","meaning":"大声朗读","example":"The judge read out the verdict.","example_zh":"法官宣读了判决。"}
+{ "word": "tighten", "phonetic": "/ˈtaɪtən/", "pos": "v.", "translation": "收紧；加强", "note": "...",
+  "examTags": ["CET-6", "考研"], "freq": "高频",
+  "synonyms": [{"word":"strengthen","zh":"加强","diff":"语气更中性"}, ...],
+  "examples": [{"en":"The Fed is expected to tighten monetary policy.","zh":"美联储预计将收紧货币政策。"}],
+  "collocations": [
+    {"phrase":"tighten up","meaning":"进一步收紧；整顿","example":"The regulator moved to tighten up oversight of crypto assets.","example_zh":"监管机构着手加强对加密资产的监管。"},
+    {"phrase":"tighten the grip","meaning":"加强控制","example":"The central bank tightened its grip on inflation.","example_zh":"央行加强了对通胀的管控。"}
+  ],
+  "wordFamily": [{"word":"tight","pos":"adj."},{"word":"tightly","pos":"adv."},{"word":"tightening","pos":"n."}],
+  "deep_analysis": "词根 tight（紧绷）+ -en（使动化），金融语境中专指货币政策收紧（monetary tightening），与 loosen/ease 对应。" }
 
 【宁缺毋滥原则】各层提取数量不设上下限，完全由文本实际词汇密度决定。文中若无合格素材，对应数组可为空，严禁为凑数而降低标准或跨层混入。
 
@@ -2444,6 +2461,16 @@ function buildVocabCardHTML(w, isSaved, showSrs = false, showHistory = false) {
         ${w.collocations.map(c => `<span class="colloc-chip" data-tts="${escapeHtml(c)}">${escapeHtml(c)}</span>`).join('')}
       </div>
     </div>`;
+  } else if (tier === 'vocab' && Array.isArray(w.collocations) && w.collocations.length && w.collocations[0]?.phrase) {
+    collocHtml = `<div class="vocab-colloc-block">
+      <div class="vocab-colloc-head">词组搭配 <span class="vocab-colloc-count">${w.collocations.length}</span></div>
+      ${w.collocations.map(c => `<div class="vocab-colloc-item">
+        <span class="vocab-colloc-phrase" data-tts="${escapeHtml(c.phrase)}">${escapeHtml(c.phrase)}</span>
+        ${c.meaning ? `<span class="vocab-colloc-meaning">${escapeHtml(c.meaning)}</span>` : ''}
+        ${c.example ? `<div class="vocab-colloc-example">"${escapeHtml(c.example)}"</div>` : ''}
+        ${c.example_zh ? `<div class="vocab-colloc-example-zh">${escapeHtml(c.example_zh)}</div>` : ''}
+      </div>`).join('')}
+    </div>`;
   }
   let similarHtml = '';
   if (tier === 'phrase' && Array.isArray(w.similar) && w.similar.length) {
@@ -2552,6 +2579,7 @@ function bindVocabEvents(card, w, mode) {
   });
   card.querySelectorAll('.ex-tts').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); speak(b.dataset.tts, 0.9, b); }));
   card.querySelectorAll('.colloc-chip').forEach(c => c.addEventListener('click', (e) => { e.stopPropagation(); speak(c.dataset.tts, 0.9); }));
+  card.querySelectorAll('.vocab-colloc-phrase[data-tts]').forEach(c => c.addEventListener('click', (e) => { e.stopPropagation(); speak(c.dataset.tts, 0.9); c.style.cursor='pointer'; }));
 }
 
 function showHistoryPopup(w) {
