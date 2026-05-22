@@ -1,4 +1,4 @@
-const APP_CACHE  = 'finread-app-v2';
+const APP_CACHE  = 'finread-app-v3';
 const FONT_CACHE = 'finread-fonts-v1';
 
 // Never intercept these — always live requests
