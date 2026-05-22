@@ -6141,7 +6141,6 @@
         <button class="icon-toggle hdr-util" id="btnSettings" title="引擎配置">⚙ 配置</button>
         <button class="icon-toggle hdr-util" id="btnClearAll" title="清空全部缓存">⊘ 清空</button>
         <button class="icon-toggle notion-btn" id="notionBtn" title="Notion 同步">N</button>
-        <button class="icon-toggle notion-btn" id="gistBtn" title="GitHub Gist 同步">G</button>
         <button class="icon-toggle notion-btn" id="jsonbinBtn" title="JSONBin 同步">J</button>
         <button class="icon-toggle" id="themeToggle" title="主题切换">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -6766,99 +6765,6 @@
     </div>
   </div>
 
-  <div id="gistModal" class="modal-bg hidden">
-    <div class="modal">
-      <h2>GitHub Gist 同步</h2>
-      <p class="modal-sub">把卡组、档案、复习日志同步到一份 private gist。无需服务器，无 CORS 限制，电脑/手机即时双向同步。</p>
-      <div class="notion-status-row" id="gistStatusRow">
-        <span class="dot"></span>
-        <span id="gistStatusText">未连接</span>
-        <span class="meta" id="gistStatusMeta"></span>
-      </div>
-      <div class="modal-tabs">
-        <button class="active" data-modal-tab="config">配置</button>
-        <button data-modal-tab="sync">同步</button>
-        <button data-modal-tab="help">说明</button>
-      </div>
-      <div id="gistTabConfig">
-        <label>GitHub Personal Access Token</label>
-        <input type="password" id="gistTokenInput" placeholder="ghp_... 或 github_pat_..." autocomplete="off" />
-        <label>Gist ID (留空则首次推送时自动创建)</label>
-        <input type="text" id="gistIdInput" placeholder="例: 1a2b3c4d5e..." />
-        <label>文件名</label>
-        <input type="text" id="gistFilenameInput" placeholder="finread-data.json" />
-        <label>自动同步</label>
-        <select id="gistAutoSync">
-          <option value="off">关闭（仅手动）</option>
-          <option value="onChange">数据变化时 4 秒防抖推送</option>
-          <option value="onStartup">应用启动时拉取</option>
-          <option value="both">启动拉取 + 变化推送 (推荐)</option>
-        </select>
-        <div class="modal-actions">
-          <button class="btn-base" id="gistTestBtn">测试连接</button>
-          <button class="btn-primary" id="gistSaveBtn" style="padding:8px 24px;">保存配置</button>
-        </div>
-      </div>
-      <div id="gistTabSync" class="hidden">
-        <div class="info-box" id="gistSyncInfo">配置 Token 后启用同步</div>
-        <div style="display:flex;gap:10px;flex-direction:column;">
-          <button class="btn-primary" id="gistPushBtn" disabled>⬆ 推送本地 → Gist (全量覆盖)</button>
-          <button class="btn-base" id="gistPullBtn" disabled>⬇ 拉取 Gist → 本地 (智能合并)</button>
-        </div>
-        <!-- ── 从旧备份 Raw URL 恢复 ── -->
-        <div style="margin-top:18px;padding:14px 16px;background:var(--warn-light);border:1px solid var(--warn);border-radius:var(--r-md);">
-          <div style="font-size:12px;font-weight:600;color:var(--warn);margin-bottom:8px;">🔄 从历史备份恢复</div>
-          <div style="font-size:12px;color:var(--text-soft);margin-bottom:10px;line-height:1.6;">
-            如果 Gist 被覆盖了旧数据，把旧版本的 Raw URL 粘贴到下方，点击恢复即可找回。<br>
-            <span style="color:var(--warn);font-weight:600;">需先在「配置」填好 Token，且 URL 必须包含版本 SHA（带 /raw/abc123…/ 的完整地址）。</span>
-          </div>
-          <input id="gistRawUrlInput" type="url"
-            placeholder="https://gist.githubusercontent.com/.../raw/.../finread-data.json"
-            style="width:100%;margin-bottom:8px;font-size:12px;" />
-          <button class="btn-base" id="gistRestoreBtn" style="width:100%;background:var(--warn);color:#fff;border-color:var(--warn);">
-            ↺ 从此 URL 恢复数据
-          </button>
-        </div>
-        <div style="margin-top:20px;">
-          <label>同步日志</label>
-          <textarea id="gistSyncLog" rows="6" readonly
-            style="background:var(--bg-soft);font-family:monospace;font-size:11px;"></textarea>
-        </div>
-      </div>
-      <div id="gistTabHelp" class="hidden">
-        <div class="info-box">
-          <b>3 步完成配置</b>
-        </div>
-        <label>① 创建 GitHub Personal Access Token</label>
-        <div class="info-box" style="line-height:1.7;">
-          1. 访问 <code>https://github.com/settings/tokens</code><br />
-          2. 推荐 <b>Fine-grained token</b>：Generate new token → 仅勾选 <code>Gists: Read and write</code><br />
-          　或经典 token：Generate new token (classic) → 仅勾选 <code>gist</code> 一个 scope<br />
-          3. 复制生成的 token (<code>ghp_...</code> 或 <code>github_pat_...</code>) 填到上方
-        </div>
-        <label>② Gist ID (可选)</label>
-        <div class="info-box" style="line-height:1.7;">
-          留空：首次推送时自动创建一个 private gist 并把 ID 记下。<br />
-          已有：从 gist URL 复制 ID（URL 倒数第二段，类似 <code>a1b2c3d4...</code>）。<br />
-          多设备同步：第一台设备推送后，把 Gist ID 抄到其它设备的配置里。
-        </div>
-        <label>③ 多设备同步流程</label>
-        <div class="info-box" style="line-height:1.7;">
-          电脑端：配置 → 测试连接 → 同步页 → 推送本地 → Gist (记下 Gist ID)<br />
-          手机端：粘贴同一 Token + 抄上 Gist ID → 拉取 Gist → 本地<br />
-          之后把「自动同步」设为「启动拉取 + 变化推送」即可全自动。
-        </div>
-        <label>安全提示</label>
-        <div class="info-box" style="line-height:1.7;">
-          Token 仅存于本地 localStorage；建议使用 fine-grained token 并只授予 gist 权限，最坏情况下也只能读写你的 gists。Gist 设置为 private (即非
-          public)，仅你和持有 token 的人可见。
-        </div>
-      </div>
-      <div class="modal-actions" style="margin-top:16px;">
-        <button class="btn-base" id="gistCloseBtn">关闭</button>
-      </div>
-    </div>
-  </div>
 
   <!-- ── JSONBin 同步 Modal ── -->
   <div id="jsonbinModal" class="modal-bg hidden">
@@ -7071,7 +6977,6 @@
       streaming: 'finread:streaming',
       chunkThreshold: 'finread:chunkThreshold',
       notion: 'finread:notion',
-      gist: 'finread:gist',
       jsonbin: 'finread:jsonbin',
       studyMode: 'finread:studyMode',
       voice: 'finread:voice',
@@ -7093,7 +6998,6 @@
       apiKey: '', provider: 'openrouter', model: 'deepseek/deepseek-chat-v3.1',
       streaming: true, chunkThreshold: DEFAULT_CHUNK_THRESHOLD,
       notion: { token: '', pageId: '', parentId: NOTION_PARENT_DEFAULT, proxyUrl: '', autoSync: 'off', lastSync: 0 },
-      gist: { token: '', gistId: '', filename: 'finread-data.json', autoSync: 'off', lastSync: 0 },
       jsonbin: { apiKey: '', binId: '', lastSync: 0 },
       studyMode: 'en2zh',
       activeId: null, flipIdx: 0, flipped: false,
@@ -7421,25 +7325,20 @@
       updateAllCounts();
       invalidateHighlightCache();
       if (state.notion.autoSync === 'onChange') notionPushDebounced();
-      if (state.gist.autoSync === 'onChange' || state.gist.autoSync === 'both') gistPushDebounced();
     }
     function persistArticles() {
       safeLocalStorageSet(STORE.articles, JSON.stringify(state.articles));
       $('#articleCount').textContent = state.articles.length;
-      if (state.gist.autoSync === 'onChange' || state.gist.autoSync === 'both') gistPushDebounced();
     }
     function persistWordHistory() {
       safeLocalStorageSet(STORE.wordHistory, JSON.stringify(state.wordHistory));
-      if (state.gist.autoSync === 'onChange' || state.gist.autoSync === 'both') gistPushDebounced();
     }
     function persistReviewLog() {
       const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
       state.reviewLog = state.reviewLog.filter(r => r.ts > cutoff);
       safeLocalStorageSet(STORE.reviewLog, JSON.stringify(state.reviewLog));
-      if (state.gist.autoSync === 'onChange' || state.gist.autoSync === 'both') gistPushDebounced();
     }
     function persistNotion() { localStorage.setItem(STORE.notion, JSON.stringify(state.notion)); }
-    function persistGist() { localStorage.setItem(STORE.gist, JSON.stringify(state.gist)); }
     function persistJsonbin() { localStorage.setItem(STORE.jsonbin, JSON.stringify(state.jsonbin)); }
 
     function countByTier(tier) { return state.vocab.filter(v => v.tier === tier).length; }
