@@ -903,7 +903,15 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
    ================================================================ */
 @media (max-width: 900px) {
   .grid-layout { grid-template-columns:1fr; gap:40px; }
-  aside.sticky { position:static; max-height:none; }
+  /* 关键修复：清除桌面端的内部滚动，让 aside 在移动端自然展开 */
+  aside.sticky {
+    position:static; max-height:none;
+    overflow:visible;        /* 清除 overflow-y:auto，解除内部滚动锁 */
+    align-self:auto;         /* 恢复 grid 默认对齐，允许高度随内容撑开 */
+    padding-right:0;
+  }
+  /* 移动端侧边栏视觉分隔 */
+  aside.sticky { border-top:2px solid var(--border); padding-top:24px; margin-top:8px; }
   .hero-title { font-size:34px; }
   .masthead-inner { flex-direction:column; align-items:flex-start; gap:12px; }
   nav.tabs { width:100%; overflow-x:auto; }
@@ -3560,6 +3568,12 @@ function bindEvents() {
     $('#sidePhrases').classList.toggle('hidden', state.sideTab !== 'phrase');
     $('#sideProperNouns').classList.toggle('hidden', state.sideTab !== 'proper');
     $('#sideVocab').classList.toggle('hidden', state.sideTab !== 'vocab');
+    // 移动端：切换 tab 后滚动到内容区顶部
+    if (window.innerWidth <= 900) {
+      requestAnimationFrame(() => {
+        b.closest('aside')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
   }));
   $('#flipInner').addEventListener('click', (e) => {
     if (window.getSelection().toString().length > 0) return;
