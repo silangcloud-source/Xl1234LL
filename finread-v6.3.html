@@ -540,134 +540,6 @@
       transform: skewX(-10deg);
     }
 
-    .hero-sub {
-      font-size: 16px;
-      color: var(--text-muted);
-      max-width: 560px;
-      margin: 0 0 32px;
-      line-height: 1.75;
-    }
-
-    .feature-badges {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 28px;
-    }
-
-    .feature-badge {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: .04em;
-      padding: 4px 10px;
-      border-radius: 20px;
-      background: var(--accent-light);
-      color: var(--accent);
-      font-weight: 600;
-    }
-
-    .feature-badge.new {
-      background: var(--bull-light);
-      color: var(--bull);
-    }
-
-    .feature-badge.new::before {
-      content: '✦ ';
-    }
-
-    /* Tier intro */
-    .tier-intro {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 32px;
-    }
-
-    .tier-card {
-      padding: 20px 18px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--r-md);
-      border-left: 3px solid;
-      transition: box-shadow .2s, transform .2s, border-color .2s;
-    }
-
-    .tier-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .tier-card.t-pattern {
-      border-left-color: var(--pattern-color);
-    }
-
-    .tier-card.t-phrase {
-      border-left-color: var(--phrase-color);
-    }
-
-    .tier-card.t-proper {
-      border-left-color: var(--proper-color);
-    }
-
-    .tier-card.t-vocab {
-      border-left-color: var(--vocab-color);
-    }
-
-    .tier-card.t-pattern:hover {
-      border-color: var(--pattern-color);
-    }
-
-    .tier-card.t-phrase:hover {
-      border-color: var(--phrase-color);
-    }
-
-    .tier-card.t-proper:hover {
-      border-color: var(--proper-color);
-    }
-
-    .tier-card.t-vocab:hover {
-      border-color: var(--vocab-color);
-    }
-
-    .tier-card .label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .tier-card.t-pattern .label {
-      color: var(--pattern-color);
-    }
-
-    .tier-card.t-phrase .label {
-      color: var(--phrase-color);
-    }
-
-    .tier-card.t-proper .label {
-      color: var(--proper-color);
-    }
-
-    .tier-card.t-vocab .label {
-      color: var(--vocab-color);
-    }
-
-    .tier-card .title {
-      font-family: 'Fraunces', Georgia, serif;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 6px;
-    }
-
-    .tier-card .desc {
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.55;
-    }
-
     /* ================================================================
    INPUT BOX
    ================================================================ */
@@ -1722,35 +1594,6 @@
       line-height: 1.5;
     }
 
-    .tier-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      padding: 2px 7px;
-      border-radius: 5px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .tier-tag.t-pattern {
-      background: var(--pattern-bg);
-      color: var(--pattern-color);
-    }
-
-    .tier-tag.t-phrase {
-      background: var(--phrase-bg);
-      color: var(--phrase-color);
-    }
-
-    .tier-tag.t-proper {
-      background: var(--proper-bg);
-      color: var(--proper-color);
-    }
-
-    .tier-tag.t-vocab {
-      background: var(--vocab-bg);
-      color: var(--vocab-color);
-    }
-
     .vocab-card .pos {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
@@ -2770,14 +2613,6 @@
       text-decoration: line-through;
     }
 
-    .wc-used-count {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-      height: 16px;
-    }
-
     .wc-gen-wrap {
       margin-top: 16px;
     }
@@ -3287,19 +3122,6 @@
 
     .pomo-start-btn.no-due {
       background: linear-gradient(135deg, var(--bull), #047857);
-    }
-
-    .pomo-round-badge {
-      display: inline-block;
-      padding: 1px 6px;
-      border-radius: 10px;
-      background: var(--accent-light);
-      color: var(--accent);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9px;
-      font-weight: 600;
-      margin-left: 6px;
-      vertical-align: middle;
     }
 
     /* ================================================================
@@ -4232,10 +4054,6 @@
 
       h1.title {
         font-size: 30px;
-      }
-
-      .tier-intro {
-        grid-template-columns: repeat(2, 1fr);
       }
 
       .tier-radio-group {
@@ -5316,7 +5134,6 @@
 
     /* ── Premium cards everywhere ── */
     .vocab-card,
-    .tier-card,
     .article-card,
     .stat-block,
     .tier-stat,
@@ -5388,7 +5205,6 @@
     .modal select,
     .modal textarea,
     #searchInput,
-    .wc-textarea,
     .history-search-wrap input,
     #historySearch {
       border-radius: 14px;
@@ -5410,11 +5226,6 @@
       line-height: 1.08;
       letter-spacing: -.032em;
       font-weight: 700;
-    }
-
-    .hero-sub {
-      font-size: 17px;
-      line-height: 1.7;
     }
 
     .hero-layout {
@@ -5447,43 +5258,6 @@
       font-size: 46px;
       font-family: 'Fraunces', Georgia, serif;
       letter-spacing: -.02em;
-    }
-
-    /* ── Tier intro cards: more app-like ── */
-    .tier-intro {
-      gap: 14px;
-      margin-bottom: 36px;
-    }
-
-    .tier-card {
-      padding: 24px 20px 24px 26px;
-      border-left: 0;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .tier-card::before {
-      content: '';
-      position: absolute;
-      inset: 0 auto 0 0;
-      width: 4px;
-      border-radius: var(--r-xl) 0 0 var(--r-xl);
-    }
-
-    .tier-card.t-pattern::before {
-      background: var(--pattern-color);
-    }
-
-    .tier-card.t-phrase::before {
-      background: var(--phrase-color);
-    }
-
-    .tier-card.t-proper::before {
-      background: var(--proper-color);
-    }
-
-    .tier-card.t-vocab::before {
-      background: var(--vocab-color);
     }
 
     /* ── Vocab cards: premium iOS feel ── */
@@ -5846,10 +5620,6 @@
       .hero-title {
         font-size: 36px;
         letter-spacing: -.026em;
-      }
-
-      .hero-sub {
-        font-size: 15px;
       }
 
       .vocab-head h1 {
