@@ -2,7 +2,7 @@
   "name": "FinRead 财经精读",
   "short_name": "FinRead",
   "description": "AI 驱动的财经英语精读与四层词汇学习工具",
-  "start_url": "./finread-v5.html",
+  "start_url": "./finread-v6.3.html",
   "scope": "./",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone"],
@@ -47,7 +47,7 @@
     {
       "name": "快速输入",
       "short_name": "输入",
-      "url": "./finread-v5.html#input",
+      "url": "./finread-v6.3.html#input",
       "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
     }
   ]

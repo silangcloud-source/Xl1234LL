@@ -1,4 +1,4 @@
-const APP_CACHE  = 'finread-app-v5';
+const APP_CACHE  = 'finread-app-v6-3';
 const FONT_CACHE = 'finread-fonts-v1';
 
 // Never intercept these — always live requests
@@ -16,7 +16,7 @@ self.addEventListener('install', e => {
   // 不在 install 里 skipWaiting，由主页面触发，避免打断用户操作
   e.waitUntil(
     caches.open(APP_CACHE)
-      .then(c => c.add('./finread-v5.html'))
+      .then(c => c.add('./finread-v6.3.html'))
       .catch(() => {})
   );
 });

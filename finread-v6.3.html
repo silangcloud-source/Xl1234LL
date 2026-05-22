@@ -1102,7 +1102,7 @@
     }
 
     .toggle-pill {
-      padding: 4px 10px;
+      padding: 6px 12px;
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 20px;
@@ -1112,10 +1112,20 @@
       cursor: pointer;
       transition: all .15s;
       user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(99, 102, 241, .15);
+      display: inline-flex;
+      align-items: center;
+      line-height: 1;
     }
 
     .toggle-pill:hover {
       color: var(--text-main);
+    }
+
+    .toggle-pill:active {
+      transform: scale(.94);
     }
 
     .toggle-pill.on {
@@ -4356,7 +4366,8 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        padding: 5px 4px;
+        padding: 10px 6px;
+        min-height: 38px;
       }
 
       /* ── 3. 全局留白缩减 ── */
@@ -6815,8 +6826,9 @@
     const SAMPLE = `The Federal Reserve held interest rates steady on Wednesday, signaling a more cautious approach as policymakers grapple with persistent inflation and a softening labor market. Chair Jerome Powell emphasized that the central bank's decisions would remain data-dependent, with markets now pricing in only one rate cut by year-end. The yield on the 10-year U.S. Treasury note climbed 8 basis points to 4.32%, while the S&P 500 pared earlier gains to close marginally lower. European Central Bank officials are expected to follow suit, maintaining their hawkish stance amid rising commodity prices.`;
 
     const VERSION_CONFIG = {
-      current: 'v6.2',
+      current: 'v6.3',
       changelog: [
+        '2026-05-22  v6.3  布局优化：1440px 大屏支持 · 译文/语法标签触摸优化 · 顶栏图标化收纳 · 移除 Gist 与快讯',
         '2026-05-22  v6.2  FXStreet 内嵌新闻源：📰 按钮直接拉取最新头条 · 一键载入到输入框 · 5分钟缓存',
         '2026-05-22  v6.1  番茄复习：25分钟倒计时 · 50词单次上限 · 快速多轮巩固未掌握词 · 自动翻面重置',
         '2026-05-22  v6.0  GitHub Gist 跨设备同步：卡组/档案/复习日志 · 智能合并 · 启动拉取+变化推送',
