@@ -834,6 +834,105 @@ aside.sticky::-webkit-scrollbar-thumb { background: var(--border); border-radius
 .filter-pill.on[data-filter="proper"]  { background: var(--proper-bg);  color: var(--proper-color);  border-color: var(--proper-color); }
 .filter-pill.on[data-filter="vocab"]   { background: var(--vocab-bg);   color: var(--vocab-color);   border-color: var(--vocab-color); }
 .filter-pill.on[data-filter="due"]     { background: var(--bear-light); color: var(--bear);           border-color: var(--bear); }
+
+/* ================================================================
+   WRITING CHALLENGE PANEL
+   ================================================================ */
+.wc-panel {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r-xl); margin-bottom: 28px; overflow: hidden;
+}
+.wc-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 22px; gap: 12px; flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--accent-pale) 0%, var(--bg-card) 100%);
+}
+.wc-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 18px; font-weight: 700; margin: 0;
+  color: var(--text-main); letter-spacing: -.015em;
+}
+.wc-sub {
+  font-size: 12px; color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace; margin-top: 2px;
+}
+.wc-header-actions { display: flex; gap: 8px; align-items: center; }
+.wc-body { padding: 20px 22px; }
+.wc-words {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+}
+.wc-chip {
+  display: inline-flex; flex-direction: column; align-items: flex-start;
+  padding: 6px 12px; border-radius: var(--r-md);
+  border: 1px solid; cursor: default;
+  font-family: 'JetBrains Mono', monospace;
+  transition: transform .15s;
+}
+.wc-chip:hover { transform: translateY(-2px); }
+.wc-chip-word {
+  font-size: 13px; font-weight: 700; line-height: 1.3;
+}
+.wc-chip-zh {
+  font-size: 10px; opacity: .7; font-family: 'Noto Sans SC', sans-serif;
+  font-weight: 400; line-height: 1.3; margin-top: 1px;
+}
+.wc-chip.t-pattern { background: var(--pattern-bg); color: var(--pattern-color); border-color: var(--pattern-color); }
+.wc-chip.t-phrase  { background: var(--phrase-bg);  color: var(--phrase-color);  border-color: var(--phrase-color); }
+.wc-chip.t-proper  { background: var(--proper-bg);  color: var(--proper-color);  border-color: var(--proper-color); }
+.wc-chip.t-vocab   { background: var(--vocab-bg);   color: var(--vocab-color);   border-color: var(--vocab-color); }
+.wc-chip.used {
+  opacity: .5; text-decoration: line-through;
+}
+.wc-used-count {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--text-muted); margin-bottom: 8px; height: 16px;
+}
+.wc-textarea {
+  width: 100%; min-height: 120px; padding: 14px 16px;
+  background: var(--bg-soft); border: 1.5px solid var(--border);
+  border-radius: var(--r-md); font-size: 15px; color: var(--text-main);
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  line-height: 1.75; resize: vertical; outline: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+.wc-textarea:focus { border-color: var(--accent); box-shadow: var(--shadow-glow); }
+.wc-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 12px; gap: 10px; flex-wrap: wrap;
+}
+.wc-char-count {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--text-muted);
+}
+.wc-feedback {
+  margin-top: 16px; padding: 16px 18px;
+  background: var(--accent-pale); border: 1px solid var(--accent-light);
+  border-radius: var(--r-md); display: none;
+}
+.wc-feedback.visible { display: block; animation: viewFadeIn .25s ease; }
+.wc-feedback-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
+  font-weight: 700; letter-spacing: .08em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.wc-feedback-body {
+  font-size: 14px; color: var(--text-soft); line-height: 1.75;
+  white-space: pre-wrap;
+}
+.wc-score-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px; border-radius: 50%;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 20px; font-weight: 700;
+  background: var(--accent); color: white;
+  box-shadow: 0 2px 8px rgba(99,102,241,.35);
+  flex-shrink: 0;
+}
+.wc-feedback-header {
+  display: flex; align-items: flex-start; gap: 14px; margin-bottom: 12px;
+}
 .empty { padding:80px 20px; text-align:center; color: var(--text-muted); background: var(--bg-card); border-radius: var(--r-xl); border:1px dashed var(--border-strong); }
 .empty .em { font-family:'Fraunces',Georgia,serif; font-size:22px; margin-bottom:12px; color: var(--text-main); }
 
@@ -1671,6 +1770,40 @@ section[id^="view"] {
       <div class="em">存储库为空</div>
       <div>解析文章后将卡片存入此处</div>
     </div>
+
+    <!-- ── WRITING CHALLENGE ── -->
+    <div id="wcPanel" class="wc-panel hidden">
+      <div class="wc-header">
+        <div>
+          <div class="wc-title">词汇写作挑战</div>
+          <div class="wc-sub">用下面 10 个词写一段话 · 合理有趣 · AI 即时点评</div>
+        </div>
+        <div class="wc-header-actions">
+          <button class="btn-base" id="wcShuffle">🎲 换一批</button>
+          <button class="btn-primary" id="wcSubmit" disabled>✦ 提交评分</button>
+        </div>
+      </div>
+      <div class="wc-body">
+        <div class="wc-words" id="wcWords"></div>
+        <div class="wc-used-count" id="wcUsedCount"></div>
+        <textarea class="wc-textarea" id="wcTextarea" placeholder="用上面 10 个词，写一句话或一段简短笔记... 不必强求全用，自然融入即可。"></textarea>
+        <div class="wc-footer">
+          <span class="wc-char-count" id="wcCharCount">0 字</span>
+          <div style="font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;">尝试融入越多词越好 · AI 将评估语义合理性和趣味性</div>
+        </div>
+        <div class="wc-feedback" id="wcFeedback">
+          <div class="wc-feedback-header">
+            <div class="wc-score-badge" id="wcScoreBadge">–</div>
+            <div>
+              <div class="wc-feedback-label">AI 点评</div>
+              <div id="wcFeedbackTitle" style="font-weight:700;color:var(--text-main);font-size:14px;"></div>
+            </div>
+          </div>
+          <div class="wc-feedback-body" id="wcFeedbackBody"></div>
+        </div>
+      </div>
+    </div>
+
     <div id="vocabContent" class="grid-layout hidden">
       <div>
         <div class="vocab-toolbar">
@@ -2051,8 +2184,9 @@ section[id^="view"] {
 const SAMPLE = `The Federal Reserve held interest rates steady on Wednesday, signaling a more cautious approach as policymakers grapple with persistent inflation and a softening labor market. Chair Jerome Powell emphasized that the central bank's decisions would remain data-dependent, with markets now pricing in only one rate cut by year-end. The yield on the 10-year U.S. Treasury note climbed 8 basis points to 4.32%, while the S&P 500 pared earlier gains to close marginally lower. European Central Bank officials are expected to follow suit, maintaining their hawkish stance amid rising commodity prices.`;
 
 const VERSION_CONFIG = {
-  current: 'v5.5',
+  current: 'v5.6',
   changelog: [
+    '2026-05-22  v5.6  词汇写作挑战：随机抽10词 · 实时高亮已用词 · AI流式点评打分',
     '2026-05-22  v5.5  连接等待计时器 · URL自动识别 · 链接按钮从URL中提取地址',
     '2026-05-22  v5.4  统一弹窗 · 撤销删除 · ESC关闭 · 快捷键面板(?) · 目标庆祝 · 90天热力图 · 分页 · 防抖搜索',
     '2026-05-22  v5.3  连续打卡 · 每日目标 · 草稿保存 · 单词联动 · 历史搜索 · 一键复制 · AI记忆法',
@@ -3214,6 +3348,154 @@ async function streamMnemonic(w, card) {
   }
 }
 
+/* ============================================================
+ *  WRITING CHALLENGE
+ * ============================================================ */
+let _wcWords = [];   // current 10 words for the challenge
+let _wcCtrl = null;  // AbortController for streaming
+
+function wcPickWords(n = 10) {
+  const pool = state.vocab.filter(v => v.word && v.translation);
+  if (pool.length < 3) return [];
+  // 按层级分桶，然后从各桶均匀抽取，最后随机打乱
+  const buckets = { vocab: [], phrase: [], pattern: [], proper: [] };
+  pool.forEach(v => (buckets[v.tier] || (buckets.other = buckets.other || [])).push(v));
+  const shuffleBucket = b => b.sort(() => Math.random() - .5);
+  Object.values(buckets).forEach(shuffleBucket);
+  const picked = [];
+  const tiers = ['vocab', 'phrase', 'pattern', 'proper'];
+  // 轮转抽取，优先词汇和短语
+  const weights = { vocab: 3, phrase: 3, pattern: 2, proper: 2 };
+  const weighted = [];
+  tiers.forEach(t => { for (let i = 0; i < (weights[t] || 1); i++) weighted.push(t); });
+  weighted.sort(() => Math.random() - .5);
+  for (const t of weighted) {
+    if (picked.length >= n) break;
+    const b = buckets[t];
+    if (b && b.length) {
+      const w = b.pop();
+      if (!picked.some(p => p.word === w.word)) picked.push(w);
+    }
+  }
+  // 不够时从总池补
+  while (picked.length < Math.min(n, pool.length)) {
+    const w = pool[Math.floor(Math.random() * pool.length)];
+    if (!picked.some(p => p.word === w.word)) picked.push(w);
+  }
+  return picked.slice(0, n).sort(() => Math.random() - .5);
+}
+
+function wcRender() {
+  if (state.vocab.filter(v => v.word).length < 3) { hide('#wcPanel'); return; }
+  show('#wcPanel');
+  if (!_wcWords.length) _wcWords = wcPickWords();
+  const wordsEl = $('#wcWords');
+  wordsEl.innerHTML = '';
+  _wcWords.forEach(w => {
+    const chip = document.createElement('span');
+    chip.className = `wc-chip t-${w.tier}`;
+    chip.dataset.word = w.word;
+    chip.innerHTML = `<span class="wc-chip-word">${escapeHtml(w.word)}</span><span class="wc-chip-zh">${escapeHtml((w.translation || '').slice(0, 18))}</span>`;
+    wordsEl.appendChild(chip);
+  });
+  wcSyncHighlight();
+  $('#wcFeedback').classList.remove('visible');
+  $('#wcFeedbackBody').textContent = '';
+  $('#wcScoreBadge').textContent = '–';
+  $('#wcFeedbackTitle').textContent = '';
+  $('#wcSubmit').disabled = !$('#wcTextarea').value.trim();
+}
+
+function wcSyncHighlight() {
+  const text = ($('#wcTextarea').value || '').toLowerCase();
+  const words = $('#wcWords').querySelectorAll('.wc-chip');
+  let used = 0;
+  words.forEach(chip => {
+    const w = chip.dataset.word.toLowerCase();
+    const isUsed = text.includes(w);
+    chip.classList.toggle('used', isUsed);
+    if (isUsed) used++;
+  });
+  const total = _wcWords.length;
+  $('#wcUsedCount').textContent = used > 0
+    ? `✓ 已使用 ${used}/${total} 个词${used === total ? ' 🎉 全部用上了！' : ''}`
+    : '';
+  $('#wcCharCount').textContent = ($('#wcTextarea').value || '').length + ' 字';
+  $('#wcSubmit').disabled = !$('#wcTextarea').value.trim();
+}
+
+async function wcSubmit() {
+  const text = $('#wcTextarea').value.trim();
+  if (!text) return;
+  if (!state.apiKey) { toast('请先在 ⚙ 配置 中填写 API Key', 'error'); return; }
+  if (_wcCtrl) _wcCtrl.abort();
+  _wcCtrl = new AbortController();
+  const btn = $('#wcSubmit');
+  btn.disabled = true;
+  btn.textContent = '评分中...';
+  const feedbackEl = $('#wcFeedback');
+  feedbackEl.classList.add('visible');
+  const bodyEl = $('#wcFeedbackBody');
+  bodyEl.textContent = '✦  AI 正在阅读你的文字...';
+  $('#wcScoreBadge').textContent = '…';
+  $('#wcFeedbackTitle').textContent = '';
+  const wordList = _wcWords.map(w => `${w.word}（${w.translation}）`).join('、');
+  const usedCount = _wcWords.filter(w => text.toLowerCase().includes(w.word.toLowerCase())).length;
+  const prompt = `你是一位专业的金融英语写作教练。学习者从词库中抽到了 ${_wcWords.length} 个词，需要用它们写一段自然、有趣的文字。
+
+【抽到的词汇】
+${wordList}
+
+【学习者的创作】
+${text}
+
+【使用情况】学习者共使用了其中 ${usedCount}/${_wcWords.length} 个词。
+
+请按以下格式点评（全中文，总字数 200 字以内）：
+
+⭐ 综合评分：X/10
+✅ 亮点：指出最精彩的表达或创意（一句话）
+📝 词汇融入度：评价词汇是否用得自然、是否生搬硬套
+💡 改进建议：最多两点具体问题 + 修改方向
+✍️ 范例改写：给出一个使用相同词汇、更流畅有趣的短段落（3-4 句）
+
+注意：鼓励为主，语气轻松专业，不必逐词点评。`;
+  try {
+    let firstChunk = true;
+    await streamRequestProgressive(prompt, _wcCtrl, full => {
+      if (firstChunk) {
+        firstChunk = false;
+        // 尝试从第一批内容提取分数
+        const scoreMatch = full.match(/评分[：:]\s*(\d+)/);
+        if (scoreMatch) {
+          const s = parseInt(scoreMatch[1]);
+          const badge = $('#wcScoreBadge');
+          badge.textContent = s;
+          badge.style.background = s >= 8 ? 'var(--bull)' : s >= 6 ? 'var(--accent)' : 'var(--warn)';
+        }
+        const titleMatch = full.match(/亮点[：:]\s*([^\n]{2,40})/);
+        if (titleMatch) $('#wcFeedbackTitle').textContent = titleMatch[1];
+      }
+      bodyEl.textContent = full;
+      // 实时更新分数
+      const sm = full.match(/评分[：:]\s*(\d+)/);
+      if (sm) {
+        const s = parseInt(sm[1]);
+        const badge = $('#wcScoreBadge');
+        badge.textContent = s;
+        badge.style.background = s >= 8 ? 'var(--bull)' : s >= 6 ? 'var(--accent)' : 'var(--warn)';
+      }
+    });
+    if (usedCount === _wcWords.length) celebrate(20);
+  } catch (e) {
+    if (e.name !== 'AbortError') bodyEl.textContent = '评分失败：' + e.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✦ 提交评分';
+    _wcCtrl = null;
+  }
+}
+
 function buildVocabCardHTML(w, isSaved, showSrs = false, showHistory = false) {
   const tier = w.tier || 'vocab';
   const isPattern = tier === 'pattern';
@@ -3510,6 +3792,7 @@ let _vocabPage = 1;
 function renderVocabBook() {
   updateAllCounts();
   const total = state.vocab.length;
+  wcRender();
   if (total === 0) { show('#vocabEmpty'); hide('#vocabContent'); return; }
   hide('#vocabEmpty'); show('#vocabContent');
   const list = $('#vocabGrid');
@@ -4798,6 +5081,9 @@ function bindEvents() {
   $('#btnExport').addEventListener('click', exportVocab);
   $('#btnAnki').addEventListener('click', exportAnki);
   $('#btnImport').addEventListener('click', importVocab);
+  $('#wcShuffle').addEventListener('click', () => { _wcWords = wcPickWords(); wcRender(); $('#wcTextarea').value = ''; wcSyncHighlight(); });
+  $('#wcTextarea').addEventListener('input', wcSyncHighlight);
+  $('#wcSubmit').addEventListener('click', wcSubmit);
   $('#themeToggle').addEventListener('click', toggleTheme);
   $('#btnSettings').addEventListener('click', openSettings);
   $('#btnSettingsCancel').addEventListener('click', closeSettings);
