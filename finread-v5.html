@@ -684,6 +684,23 @@ h1.title {
 [data-theme="dark"] .exam-tag.kaoyan { background:rgba(139,92,246,.18);  color:#a78bfa; }
 [data-theme="dark"] .exam-tag.ielts  { background:rgba(245,158,11,.18);  color:#fbbf24; }
 
+/* ── 词根/词族网络 ── */
+.word-family { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
+.wf-chip { display:inline-flex; align-items:center; gap:3px; font-family:'JetBrains Mono',monospace; font-size:10px; padding:3px 8px; border-radius:6px; background:rgba(99,102,241,.09); color:var(--accent); border:1px solid rgba(99,102,241,.18); cursor:default; user-select:none; }
+.wf-chip em { font-style:normal; color:var(--text-muted); font-size:9px; }
+[data-theme="dark"] .wf-chip { background:rgba(99,102,241,.15); border-color:rgba(99,102,241,.28); }
+
+/* ── AI 写作练习 ── */
+.writing-box { margin-top:12px; border-top:1px solid var(--border); padding-top:12px; }
+.writing-box-label { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; color:var(--text-muted); letter-spacing:.06em; text-transform:uppercase; margin-bottom:8px; }
+.writing-box textarea { width:100%; min-height:76px; resize:vertical; border:1px solid var(--border); border-radius:var(--r); padding:10px 12px; font-size:13px; line-height:1.6; background:var(--bg-soft); color:var(--text-main); font-family:inherit; box-sizing:border-box; transition:border-color .15s; }
+.writing-box textarea:focus { outline:none; border-color:var(--accent); }
+.writing-submit { margin-top:8px; border-color:#10b981 !important; color:#10b981 !important; }
+.writing-submit:hover { background:rgba(16,185,129,.1) !important; }
+.writing-submit:disabled { opacity:.5; cursor:not-allowed; }
+.writing-feedback { margin-top:10px; padding:12px 14px; background:rgba(16,185,129,.06); border:1px solid rgba(16,185,129,.2); border-radius:var(--r); font-size:13px; line-height:1.7; color:var(--text-main); white-space:pre-wrap; display:none; }
+.writing-feedback.visible { display:block; animation:fadeUp .25s ease; }
+
 /* ================================================================
    STICKY SIDEBAR
    ================================================================ */
@@ -1184,6 +1201,7 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
           <span class="filter-pill" data-filter="proper">专名</span>
           <span class="filter-pill" data-filter="vocab">词汇</span>
           <button class="btn-base" id="btnExport">⇣ 导出</button>
+          <button class="btn-base" id="btnAnki" title="导出为 Anki TSV 格式">Anki</button>
         </div>
         <div class="vocab-list" id="vocabGrid"></div>
       </div>
@@ -1455,6 +1473,9 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
       <option value="">自动（优先级智能匹配）</option>
     </select>
     <div style="font-size:11px;color:var(--text-muted);margin-top:-10px;margin-bottom:14px;font-family:monospace;" id="voiceHint"></div>
+    <label>每日复习提醒时间</label>
+    <input type="time" id="reminderTimeInput" value="09:00" style="font-family:monospace;" />
+    <div style="font-size:11px;color:var(--text-muted);margin-top:-10px;margin-bottom:14px;font-family:monospace;">打开 App 时若已过提醒时间且有待复习卡，将弹出系统通知</div>
     <div class="modal-actions">
       <button class="btn-base" id="btnSettingsCancel">取消</button>
       <button class="btn-primary" id="btnSettingsSave" style="padding:8px 24px;">保存</button>
@@ -1480,8 +1501,9 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
 const SAMPLE = `The Federal Reserve held interest rates steady on Wednesday, signaling a more cautious approach as policymakers grapple with persistent inflation and a softening labor market. Chair Jerome Powell emphasized that the central bank's decisions would remain data-dependent, with markets now pricing in only one rate cut by year-end. The yield on the 10-year U.S. Treasury note climbed 8 basis points to 4.32%, while the S&P 500 pared earlier gains to close marginally lower. European Central Bank officials are expected to follow suit, maintaining their hawkish stance amid rising commodity prices.`;
 
 const VERSION_CONFIG = {
-  current: 'v5.1',
+  current: 'v5.2',
   changelog: [
+    '2026-05-22  v5.2  词族网络 · AI写作评批 · Anki导出 · 复习通知',
     '2026-05-22  v5.1  首屏极简主义重构，优化视觉重心',
     '2026-05-22  v5.0  深度学习模块 · 考点标签 · TTS 语音选择器',
   ],
@@ -1527,6 +1549,7 @@ const STORE = {
   notion: 'finread:notion',
   studyMode: 'finread:studyMode',
   voice: 'finread:voice',
+  reminderTime: 'finread:reminderTime',
 };
 
 const PROPER_TYPE_LABELS = {
@@ -1551,6 +1574,7 @@ let state = {
   currentSelection: { text: '', context: '' },
   parseSession: null, notionTab: 'config',
   selectedVoice: '',
+  reminderTime: '09:00',
 };
 
 const $ = (s) => document.querySelector(s);
@@ -1812,11 +1836,13 @@ ${chunkNote}
 对每个必须给 synonyms 数组（近义词附 Collins 风格辨析）、deep_analysis（词根分析或深度语境解析，1-2 句），并评估备考价值：
   · examTags: 从 ["CET-4","CET-6","考研","雅思"] 中选适用标签，无考点价值则留空数组
   · freq: "高频"/"中频"/"低频"，无把握则省略此字段
+  · wordFamily: 同根词数组，每项 {"word":"...","pos":"..."}，最多 4 个，仅列真实存在的英语词（如 regulate→regulation/regulatory/deregulate）
 { "word": "hawkish", "phonetic": "/.../", "pos": "adj.", "translation": "...", "note": "...",
   "examTags": ["CET-6", "考研"], "freq": "中频",
   "replacements": "aggressive, hardline",
   "synonyms": [{"word":"aggressive","zh":"激进的","diff":"语气更强"}, ...],
   "examples": [{"en":"...","zh":"..."}],
+  "wordFamily": [{"word":"hawk","pos":"n."},{"word":"hawkishness","pos":"n."}],
   "deep_analysis": "词根 hawk（鹰）+ -ish，引申为鹰派立场；金融语境中常指倾向加息的货币政策态度。" }
 
 【宁缺毋滥原则】各层提取数量不设上下限，完全由文本实际词汇密度决定。文中若无合格素材，对应数组可为空，严禁为凑数而降低标准或跨层混入。
@@ -2339,7 +2365,53 @@ function renderSentences() {
       ans.classList.toggle('visible');
       this.textContent = ans.classList.contains('visible') ? '▲ 收起答案' : '▾ 查看参考答案';
     });
+    // AI 写作练习区
+    const writingBox = document.createElement('div');
+    writingBox.className = 'writing-box';
+    writingBox.innerHTML = `<div class="writing-box-label">✍ 写作练习 · 获取 AI 评批</div>
+      <textarea class="writing-ta" placeholder="在此写下你的翻译或作答，然后点击获取 AI 反馈…"></textarea>
+      <button class="btn-base writing-submit">获取 AI 反馈</button>
+      <div class="writing-feedback"></div>`;
+    const submitBtn = writingBox.querySelector('.writing-submit');
+    const feedbackEl = writingBox.querySelector('.writing-feedback');
+    submitBtn.addEventListener('click', async () => {
+      const userText = writingBox.querySelector('.writing-ta').value.trim();
+      if (!userText) { toast('请先写下你的作答', 'warning'); return; }
+      submitBtn.disabled = true;
+      submitBtn.textContent = '分析中…';
+      feedbackEl.textContent = '';
+      feedbackEl.classList.add('visible');
+      await streamWritingFeedback(ex.question, ex.answer, userText, feedbackEl);
+      submitBtn.disabled = false;
+      submitBtn.textContent = '重新评批';
+    });
+    exPanel.appendChild(writingBox);
     box.appendChild(exPanel);
+  }
+}
+
+async function streamWritingFeedback(question, referenceAnswer, userAnswer, outputEl) {
+  if (!state.apiKey) { outputEl.textContent = '请先在 ⚙ 配置 中填写 API Key。'; return; }
+  const prompt = `你是一位专业的英语写作教练，专注商业金融语境。请对学生作答给出简洁、有建设性的评批。
+
+【练习题目】${question}
+【参考答案】${referenceAnswer}
+【学生作答】${userAnswer}
+
+请按以下格式回复（中文，总字数控制在150字以内）：
+⭐ 评分：X/10
+✅ 亮点：一句话
+❌ 问题：具体指出+纠正方案
+💡 改写建议：给出更地道的表达（如有必要）`;
+  const ctrl = new AbortController();
+  try {
+    let text = '';
+    await streamRequestProgressive(prompt, ctrl, full => {
+      text = full;
+      outputEl.textContent = full;
+    });
+  } catch (e) {
+    outputEl.textContent = '评批失败：' + e.message;
   }
 }
 
@@ -2432,6 +2504,7 @@ function buildVocabCardHTML(w, isSaved, showSrs = false, showHistory = false) {
       </div>
       <div class="zh">${escapeHtml(w.translation || '')}</div>
       ${w.deep_analysis ? `<div class="deep-analysis"><span class="deep-analysis-label">DEEP</span>${escapeHtml(w.deep_analysis)}</div>` : ''}
+      ${Array.isArray(w.wordFamily) && w.wordFamily.length ? `<div class="word-family">${w.wordFamily.map(f => `<span class="wf-chip">${escapeHtml(f.word)} <em>${escapeHtml(f.pos || '')}</em></span>`).join('')}</div>` : ''}
       ${w.note ? `<div class="note">${escapeHtml(w.note)}</div>` : ''}
       ${synHtml} ${collocHtml} ${similarHtml} ${historyHtml} ${examplesHtml}
     </div>
@@ -3235,6 +3308,32 @@ function exportVocab() {
   toast(`已导出 ${state.vocab.length} 卡 + ${state.articles.length} 文章`, 'success');
 }
 
+function exportAnki() {
+  if (!state.vocab.length) { toast('词库为空，无法导出', 'warning'); return; }
+  // Anki note type: Basic (and reversed)
+  // Columns: Front \t Back \t Tags
+  const TIER_ZH = { pattern: '句式', phrase: '短语', proper: '专名', vocab: '词汇' };
+  const rows = state.vocab.map(w => {
+    const front = w.word;
+    const parts = [w.translation || ''];
+    if (w.phonetic) parts.push(`[${w.phonetic}]`);
+    if (w.pos) parts.push(w.pos);
+    if (w.note) parts.push(w.note);
+    if (w.examples?.[0]) parts.push(`e.g. ${w.examples[0].en}`);
+    const back = parts.filter(Boolean).join('  ·  ');
+    const tags = [TIER_ZH[w.tier] || w.tier, ...(w.examTags || []), w.freq || ''].filter(Boolean).join(' ');
+    return [front, back, tags].join('\t');
+  });
+  const tsv = '#separator:tab\n#html:false\n#notetype:Basic\n#deck:FinRead\n' + rows.join('\n');
+  const blob = new Blob([tsv], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `finread-anki-${new Date().toISOString().slice(0, 10)}.txt`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast(`已导出 ${state.vocab.length} 张 Anki 卡片`, 'success');
+}
+
 function importVocab() {
   const input = document.createElement('input');
   input.type = 'file';
@@ -3283,6 +3382,7 @@ function openSettings() {
   $('#streamingSelect').value = String(state.streaming);
   $('#chunkThresholdInput').value = state.chunkThreshold;
   populateVoiceSelect();
+  $('#reminderTimeInput').value = state.reminderTime || '09:00';
   show('#settingsModal');
 }
 function closeSettings() { hide('#settingsModal'); }
@@ -3343,6 +3443,8 @@ function saveSettings() {
   state.streaming = $('#streamingSelect').value === 'true';
   state.chunkThreshold = parseInt($('#chunkThresholdInput').value) || DEFAULT_CHUNK_THRESHOLD;
   state.selectedVoice = $('#voiceSelect').value;
+  state.reminderTime = $('#reminderTimeInput').value || '09:00';
+  localStorage.setItem(STORE.reminderTime, state.reminderTime);
   localStorage.setItem(STORE.provider, state.provider);
   localStorage.setItem(STORE.model, state.model);
   localStorage.setItem(STORE.apiKey, state.apiKey);
@@ -3609,6 +3711,7 @@ function bindEvents() {
     });
   });
   $('#btnExport').addEventListener('click', exportVocab);
+  $('#btnAnki').addEventListener('click', exportAnki);
   $('#btnImport').addEventListener('click', importVocab);
   $('#themeToggle').addEventListener('click', toggleTheme);
   $('#btnSettings').addEventListener('click', openSettings);
@@ -3745,6 +3848,7 @@ function init() {
   state.chunkThreshold = parseInt(localStorage.getItem(STORE.chunkThreshold)) || DEFAULT_CHUNK_THRESHOLD;
   state.selectedVoice = localStorage.getItem(STORE.voice) || '';
   state.studyMode = localStorage.getItem(STORE.studyMode) || 'en2zh';
+  state.reminderTime = localStorage.getItem(STORE.reminderTime) || '09:00';
   const savedTheme = localStorage.getItem(STORE.theme);
   if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
   else if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme', 'dark');
@@ -3763,6 +3867,30 @@ function init() {
   bindEvents();
   bindKeyboard();
   if (!state.apiKey) openSettings();
+
+  // 复习提醒通知
+  if ('Notification' in window) {
+    if (Notification.permission === 'default') {
+      Notification.requestPermission();
+    } else if (Notification.permission === 'granted') {
+      const due = getReviewPool().length;
+      if (due > 0) {
+        const [rh, rm] = (state.reminderTime || '09:00').split(':').map(Number);
+        const now = new Date();
+        const pastReminder = now.getHours() > rh || (now.getHours() === rh && now.getMinutes() >= rm);
+        const todayKey = now.toDateString();
+        const lastNotif = localStorage.getItem('finread:lastNotif');
+        if (pastReminder && lastNotif !== todayKey) {
+          localStorage.setItem('finread:lastNotif', todayKey);
+          new Notification('FinRead 复习提醒 📚', {
+            body: `今日有 ${due} 张卡片待复习，趁现在！`,
+            icon: './icon-192.png',
+            tag: 'finread-review',
+          });
+        }
+      }
+    }
+  }
 }
 
 init();
