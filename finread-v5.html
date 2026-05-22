@@ -1210,6 +1210,257 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
 @media (max-width: 600px) {
   .goals-banner { grid-template-columns: 1fr; }
 }
+
+/* ================================================================
+   v5.4 — UNIFIED DIALOG SYSTEM
+   ================================================================ */
+#dialogOverlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(7, 16, 31, .58);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none;
+  align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .2s ease;
+  padding: 16px;
+}
+#dialogOverlay.visible { display: flex; opacity: 1; }
+.dialog-box {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r-xl); padding: 28px 28px 22px;
+  box-shadow: var(--shadow-xl);
+  max-width: 420px; width: 100%;
+  transform: translateY(8px) scale(.97); opacity: 0;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), opacity .2s;
+}
+#dialogOverlay.visible .dialog-box { transform: translateY(0) scale(1); opacity: 1; }
+.dialog-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-bottom: 16px;
+  background: var(--accent-light); color: var(--accent);
+}
+.dialog-icon.danger { background: var(--bear-light); color: var(--bear); }
+.dialog-icon.warn { background: var(--warn-light); color: var(--warn); }
+.dialog-icon.info { background: var(--accent-light); color: var(--accent); }
+.dialog-title {
+  font-size: 18px; font-weight: 700;
+  color: var(--text-main); margin-bottom: 8px;
+  font-family: 'Fraunces', Georgia, serif;
+  letter-spacing: -.015em;
+}
+.dialog-message {
+  font-size: 14px; color: var(--text-soft);
+  line-height: 1.65; margin-bottom: 20px;
+  white-space: pre-wrap; word-break: break-word;
+}
+.dialog-message strong { color: var(--text-main); }
+.dialog-actions {
+  display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;
+}
+.dialog-btn {
+  background: var(--bg-soft); border: 1px solid var(--border);
+  color: var(--text-soft); cursor: pointer;
+  padding: 8px 18px; border-radius: var(--r-md);
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 13px; font-weight: 500;
+  transition: all .15s;
+  min-width: 80px;
+}
+.dialog-btn:hover { background: var(--bg-card); border-color: var(--border-strong); }
+.dialog-btn.primary {
+  background: var(--accent); border-color: var(--accent);
+  color: white; font-weight: 600;
+}
+.dialog-btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.dialog-btn.danger {
+  background: var(--bear); border-color: var(--bear);
+  color: white; font-weight: 600;
+}
+.dialog-btn.danger:hover { filter: brightness(1.08); }
+.dialog-list {
+  max-height: 280px; overflow-y: auto;
+  background: var(--bg-soft); border-radius: var(--r-md);
+  padding: 12px 14px; margin-bottom: 18px;
+  font-size: 13px; line-height: 1.7;
+  color: var(--text-soft);
+  font-family: 'JetBrains Mono', monospace;
+}
+.dialog-list-item { padding: 4px 0; border-bottom: 1px dashed var(--border); }
+.dialog-list-item:last-child { border-bottom: none; }
+.dialog-list-item b { color: var(--text-main); }
+
+/* ================================================================
+   v5.4 — TOAST WITH UNDO
+   ================================================================ */
+#toast { gap: 12px; }
+.toast-undo {
+  background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.32);
+  color: white; cursor: pointer; padding: 4px 12px;
+  border-radius: 6px; font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700; letter-spacing: .04em;
+  transition: background .15s;
+}
+.toast-undo:hover { background: rgba(255,255,255,.28); }
+
+/* ================================================================
+   v5.4 — KEYBOARD SHORTCUTS PANEL
+   ================================================================ */
+#shortcutsPanel {
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(7, 16, 31, .58);
+  backdrop-filter: blur(8px);
+  display: none; align-items: center; justify-content: center;
+  padding: 16px;
+}
+#shortcutsPanel.visible { display: flex; }
+.shortcuts-box {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r-xl); padding: 28px;
+  box-shadow: var(--shadow-xl);
+  max-width: 520px; width: 100%; max-height: 80vh; overflow-y: auto;
+  animation: popIn .22s cubic-bezier(.34,1.56,.64,1);
+}
+.shortcuts-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 18px;
+}
+.shortcuts-header h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 20px; font-weight: 700; margin: 0;
+  letter-spacing: -.015em;
+}
+.shortcuts-grid {
+  display: grid; grid-template-columns: 1fr; gap: 6px;
+}
+.shortcut-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px dashed var(--border);
+}
+.shortcut-row:last-child { border-bottom: none; }
+.shortcut-desc { font-size: 13px; color: var(--text-soft); }
+.shortcut-keys { display: flex; gap: 4px; }
+.kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 24px; height: 24px; padding: 0 7px;
+  background: var(--bg-soft); border: 1px solid var(--border-strong);
+  border-bottom-width: 2px; border-radius: 5px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  font-weight: 600; color: var(--text-main);
+}
+.shortcuts-section {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  color: var(--text-muted); letter-spacing: .08em;
+  text-transform: uppercase; font-weight: 700;
+  margin: 14px 0 6px; padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.shortcuts-section:first-child { margin-top: 0; }
+
+/* ================================================================
+   v5.4 — CONFETTI / CELEBRATION
+   ================================================================ */
+@keyframes confettiFall {
+  0% { transform: translate(0, 0) rotate(0); opacity: 1; }
+  100% { transform: translate(var(--dx), 100vh) rotate(720deg); opacity: 0; }
+}
+.confetti-piece {
+  position: fixed; top: 10%; pointer-events: none;
+  width: 8px; height: 14px; z-index: 999;
+  animation: confettiFall 1.8s cubic-bezier(.25,.46,.45,.94) forwards;
+}
+
+/* ================================================================
+   v5.4 — REVIEW HEATMAP (90 days)
+   ================================================================ */
+.heatmap-block {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 18px 20px; margin-top: 24px;
+}
+.heatmap-block h3 {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text-muted); margin: 0 0 14px;
+}
+.heatmap-grid {
+  display: grid; grid-template-columns: repeat(15, 1fr);
+  gap: 4px; margin-bottom: 10px;
+}
+.heatmap-cell {
+  aspect-ratio: 1; border-radius: 3px;
+  background: var(--bg-soft); border: 1px solid var(--border);
+  position: relative; cursor: help;
+  transition: transform .15s;
+}
+.heatmap-cell:hover { transform: scale(1.3); z-index: 5; box-shadow: var(--shadow-sm); }
+.heatmap-cell.l1 { background: rgba(99,102,241,.18); border-color: rgba(99,102,241,.25); }
+.heatmap-cell.l2 { background: rgba(99,102,241,.36); border-color: rgba(99,102,241,.45); }
+.heatmap-cell.l3 { background: rgba(99,102,241,.56); border-color: rgba(99,102,241,.65); }
+.heatmap-cell.l4 { background: rgba(99,102,241,.82); border-color: rgba(99,102,241,.9); }
+.heatmap-legend {
+  display: flex; align-items: center; gap: 6px; justify-content: flex-end;
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  color: var(--text-muted);
+}
+.heatmap-legend-cell {
+  width: 12px; height: 12px; border-radius: 3px;
+  border: 1px solid var(--border);
+}
+
+/* ================================================================
+   v5.4 — VIEW TRANSITIONS
+   ================================================================ */
+section[id^="view"] {
+  animation: viewFadeIn .26s cubic-bezier(.4,0,.2,1);
+}
+@keyframes viewFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ================================================================
+   v5.4 — SKELETON LOADER
+   ================================================================ */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-soft) 0%, var(--bg-card) 50%, var(--bg-soft) 100%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.4s ease-in-out infinite;
+  border-radius: var(--r-sm);
+}
+@keyframes skeletonShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skeleton-sent {
+  height: 80px; margin-bottom: 16px; border-radius: var(--r-md);
+}
+
+/* ================================================================
+   v5.4 — PAGINATION
+   ================================================================ */
+.pagination {
+  display: flex; gap: 4px; justify-content: center;
+  align-items: center; margin-top: 24px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.page-btn {
+  min-width: 32px; height: 32px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r-sm); cursor: pointer;
+  font-size: 12px; color: var(--text-soft);
+  transition: all .15s;
+  padding: 0 8px;
+}
+.page-btn:hover:not(:disabled) { background: var(--bg-soft); border-color: var(--border-strong); }
+.page-btn.active {
+  background: var(--accent); color: white;
+  border-color: var(--accent); font-weight: 700;
+}
+.page-btn:disabled { opacity: .35; cursor: not-allowed; }
+.page-info {
+  font-size: 11px; color: var(--text-muted);
+  margin: 0 10px;
+}
 </style>
 </head>
 <body>
@@ -1236,6 +1487,7 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
         <button data-view="stats">统计</button>
       </nav>
       <button class="icon-toggle hdr-util" id="btnImport" title="导入 JSON">↑ 导入</button>
+      <button class="icon-toggle hdr-util" id="btnShortcuts" title="键盘快捷键 (?)">⌨ ?</button>
       <button class="icon-toggle hdr-util" id="btnSettings" title="引擎配置">⚙ 配置</button>
       <button class="icon-toggle hdr-util" id="btnClearAll" title="清空全部缓存">⊘ 清空</button>
       <button class="icon-toggle notion-btn" id="notionBtn" title="Notion 同步">N</button>
@@ -1500,6 +1752,19 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
       </div>
     </div>
     <div class="stats-grid" id="statsTopBlocks"></div>
+    <div class="heatmap-block">
+      <h3>近 90 天复习热力图</h3>
+      <div class="heatmap-grid" id="reviewHeatmap"></div>
+      <div class="heatmap-legend">
+        <span>少</span>
+        <div class="heatmap-legend-cell"></div>
+        <div class="heatmap-legend-cell l1"></div>
+        <div class="heatmap-legend-cell l2"></div>
+        <div class="heatmap-legend-cell l3"></div>
+        <div class="heatmap-legend-cell l4"></div>
+        <span>多</span>
+      </div>
+    </div>
     <div class="chart-block">
       <h3>近 14 天复习量</h3>
       <div class="bar-chart" id="reviewChart"></div>
@@ -1511,6 +1776,46 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
   </section>
 
 </main>
+
+<!-- ── UNIFIED DIALOG ── -->
+<div id="dialogOverlay" role="dialog" aria-modal="true">
+  <div class="dialog-box">
+    <div class="dialog-icon" id="dialogIcon">?</div>
+    <div class="dialog-title" id="dialogTitle">提示</div>
+    <div class="dialog-message" id="dialogMessage"></div>
+    <div class="dialog-list hidden" id="dialogList"></div>
+    <div class="dialog-actions" id="dialogActions"></div>
+  </div>
+</div>
+
+<!-- ── KEYBOARD SHORTCUTS PANEL ── -->
+<div id="shortcutsPanel">
+  <div class="shortcuts-box">
+    <div class="shortcuts-header">
+      <h3>键盘快捷键</h3>
+      <button class="icon-toggle" id="closeShortcuts" title="关闭">✕</button>
+    </div>
+    <div class="shortcuts-section">全局</div>
+    <div class="shortcuts-grid">
+      <div class="shortcut-row"><span class="shortcut-desc">显示此面板</span><div class="shortcut-keys"><span class="kbd">?</span></div></div>
+      <div class="shortcut-row"><span class="shortcut-desc">关闭弹窗 / 取消</span><div class="shortcut-keys"><span class="kbd">Esc</span></div></div>
+      <div class="shortcut-row"><span class="shortcut-desc">切换深色模式</span><div class="shortcut-keys"><span class="kbd">Shift</span><span class="kbd">D</span></div></div>
+    </div>
+    <div class="shortcuts-section">输入区</div>
+    <div class="shortcuts-grid">
+      <div class="shortcut-row"><span class="shortcut-desc">启动引擎解析</span><div class="shortcut-keys"><span class="kbd">Ctrl</span><span class="kbd">↵</span></div></div>
+    </div>
+    <div class="shortcuts-section">闪卡复习</div>
+    <div class="shortcuts-grid">
+      <div class="shortcut-row"><span class="shortcut-desc">翻面</span><div class="shortcut-keys"><span class="kbd">Space</span></div></div>
+      <div class="shortcut-row"><span class="shortcut-desc">Again（重做）</span><div class="shortcut-keys"><span class="kbd">1</span></div></div>
+      <div class="shortcut-row"><span class="shortcut-desc">Hard（困难）</span><div class="shortcut-keys"><span class="kbd">2</span></div></div>
+      <div class="shortcut-row"><span class="shortcut-desc">Good（一般）</span><div class="shortcut-keys"><span class="kbd">3</span></div></div>
+      <div class="shortcut-row"><span class="shortcut-desc">Easy（简单）</span><div class="shortcut-keys"><span class="kbd">4</span></div></div>
+      <div class="shortcut-row"><span class="shortcut-desc">下一张 / 上一张</span><div class="shortcut-keys"><span class="kbd">→</span><span class="kbd">←</span></div></div>
+    </div>
+  </div>
+</div>
 
 <!-- ── WORD DETAIL POPUP ── -->
 <div id="wordDetailOverlay"></div>
@@ -1742,8 +2047,9 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
 const SAMPLE = `The Federal Reserve held interest rates steady on Wednesday, signaling a more cautious approach as policymakers grapple with persistent inflation and a softening labor market. Chair Jerome Powell emphasized that the central bank's decisions would remain data-dependent, with markets now pricing in only one rate cut by year-end. The yield on the 10-year U.S. Treasury note climbed 8 basis points to 4.32%, while the S&P 500 pared earlier gains to close marginally lower. European Central Bank officials are expected to follow suit, maintaining their hawkish stance amid rising commodity prices.`;
 
 const VERSION_CONFIG = {
-  current: 'v5.3',
+  current: 'v5.4',
   changelog: [
+    '2026-05-22  v5.4  统一弹窗 · 撤销删除 · ESC关闭 · 快捷键面板(?) · 目标庆祝 · 90天热力图 · 分页 · 防抖搜索',
     '2026-05-22  v5.3  连续打卡 · 每日目标 · 草稿保存 · 单词联动 · 历史搜索 · 一键复制 · AI记忆法',
     '2026-05-22  v5.2  词族网络 · AI写作评批 · Anki导出 · 复习通知',
     '2026-05-22  v5.1  首屏极简主义重构，优化视觉重心',
@@ -1870,11 +2176,144 @@ const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(
 
 function toast(msg, type = '', duration = 2400) {
   const el = $('#toast');
-  el.textContent = msg;
+  el.innerHTML = '';
+  el.appendChild(document.createTextNode(msg));
   el.className = type ? type : '';
   el.classList.add('visible');
   clearTimeout(el._timer);
   el._timer = setTimeout(() => el.classList.remove('visible'), duration);
+}
+
+function toastWithUndo(msg, type, onUndo, duration = 5000) {
+  const el = $('#toast');
+  el.innerHTML = '';
+  el.appendChild(document.createTextNode(msg));
+  const btn = document.createElement('button');
+  btn.className = 'toast-undo';
+  btn.textContent = '↶ 撤销';
+  btn.addEventListener('click', () => {
+    clearTimeout(el._timer);
+    el.classList.remove('visible');
+    onUndo();
+  });
+  el.appendChild(btn);
+  el.className = type ? type : '';
+  el.classList.add('visible');
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => el.classList.remove('visible'), duration);
+}
+
+/* ============================================================
+ *  UNIFIED DIALOG SYSTEM
+ * ============================================================ */
+const DIALOG_ICONS = {
+  info: { glyph: 'i', cls: 'info' },
+  warn: { glyph: '!', cls: 'warn' },
+  danger: { glyph: '⚠', cls: 'danger' },
+  question: { glyph: '?', cls: 'info' },
+};
+
+let _dialogResolve = null;
+function showDialog({ title = '提示', message = '', icon = 'question', confirmText = '确定', cancelText = '', danger = false, list = null }) {
+  return new Promise(resolve => {
+    _dialogResolve = resolve;
+    const ic = DIALOG_ICONS[icon] || DIALOG_ICONS.question;
+    const iconEl = $('#dialogIcon');
+    iconEl.textContent = ic.glyph;
+    iconEl.className = 'dialog-icon ' + ic.cls;
+    $('#dialogTitle').textContent = title;
+    $('#dialogMessage').textContent = message;
+    const listEl = $('#dialogList');
+    if (list && list.length) {
+      listEl.innerHTML = list.map(item => `<div class="dialog-list-item">${item}</div>`).join('');
+      listEl.classList.remove('hidden');
+    } else {
+      listEl.classList.add('hidden');
+      listEl.innerHTML = '';
+    }
+    const actions = $('#dialogActions');
+    actions.innerHTML = '';
+    if (cancelText) {
+      const cancelBtn = document.createElement('button');
+      cancelBtn.className = 'dialog-btn';
+      cancelBtn.textContent = cancelText;
+      cancelBtn.addEventListener('click', () => closeDialog(false));
+      actions.appendChild(cancelBtn);
+    }
+    const okBtn = document.createElement('button');
+    okBtn.className = 'dialog-btn ' + (danger ? 'danger' : 'primary');
+    okBtn.textContent = confirmText;
+    okBtn.addEventListener('click', () => closeDialog(true));
+    actions.appendChild(okBtn);
+    $('#dialogOverlay').classList.add('visible');
+    setTimeout(() => okBtn.focus(), 50);
+  });
+}
+
+function closeDialog(result) {
+  $('#dialogOverlay').classList.remove('visible');
+  if (_dialogResolve) { _dialogResolve(result); _dialogResolve = null; }
+}
+
+function confirmDialog(message, options = {}) {
+  return showDialog({
+    title: options.title || '请确认',
+    message,
+    icon: options.danger ? 'danger' : 'warn',
+    confirmText: options.confirmText || '确定',
+    cancelText: options.cancelText || '取消',
+    danger: !!options.danger,
+  });
+}
+
+function alertDialog(message, options = {}) {
+  return showDialog({
+    title: options.title || '提示',
+    message,
+    icon: options.icon || 'info',
+    confirmText: options.confirmText || '知道了',
+  });
+}
+
+/* ============================================================
+ *  UTILITIES — debounce, throttle, idle
+ * ============================================================ */
+function debounce(fn, ms) {
+  let t;
+  return function(...args) {
+    clearTimeout(t);
+    t = setTimeout(() => fn.apply(this, args), ms);
+  };
+}
+
+function throttle(fn, ms) {
+  let last = 0, timer;
+  return function(...args) {
+    const now = Date.now();
+    const elapsed = now - last;
+    if (elapsed >= ms) { last = now; fn.apply(this, args); }
+    else { clearTimeout(timer); timer = setTimeout(() => { last = Date.now(); fn.apply(this, args); }, ms - elapsed); }
+  };
+}
+
+const idle = window.requestIdleCallback || (cb => setTimeout(cb, 1));
+
+/* ============================================================
+ *  CONFETTI CELEBRATION
+ * ============================================================ */
+function celebrate(count = 24) {
+  const colors = ['#6366F1', '#8B5CF6', '#F59E0B', '#10B981', '#EC4899', '#F97316'];
+  for (let i = 0; i < count; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = (Math.random() * 100) + 'vw';
+    piece.style.background = colors[i % colors.length];
+    piece.style.setProperty('--dx', (Math.random() * 200 - 100) + 'px');
+    piece.style.animationDelay = (Math.random() * 0.4) + 's';
+    piece.style.animationDuration = (1.4 + Math.random() * 0.8) + 's';
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 2600);
+  }
 }
 
 let _voicesCache = [];
@@ -1971,6 +2410,7 @@ function cardStatus(card) {
 function persistVocab() {
   localStorage.setItem(STORE.vocab, JSON.stringify(state.vocab));
   updateAllCounts();
+  invalidateHighlightCache();
   if (state.notion.autoSync === 'onChange') notionPushDebounced();
 }
 function persistArticles() {
@@ -2506,23 +2946,42 @@ function renderAnalysis() {
   renderSidebars();
 }
 
-function highlightSentenceHTML(s, a) {
+let _highlightCache = null;
+function invalidateHighlightCache() { _highlightCache = null; }
+
+function getHighlightContext(a) {
+  if (_highlightCache && _highlightCache.analysis === a) return _highlightCache;
+  const savedVocab = new Set();
+  const savedPhrase = new Set();
+  const savedProper = new Set();
+  state.vocab.forEach(v => {
+    const key = v.word.toLowerCase();
+    if (v.tier === 'vocab') savedVocab.add(key);
+    else if (v.tier === 'phrase') savedPhrase.add(key);
+    else if (v.tier === 'proper') savedProper.add(key);
+  });
   const properMap = new Map();
   (a.properNouns || []).forEach((pn, i) => properMap.set(pn.name.toLowerCase(), i));
-  const sortedPhrases = (a.phrases || []).map((p, i) => ({ ...p, originalIndex: i })).sort((a, b) => b.phrase.length - a.phrase.length);
-  const sortedVocab = (a.vocab || []).map((v, i) => ({ ...v, originalIndex: i })).sort((a, b) => b.word.length - a.word.length);
+  const sortedPhrases = (a.phrases || []).map((p, i) => ({ ...p, originalIndex: i })).sort((x, y) => y.phrase.length - x.phrase.length);
+  const sortedVocab = (a.vocab || []).map((v, i) => ({ ...v, originalIndex: i })).sort((x, y) => y.word.length - x.word.length);
+  _highlightCache = { analysis: a, savedVocab, savedPhrase, savedProper, properMap, sortedPhrases, sortedVocab };
+  return _highlightCache;
+}
+
+function highlightSentenceHTML(s, a) {
+  const ctx = getHighlightContext(a);
   let textHtml = escapeHtml(s.original);
   textHtml = textHtml.replace(/\*\*(.*?)\*\*/g, (match, name) => {
-    const idx = properMap.get(name.toLowerCase());
+    const idx = ctx.properMap.get(name.toLowerCase());
     if (idx !== undefined) {
-      const isSaved = state.vocab.some(v => v.tier === 'proper' && v.word.toLowerCase() === name.toLowerCase());
+      const isSaved = ctx.savedProper.has(name.toLowerCase());
       return `<b class="proper-noun${isSaved ? ' saved' : ''}" data-pn-idx="${idx}">${name}</b>`;
     }
     return `<b class="proper-noun no-data">${name}</b>`;
   });
   const phraseSlots = [];
-  sortedPhrases.forEach(p => {
-    const isSaved = state.vocab.some(v => v.tier === 'phrase' && v.word.toLowerCase() === p.phrase.toLowerCase());
+  ctx.sortedPhrases.forEach(p => {
+    const isSaved = ctx.savedPhrase.has(p.phrase.toLowerCase());
     const safe = p.phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(`(?<![\\w])(${safe})(?![\\w])`, 'gi');
     textHtml = textHtml.replace(regex, (match) => {
@@ -2531,8 +2990,8 @@ function highlightSentenceHTML(s, a) {
       return placeholder;
     });
   });
-  sortedVocab.forEach(v => {
-    const isSaved = state.vocab.some(x => x.tier === 'vocab' && x.word.toLowerCase() === v.word.toLowerCase());
+  ctx.sortedVocab.forEach(v => {
+    const isSaved = ctx.savedVocab.has(v.word.toLowerCase());
     const safeWord = v.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(`\\b(${safeWord})\\b`, 'gi');
     textHtml = textHtml.replace(regex, (match) => `<span class="hover-word${isSaved ? ' saved' : ''}" data-idx="${v.originalIndex}">${match}</span>`);
@@ -2614,14 +3073,16 @@ function renderSentences() {
   const a = state.analysis;
   const box = $('#sentencesBox');
   box.innerHTML = '';
+  const frag = document.createDocumentFragment();
   (a.sentences || []).forEach(s => {
     const row = document.createElement('div');
     row.className = 'sent' + (state.activeId === s.id ? ' active' : '');
     row.dataset.sid = s.id;
     row.innerHTML = buildSentenceHTML(s, a);
     attachSentenceEvents(row, s);
-    box.appendChild(row);
+    frag.appendChild(row);
   });
+  box.appendChild(frag);
   const ca = a.comparative_analysis;
   if (Array.isArray(ca) && ca.length) {
     const compPanel = document.createElement('div');
@@ -2849,18 +3310,26 @@ function buildVocabCardHTML(w, isSaved, showSrs = false, showHistory = false) {
 
 function bindVocabEvents(card, w, mode) {
   card.querySelectorAll('[data-act]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', async (e) => {
       e.stopPropagation();
       const act = btn.dataset.act;
       if (act === 'save') {
         const exists = state.vocab.find(v => v.tier === w.tier && v.word === w.word);
         if (exists) {
-          if (confirm(`「${w.word}」已存在，移除吗？`)) {
+          const ok = await confirmDialog(`将「${w.word}」从词库中移除？\n\n该词的复习进度（间隔、易度、复习次数）会一并清除。`, { title: '移除卡片', danger: true, confirmText: '移除' });
+          if (ok) {
+            const backup = { ...exists };
             state.vocab = state.vocab.filter(v => !(v.tier === w.tier && v.word === w.word));
             persistVocab();
             if (state.view === 'analysis') renderSidebars();
             else if (state.view === 'vocab') renderVocabBook();
-            toast('已移除', 'warning');
+            toastWithUndo(`已移除「${w.word}」`, 'warning', () => {
+              state.vocab.push(backup);
+              persistVocab();
+              if (state.view === 'analysis') renderSidebars();
+              else if (state.view === 'vocab') renderVocabBook();
+              toast('已恢复', 'success');
+            });
           }
         } else {
           addVocabInternal(w);
@@ -2886,11 +3355,18 @@ function bindVocabEvents(card, w, mode) {
       } else if (act === 'mnemonic') {
         streamMnemonic(w, card);
       } else if (act === 'delete') {
-        if (confirm(`确认删除「${w.word}」？复习进度也会一并删除。`)) {
+        const ok = await confirmDialog(`删除卡片「${w.word}」？\n\n该卡的所有复习进度也会一同删除。可在 5 秒内撤销。`, { title: '删除卡片', danger: true, confirmText: '删除' });
+        if (ok) {
+          const backup = { ...w };
           state.vocab = state.vocab.filter(v => !(v.tier === w.tier && v.word === w.word));
           persistVocab();
           renderVocabBook();
-          toast('已删除', 'warning');
+          toastWithUndo(`已删除「${w.word}」`, 'warning', () => {
+            state.vocab.push(backup);
+            persistVocab();
+            renderVocabBook();
+            toast('已恢复', 'success');
+          });
         }
       } else if (act === 'show-history') showHistoryPopup(w);
       else if (act === 'syn-save') {
@@ -2923,8 +3399,17 @@ function bindVocabEvents(card, w, mode) {
 function showHistoryPopup(w) {
   const hist = getWordHistory(w);
   if (!hist.length) return toast('暂无历史出现记录');
-  const msg = hist.slice(-5).reverse().map((h, i) => `${i + 1}. 「${h.articleTitle}」\n   ${h.sentence.slice(0, 100)}${h.sentence.length > 100 ? '...' : ''}`).join('\n\n');
-  alert(`「${w.word}」共出现 ${hist.length} 次：\n\n${msg}`);
+  const items = hist.slice(-8).reverse().map((h) => {
+    const sent = (h.sentence || '').length > 120 ? h.sentence.slice(0, 120) + '...' : h.sentence;
+    return `<b>${escapeHtml(h.articleTitle)}</b><br/><span style="color:var(--text-muted);font-family:inherit;">${escapeHtml(sent)}</span>`;
+  });
+  showDialog({
+    title: `「${w.word}」的出现历史`,
+    message: `该词在 ${hist.length} 篇文章中出现过。展示最近 ${Math.min(8, hist.length)} 次：`,
+    icon: 'info',
+    confirmText: '关闭',
+    list: items,
+  });
 }
 
 function showWordDetailPopup(savedCard) {
@@ -2989,13 +3474,15 @@ function renderSidebars() {
   });
 }
 
+const VOCAB_PAGE_SIZE = 60;
+let _vocabPage = 1;
+
 function renderVocabBook() {
   updateAllCounts();
   const total = state.vocab.length;
   if (total === 0) { show('#vocabEmpty'); hide('#vocabContent'); return; }
   hide('#vocabEmpty'); show('#vocabContent');
   const list = $('#vocabGrid');
-  list.innerHTML = '';
   const now = Date.now();
   let filtered = state.vocab.filter(w => {
     if (state.vocabFilter === 'due') return !w.lastReview || w.due <= now;
@@ -3012,14 +3499,59 @@ function renderVocabBook() {
     if (aDue !== bDue) return aDue - bDue;
     return (b.addedAt || 0) - (a.addedAt || 0);
   });
-  filtered.forEach(w => {
+  // 分页：超过 60 张时分页
+  const totalPages = Math.max(1, Math.ceil(filtered.length / VOCAB_PAGE_SIZE));
+  if (_vocabPage > totalPages) _vocabPage = 1;
+  const pageItems = filtered.slice((_vocabPage - 1) * VOCAB_PAGE_SIZE, _vocabPage * VOCAB_PAGE_SIZE);
+  list.innerHTML = '';
+  const frag = document.createDocumentFragment();
+  pageItems.forEach(w => {
     const card = document.createElement('div');
     card.className = `vocab-card t-${w.tier}`;
     card.innerHTML = buildVocabCardHTML(w, true, true, false);
     bindVocabEvents(card, w, 'manage');
-    list.appendChild(card);
+    frag.appendChild(card);
   });
+  list.appendChild(frag);
+  renderVocabPagination(list, totalPages, filtered.length);
   renderFlipCard();
+}
+
+function renderVocabPagination(container, totalPages, totalItems) {
+  const existing = container.parentNode.querySelector('.pagination');
+  if (existing) existing.remove();
+  if (totalPages <= 1) return;
+  const nav = document.createElement('div');
+  nav.className = 'pagination';
+  const prev = document.createElement('button');
+  prev.className = 'page-btn'; prev.textContent = '‹'; prev.disabled = _vocabPage === 1;
+  prev.addEventListener('click', () => { _vocabPage--; renderVocabBook(); window.scrollTo({ top: container.offsetTop - 80, behavior: 'smooth' }); });
+  nav.appendChild(prev);
+  // 紧凑分页：首页 ... 当前-1 当前 当前+1 ... 末页
+  const pages = new Set([1, totalPages, _vocabPage, _vocabPage - 1, _vocabPage + 1]);
+  const ordered = [...pages].filter(p => p >= 1 && p <= totalPages).sort((a, b) => a - b);
+  let lastShown = 0;
+  ordered.forEach(p => {
+    if (p - lastShown > 1) {
+      const ellipsis = document.createElement('span');
+      ellipsis.className = 'page-info'; ellipsis.textContent = '…';
+      nav.appendChild(ellipsis);
+    }
+    const btn = document.createElement('button');
+    btn.className = 'page-btn' + (p === _vocabPage ? ' active' : '');
+    btn.textContent = p;
+    btn.addEventListener('click', () => { _vocabPage = p; renderVocabBook(); window.scrollTo({ top: container.offsetTop - 80, behavior: 'smooth' }); });
+    nav.appendChild(btn);
+    lastShown = p;
+  });
+  const next = document.createElement('button');
+  next.className = 'page-btn'; next.textContent = '›'; next.disabled = _vocabPage === totalPages;
+  next.addEventListener('click', () => { _vocabPage++; renderVocabBook(); window.scrollTo({ top: container.offsetTop - 80, behavior: 'smooth' }); });
+  nav.appendChild(next);
+  const info = document.createElement('span');
+  info.className = 'page-info'; info.textContent = `共 ${totalItems} 张`;
+  nav.appendChild(info);
+  container.parentNode.insertBefore(nav, container.nextSibling);
 }
 
 function getFlipPool() {
@@ -3148,12 +3680,27 @@ function updateGoalsBanner() {
   const aPct = Math.min(100, Math.round(articlesToday / aTarget * 100));
   const rBar = $('#goalsReviewBar'); const aBar = $('#goalsArticleBar');
   if (!rBar) return;
+  const rWasDone = rBar.classList.contains('done');
+  const aWasDone = aBar.classList.contains('done');
   rBar.style.width = rPct + '%';
   rBar.classList.toggle('done', rPct >= 100);
   aBar.style.width = aPct + '%';
   aBar.classList.toggle('done', aPct >= 100);
   $('#goalsReviewVal').textContent = `${reviewsToday}/${rTarget}`;
   $('#goalsArticleVal').textContent = `${articlesToday}/${aTarget}`;
+  // 庆祝目标达成（仅在状态从未完成切到完成时触发）
+  const todayKey = new Date().toDateString();
+  const celebrated = sessionStorage.getItem('finread:celebrated:' + todayKey) || '';
+  if (rPct >= 100 && !rWasDone && !celebrated.includes('r')) {
+    celebrate(32);
+    toast('🎉 今日复习目标达成！', 'success');
+    sessionStorage.setItem('finread:celebrated:' + todayKey, celebrated + 'r');
+  }
+  if (aPct >= 100 && !aWasDone && !celebrated.includes('a')) {
+    celebrate(24);
+    toast('🎉 今日精读目标达成！', 'success');
+    sessionStorage.setItem('finread:celebrated:' + todayKey, (sessionStorage.getItem('finread:celebrated:' + todayKey) || '') + 'a');
+  }
 }
 
 function updateStreakBadge() {
@@ -3188,6 +3735,7 @@ function renderHistoryView() {
   hide('#historyEmpty');
   const grid = $('#historyGrid');
   grid.innerHTML = '';
+  const frag = document.createDocumentFragment();
   articles.forEach(a => {
     const date = new Date(a.addedAt);
     const dateStr = date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }) + ' ' + date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
@@ -3214,19 +3762,34 @@ function renderHistoryView() {
       setView('input');
       toast('已载入到输入区', 'success');
     });
-    card.querySelector('[data-act="delete"]').addEventListener('click', () => {
-      if (!confirm(`删除「${a.title}」？相关词汇历史记录也会清除。`)) return;
-      state.articles = state.articles.filter(x => x.id !== a.id);
+    card.querySelector('[data-act="delete"]').addEventListener('click', async () => {
+      const ok = await confirmDialog(`删除文章「${a.title}」？\n\n该文章相关的词汇出现记录也会一同清除。可在 5 秒内撤销。`, { title: '删除文章', danger: true, confirmText: '删除' });
+      if (!ok) return;
+      const articleBackup = { ...a };
+      const historyBackup = {};
       Object.keys(state.wordHistory).forEach(k => {
+        const removed = state.wordHistory[k].filter(h => h.articleId === a.id);
+        if (removed.length) historyBackup[k] = removed;
         state.wordHistory[k] = state.wordHistory[k].filter(h => h.articleId !== a.id);
         if (state.wordHistory[k].length === 0) delete state.wordHistory[k];
       });
+      state.articles = state.articles.filter(x => x.id !== a.id);
       persistArticles(); persistWordHistory();
       renderHistoryView();
-      toast('已删除', 'warning');
+      toastWithUndo(`已删除「${a.title.slice(0, 28)}」`, 'warning', () => {
+        state.articles.unshift(articleBackup);
+        state.articles.sort((x, y) => (y.addedAt || 0) - (x.addedAt || 0));
+        Object.keys(historyBackup).forEach(k => {
+          state.wordHistory[k] = (state.wordHistory[k] || []).concat(historyBackup[k]);
+        });
+        persistArticles(); persistWordHistory();
+        renderHistoryView();
+        toast('已恢复', 'success');
+      });
     });
-    grid.appendChild(card);
+    frag.appendChild(card);
   });
+  grid.appendChild(frag);
 }
 
 function renderStatsView() {
@@ -3292,6 +3855,32 @@ function renderStatsView() {
   };
   renderBarChart('reviewChart', reviewBuckets);
   renderBarChart('growthChart', growthBuckets);
+  idle(() => renderHeatmap());
+}
+
+function renderHeatmap() {
+  const days = 90;
+  const buckets = new Array(days).fill(0);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  state.reviewLog.forEach(r => {
+    const d = new Date(r.ts); d.setHours(0, 0, 0, 0);
+    const diff = Math.round((today - d) / 86400000);
+    if (diff >= 0 && diff < days) buckets[days - 1 - diff]++;
+  });
+  const max = Math.max(...buckets, 1);
+  const level = v => v === 0 ? '' : v <= max * 0.25 ? 'l1' : v <= max * 0.5 ? 'l2' : v <= max * 0.75 ? 'l3' : 'l4';
+  const frag = document.createDocumentFragment();
+  buckets.forEach((v, i) => {
+    const dayOffset = days - 1 - i;
+    const date = new Date(today.getTime() - dayOffset * 86400000);
+    const cell = document.createElement('div');
+    cell.className = 'heatmap-cell ' + level(v);
+    cell.title = `${date.getMonth() + 1}/${date.getDate()} · ${v} 次复习`;
+    frag.appendChild(cell);
+  });
+  const grid = $('#reviewHeatmap');
+  grid.innerHTML = '';
+  grid.appendChild(frag);
 }
 
 /* ============================================================
@@ -3805,7 +4394,8 @@ function importVocab() {
       const text = await file.text();
       const data = JSON.parse(text);
       if (!data.vocab) throw new Error('文件格式不正确');
-      if (!confirm(`导入 ${data.vocab.length} 卡 + ${(data.articles || []).length} 文章？将合并到现有数据。`)) return;
+      const ok = await confirmDialog(`即将导入：\n• ${data.vocab.length} 张词卡\n• ${(data.articles || []).length} 篇文章\n\n数据将合并到现有库（不会覆盖已有卡片）。`, { title: '确认导入', icon: 'info', confirmText: '开始合并' });
+      if (!ok) return;
       const localMap = new Map(state.vocab.map(v => [`${v.tier}::${v.word}`, v]));
       let added = 0;
       data.vocab.forEach(rv => {
@@ -4160,13 +4750,14 @@ function bindEvents() {
     });
   });
   $$('.srs-btn').forEach(btn => { btn.addEventListener('click', () => reviewCard(parseInt(btn.dataset.quality))); });
-  $('#searchInput').addEventListener('input', (e) => { state.vocabSearch = e.target.value.toLowerCase(); renderVocabBook(); });
+  $('#searchInput').addEventListener('input', debounce((e) => { state.vocabSearch = e.target.value.toLowerCase(); _vocabPage = 1; renderVocabBook(); }, 220));
   $$('.filter-pill').forEach(p => {
     p.addEventListener('click', () => {
       $$('.filter-pill').forEach(x => x.classList.remove('on'));
       p.classList.add('on');
       state.vocabFilter = p.dataset.filter;
       state.flipIdx = 0;
+      _vocabPage = 1;
       renderVocabBook();
     });
   });
@@ -4180,8 +4771,12 @@ function bindEvents() {
   $('#providerSelect').addEventListener('change', onProviderChange);
   $('#modelSelect').addEventListener('change', updatePricingHint);
   $('#voiceSelect').addEventListener('change', updateVoiceHint);
-  $('#btnClearAll').addEventListener('click', () => {
-    if (!confirm('清除全部本地数据不可恢复，包括卡组、文章、Notion 配置。继续？')) return;
+  $('#btnClearAll').addEventListener('click', async () => {
+    const ok = await confirmDialog(
+      `此操作将清除：\n• ${state.vocab.length} 张词卡及复习进度\n• ${state.articles.length} 篇归档文章\n• Notion 配置与 API Key\n• 所有本地学习数据\n\n⚠️ 不可恢复！建议先导出备份。`,
+      { title: '清除全部本地数据', danger: true, confirmText: '全部清除' }
+    );
+    if (!ok) return;
     Object.values(STORE).forEach(k => localStorage.removeItem(k));
     sessionStorage.clear();
     location.reload();
@@ -4194,9 +4789,17 @@ function bindEvents() {
   $('#notionPushBtn').addEventListener('click', notionPush);
   $('#notionPullBtn').addEventListener('click', notionPull);
   $('#notionExportBtn').addEventListener('click', notionCopyJson);
-  $('#historySearch').addEventListener('input', (e) => {
+  $('#historySearch').addEventListener('input', debounce((e) => {
     state.historySearch = e.target.value;
     renderHistoryView();
+  }, 220));
+  $('#dialogOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'dialogOverlay') closeDialog(false);
+  });
+  $('#btnShortcuts').addEventListener('click', () => $('#shortcutsPanel').classList.add('visible'));
+  $('#closeShortcuts').addEventListener('click', () => $('#shortcutsPanel').classList.remove('visible'));
+  $('#shortcutsPanel').addEventListener('click', (e) => {
+    if (e.target.id === 'shortcutsPanel') $('#shortcutsPanel').classList.remove('visible');
   });
   $('#wdpClose').addEventListener('click', closeWordDetailPopup);
   $('#wordDetailOverlay').addEventListener('click', closeWordDetailPopup);
@@ -4236,22 +4839,37 @@ function bindEvents() {
       tooltipTimeout = setTimeout(() => tooltip.classList.remove('visible'), 250);
     }
   });
-  window.addEventListener('scroll', () => {
+  window.addEventListener('scroll', throttle(() => {
     const h = document.documentElement;
     const scrolled = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight);
     $('#readingProgress').style.width = (scrolled * 100) + '%';
-  });
+  }, 16), { passive: true });
 }
 
 function bindKeyboard() {
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'D' && e.shiftKey) { toggleTheme(); return; }
+    // ESC closes any open modal/panel
+    if (e.key === 'Escape') {
+      if ($('#dialogOverlay').classList.contains('visible')) { closeDialog(false); return; }
+      if ($('#shortcutsPanel').classList.contains('visible')) { $('#shortcutsPanel').classList.remove('visible'); return; }
+      if ($('#wordDetailPopup').classList.contains('visible')) { closeWordDetailPopup(); return; }
+      if (!$('#settingsModal').classList.contains('hidden')) { closeSettings(); return; }
+      if (!$('#notionModal').classList.contains('hidden')) { closeNotionModal(); return; }
+      if (!$('#customAddModal').classList.contains('hidden')) { hide('#customAddModal'); return; }
+    }
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
       if (state.view === 'input' && (e.metaKey || e.ctrlKey) && e.key === 'Enter') {
         if (!$('#btnAnalyze').disabled) doAnalyze();
       }
       return;
     }
+    // ? opens shortcuts panel (without modifier keys)
+    if (e.key === '?' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      e.preventDefault();
+      $('#shortcutsPanel').classList.toggle('visible');
+      return;
+    }
+    if (e.key === 'D' && e.shiftKey) { toggleTheme(); return; }
     if (state.view === 'vocab' && getFlipPool().length) {
       if (e.code === 'Space') {
         e.preventDefault();
