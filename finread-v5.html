@@ -3358,43 +3358,50 @@ function bindEvents() {
     btn.disabled = true;
     btn.textContent = '获取中...';
     try {
-      // 多 RSS 源 × 多代理，依次尝试直到成功
-      const RSS_URLS = [
-        'https://rsshub.app/jin10',
-        'https://rsshub.app/jin10/topic/71',
+      // 多 RSSHub 公共节点 × 多代理，顺序尝试直到拿到有效条目
+      const RSS_HOSTS = [
+        'https://rsshub.rssforever.com',
+        'https://rss.shab.fun',
+        'https://rsshub.app',
+        'https://rsshub.feeded.xyz',
       ];
+      const RSS_PATHS = ['/jin10', '/jin10/topic/71'];
+      const RSS_URLS = RSS_HOSTS.flatMap(h => RSS_PATHS.map(p => h + p));
       const PROXIES = [
         u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
         u => 'https://corsproxy.io/?' + encodeURIComponent(u),
       ];
-      const fetchTO = (url, ms = 9000) => {
+      const fetchTO = (url, ms = 8000) => {
         const ctrl = new AbortController();
         const id = setTimeout(() => ctrl.abort(), ms);
         return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(id));
       };
-      let xml = null;
-      outer: for (const mkProxy of PROXIES) {
-        for (const rssUrl of RSS_URLS) {
-          try {
-            const res = await fetchTO(mkProxy(rssUrl));
-            if (res.ok) { xml = await res.text(); break outer; }
-          } catch {}
-        }
-      }
-      if (!xml) throw new Error('所有代理请求均失败，请检查网络');
-
-      const doc = new DOMParser().parseFromString(xml, 'text/xml');
-      // 兼容 RSS 2.0 (<item>) 和 Atom (<entry>)
-      const item = doc.querySelector('item') || doc.querySelector('entry');
-      if (!item) throw new Error('RSS 响应中未找到任何条目');
-
-      // 去除 CDATA 包裹及 HTML 标签
+      // 找到第一个能解析出条目的响应
+      let item = null, getField;
       const strip = s => (s || '')
         .replace(/<!\[CDATA\[|\]\]>/g, '')
         .replace(/<[^>]*>/g, '')
         .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
         .replace(/&nbsp;/g, ' ').replace(/&#\d+;/g, '').trim();
-      const getField = (...tags) => {
+      outer: for (const mkProxy of PROXIES) {
+        for (const rssUrl of RSS_URLS) {
+          try {
+            const res = await fetchTO(mkProxy(rssUrl));
+            if (!res.ok) continue;
+            const xml = await res.text();
+            const doc = new DOMParser().parseFromString(xml, 'text/xml');
+            if (doc.querySelector('parseerror')) continue;
+            const candidate = doc.querySelector('item') || doc.querySelector('entry');
+            // 确认候选条目含有实质文字内容
+            if (candidate && strip(candidate.textContent).length > 10) {
+              item = candidate; break outer;
+            }
+          } catch {}
+        }
+      }
+      if (!item) throw new Error('所有节点均无可用快讯，请稍后重试');
+
+      getField = (...tags) => {
         for (const t of tags) {
           const el = item.querySelector(t) || item.getElementsByTagName(t)[0];
           const v = strip(el?.textContent);
