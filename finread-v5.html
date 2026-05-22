@@ -929,7 +929,7 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
   nav.tabs button { flex:0 0 auto; padding:6px 12px; font-size:11px; }
   /* 隐藏次要状态：日期 + 模型驱动 + 同步指示点 */
   #dateLabel { display:none; }
-  .meta-stat:has(#modelBadge) { display:none; }
+  #metaStatModel { display:none; }
   #syncStatusInline { display:none; }
   .meta-bar { padding:6px 14px; }
   .meta-stats { gap:10px; }
@@ -1009,7 +1009,7 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
     <div class="meta-stats">
       <span class="meta-stat">待复习 <strong id="dueToday">0</strong></span>
       <span class="meta-stat">句式 <strong id="headerPatternCount">0</strong>/80</span>
-      <span class="meta-stat">驱动 <span class="model-badge disconnected" id="modelBadge">未配置</span></span>
+      <span class="meta-stat" id="metaStatModel">驱动 <span class="model-badge disconnected" id="modelBadge">未配置</span></span>
       <span class="sync-status" id="syncStatusInline">·</span>
     </div>
   </div>
@@ -3358,17 +3358,55 @@ function bindEvents() {
     btn.disabled = true;
     btn.textContent = '获取中...';
     try {
-      const proxy = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://rsshub.app/jin10/topic/71');
-      const res = await fetch(proxy);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const xml = await res.text();
+      // 多 RSS 源 × 多代理，依次尝试直到成功
+      const RSS_URLS = [
+        'https://rsshub.app/jin10',
+        'https://rsshub.app/jin10/topic/71',
+      ];
+      const PROXIES = [
+        u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+        u => 'https://corsproxy.io/?' + encodeURIComponent(u),
+      ];
+      const fetchTO = (url, ms = 9000) => {
+        const ctrl = new AbortController();
+        const id = setTimeout(() => ctrl.abort(), ms);
+        return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(id));
+      };
+      let xml = null;
+      outer: for (const mkProxy of PROXIES) {
+        for (const rssUrl of RSS_URLS) {
+          try {
+            const res = await fetchTO(mkProxy(rssUrl));
+            if (res.ok) { xml = await res.text(); break outer; }
+          } catch {}
+        }
+      }
+      if (!xml) throw new Error('所有代理请求均失败，请检查网络');
+
       const doc = new DOMParser().parseFromString(xml, 'text/xml');
-      const item = doc.querySelector('item');
-      if (!item) throw new Error('RSS 中未找到 item');
-      const strip = s => (s || '').replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').replace(/&#\d+;/g, '').trim();
-      const title = strip(item.querySelector('title')?.textContent);
-      const desc  = strip(item.querySelector('description')?.textContent);
-      $('#newsInput').value = [title, desc].filter(Boolean).join('\n\n');
+      // 兼容 RSS 2.0 (<item>) 和 Atom (<entry>)
+      const item = doc.querySelector('item') || doc.querySelector('entry');
+      if (!item) throw new Error('RSS 响应中未找到任何条目');
+
+      // 去除 CDATA 包裹及 HTML 标签
+      const strip = s => (s || '')
+        .replace(/<!\[CDATA\[|\]\]>/g, '')
+        .replace(/<[^>]*>/g, '')
+        .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+        .replace(/&nbsp;/g, ' ').replace(/&#\d+;/g, '').trim();
+      const getField = (...tags) => {
+        for (const t of tags) {
+          const el = item.querySelector(t) || item.getElementsByTagName(t)[0];
+          const v = strip(el?.textContent);
+          if (v) return v;
+        }
+        return '';
+      };
+      const title = getField('title');
+      const body  = getField('description', 'summary', 'encoded', 'content');
+      const text  = [title, body].filter(Boolean).join('\n\n');
+      if (!text) throw new Error('获取内容为空');
+      $('#newsInput').value = text;
       onInputChange();
       toast('快讯获取成功', 'success');
     } catch (err) {
