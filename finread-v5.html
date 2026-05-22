@@ -9860,7 +9860,6 @@ ${wordList}
           content = await (await fetch(file.raw_url)).text();
         }
         const remote = JSON.parse(content);
-        const remote = await res.json();
         if (!remote.vocab && !remote.articles) {
           gistLog('此快照不含词卡或文章数据，已跳过');
           toast('快照无有效数据', 'warning'); return;
