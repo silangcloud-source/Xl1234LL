@@ -15,7 +15,7 @@
  *   MAX_ITEMS     — Max items to process per run      (default: "20")
  */
 
-const RSS_URL       = 'https://www.forexlive.com/feed';
+const RSS_URL       = 'https://www.fxstreet.com/rss/news';
 const NOTION_API    = 'https://api.notion.com/v1';
 const NOTION_VER    = '2022-06-28';
 

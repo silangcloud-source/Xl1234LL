@@ -1029,7 +1029,7 @@ aside.sticky::-webkit-scrollbar-thumb { background: var(--border); border-radius
   margin-left:6px; vertical-align:middle;
 }
 
-/* ── Forexlive RSS Panel ── */
+/* ── FXStreet RSS Panel ── */
 .fxl-panel {
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--r-xl); margin-top: 18px; overflow: hidden;
@@ -2162,7 +2162,7 @@ nav.tabs button:active { transform: scale(.95); }
           <div class="input-label">Source Text</div>
           <div style="display:flex;gap:8px;">
             <button class="btn-base" id="btnFetchNews">⚡ 快讯</button>
-            <button class="btn-base" id="btnForexlive">📰 Forexlive</button>
+            <button class="btn-base" id="btnForexlive">📰 FXStreet</button>
             <button class="btn-base" id="btnFetchLink">🔗 链接</button>
             <button class="btn-base" id="btnPaste">📋 粘贴</button>
             <button class="btn-base" id="btnSample">✦ 示例</button>
@@ -2185,11 +2185,11 @@ nav.tabs button:active { transform: scale(.95); }
         </div>
       </div>
 
-      <!-- ── Forexlive RSS PANEL ── -->
+      <!-- ── FXStreet RSS PANEL ── -->
       <div id="forexlivePanel" class="fxl-panel hidden">
         <div class="fxl-header">
           <div>
-            <div class="fxl-title">📰 Forexlive · 最新头条</div>
+            <div class="fxl-title">📰 FXStreet · 最新头条</div>
             <div class="fxl-sub">点击任意条目载入到输入框，再「启动引擎」开始精读</div>
           </div>
           <div class="fxl-actions">
@@ -2815,7 +2815,7 @@ const SAMPLE = `The Federal Reserve held interest rates steady on Wednesday, sig
 const VERSION_CONFIG = {
   current: 'v6.2',
   changelog: [
-    '2026-05-22  v6.2  Forexlive 内嵌新闻源：📰 按钮直接拉取最新头条 · 一键载入到输入框 · 5分钟缓存',
+    '2026-05-22  v6.2  FXStreet 内嵌新闻源：📰 按钮直接拉取最新头条 · 一键载入到输入框 · 5分钟缓存',
     '2026-05-22  v6.1  番茄复习：25分钟倒计时 · 50词单次上限 · 快速多轮巩固未掌握词 · 自动翻面重置',
     '2026-05-22  v6.0  GitHub Gist 跨设备同步：卡组/档案/复习日志 · 智能合并 · 启动拉取+变化推送',
     '2026-05-22  v5.9  修复电脑/手机精读空白：两处lookbehind正则兼容旧Safari · finalizeAnalysis容错保护',
@@ -4642,7 +4642,7 @@ function getFlipPool() {
 /* ============================================================
  *  FOREXLIVE RSS — in-app news source
  * ============================================================ */
-const FOREXLIVE_RSS_URL = 'https://www.forexlive.com/feed';
+const FOREXLIVE_RSS_URL = 'https://www.fxstreet.com/rss/news';
 const FOREXLIVE_CACHE_MS = 5 * 60 * 1000;   // 5-min cache
 let _fxlCache = null, _fxlCacheTime = 0;
 
@@ -4712,7 +4712,7 @@ async function fxlFetch() {
       lastErr = '响应中无 <item>';
     } catch (e) { lastErr = e.message || '网络错误'; }
   }
-  if (!xml) throw new Error('无法访问 Forexlive RSS · ' + lastErr);
+  if (!xml) throw new Error('无法访问 FXStreet RSS · ' + lastErr);
   const doc = new DOMParser().parseFromString(xml, 'text/xml');
   if (doc.querySelector('parseerror')) throw new Error('RSS XML 解析失败');
   const items = Array.from(doc.querySelectorAll('item')).map(node => {
@@ -4736,7 +4736,7 @@ async function fxlFetch() {
 async function fxlRender(forceRefresh = false) {
   const list = $('#fxlList');
   if (!list) return;
-  list.innerHTML = '<div class="fxl-loading">⏳ 正在获取 Forexlive 最新...</div>';
+  list.innerHTML = '<div class="fxl-loading">⏳ 正在获取 FXStreet 最新...</div>';
   if (forceRefresh) { _fxlCache = null; _fxlCacheTime = 0; }
   try {
     const items = await fxlFetch();
