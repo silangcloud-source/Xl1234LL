@@ -465,6 +465,73 @@ h1.title {
 @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
 
 /* ================================================================
+   DEEP LEARNING MODULES — rule-summary · deep-analysis · comparative · exercise
+   ================================================================ */
+.rule-summary {
+  margin-top:10px; padding:9px 13px;
+  background:linear-gradient(135deg,rgba(99,102,241,.08) 0%,rgba(79,70,229,.05) 100%);
+  border-left:3px solid var(--accent);
+  border-radius:0 var(--r) var(--r) 0;
+  font-size:12px; color:var(--text-soft); line-height:1.65;
+}
+.rule-summary-label {
+  display:inline-block; font-family:'JetBrains Mono',monospace;
+  font-size:10px; font-weight:700; letter-spacing:.06em;
+  color:var(--accent); background:rgba(99,102,241,.12);
+  padding:1px 6px; border-radius:3px; margin-right:6px;
+}
+.deep-analysis {
+  margin-top:8px; padding:9px 12px;
+  background:rgba(99,102,241,.06);
+  border:1px solid rgba(99,102,241,.15);
+  border-radius:var(--r);
+  font-size:12px; color:var(--text-soft); line-height:1.65;
+}
+.deep-analysis-label {
+  font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700;
+  color:var(--accent); letter-spacing:.06em; margin-right:6px;
+}
+.comparative-panel, .exercise-panel {
+  margin:18px 0; padding:20px 24px;
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--r-xl); box-shadow:var(--shadow-sm);
+  animation:fadeUp .3s ease;
+}
+.comparative-panel { border-left:3px solid #f59e0b; }
+.exercise-panel    { border-left:3px solid #10b981; }
+.panel-title {
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:14px;
+}
+.comparative-panel .panel-title { color:#f59e0b; }
+.exercise-panel    .panel-title { color:#10b981; }
+.comp-item {
+  display:grid; grid-template-columns:1fr 1fr; gap:12px;
+  margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--border);
+}
+.comp-item:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+.comp-word { font-family:'Fraunces',Georgia,serif; font-size:15px; font-weight:700; color:var(--text); margin-bottom:3px; }
+.comp-zh   { font-family:'Noto Sans SC',system-ui,sans-serif; font-size:12px; color:var(--text-soft); }
+.comp-diff { grid-column:1/-1; font-size:12px; color:var(--text-muted); background:var(--bg-soft); padding:7px 10px; border-radius:var(--r); line-height:1.65; margin-top:4px; }
+.exercise-q    { font-size:14px; color:var(--text); line-height:1.75; margin-bottom:10px; }
+.exercise-hint { font-size:12px; color:var(--text-muted); margin-bottom:14px; font-family:'Noto Sans SC',system-ui,sans-serif; }
+.exercise-reveal-btn {
+  display:inline-flex; align-items:center; gap:6px; padding:6px 14px;
+  background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.3);
+  border-radius:6px; font-size:12px; font-family:'JetBrains Mono',monospace;
+  color:#10b981; cursor:pointer; transition:all .2s;
+}
+.exercise-reveal-btn:hover { background:rgba(16,185,129,.2); }
+.exercise-answer {
+  display:none; margin-top:12px; padding:12px 14px;
+  background:rgba(16,185,129,.07); border:1px solid rgba(16,185,129,.2);
+  border-radius:var(--r); font-size:13px;
+  font-family:'Noto Sans SC',system-ui,sans-serif;
+  color:var(--text); line-height:1.75;
+}
+.exercise-answer.visible { display:block; animation:fadeUp .2s ease; }
+
+/* ================================================================
    VOCABULARY CARDS  — ★ serif English / sans-serif Chinese
    ================================================================ */
 .vocab-list { display:flex; flex-direction:column; gap:16px; }
@@ -1598,7 +1665,7 @@ ${chunkNote}
 2. 给出【全文翻译】(fullTranslation)。
 3. 按句切分原文（引号内不切）。原文中所有专有名词必须在 sentences[].original 字段中用 ** 完整包裹。
 4. 每句精准互译 (translation)。
-5. 每句结构化语法分析 grammar: { skeleton, notes }。notes 必须用【时态/语态】、【非谓语】、【三大从句】等【中括号标签】开头。
+5. 每句结构化语法分析 grammar: { skeleton, notes, rule_summary }。notes 必须用【时态/语态】、【非谓语】、【三大从句】等【中括号标签】开头。rule_summary 用 1-2 句概括该句最核心的语法亮点。
 
 ▎Tier 1 · 句式 (patterns) — 2-5 个含占位符的可复用结构
 { "pattern": "[index] climbed/fell X basis points to Y%", "meaning": "...", "example": "原句", "translation": "原译" }
@@ -1615,14 +1682,21 @@ type 必须是 organization/person/place/index/event/currency/instrument/company
 { "name": "Federal Reserve", "type": "organization", "translation": "美联储", "note": "..." }
 
 ▎Tier 4 · 词汇 (vocab) — 5-12 个 CET-4 以上金融/学术单词
-对每个必须给 synonyms 数组 (2-4 个近义词附 Collins 风格辨析)
+对每个必须给 synonyms 数组 (2-4 个近义词附 Collins 风格辨析)，以及 deep_analysis（词根分析或深度语境解析，1-2 句）
 { "word": "hawkish", "phonetic": "/.../", "pos": "adj.", "translation": "...", "note": "...",
   "replacements": "aggressive, hardline",
   "synonyms": [{"word":"aggressive","zh":"激进的","diff":"语气更强"}, ...],
-  "examples": [{"en":"...","zh":"..."}] }
+  "examples": [{"en":"...","zh":"..."}],
+  "deep_analysis": "词根 hawk（鹰）+ -ish，引申为鹰派立场；金融语境中常指倾向加息的货币政策态度。" }
+
+▎易混淆词汇对比 (comparative_analysis) — 根节点数组，2-4 组，选取本文出现的近义/易混词
+{ "word_a": "...", "translation_a": "...", "word_b": "...", "translation_b": "...", "difference": "辨析说明" }
+
+▎商业情境翻译练习 (exercise) — 根节点对象，基于本文主题出一道英译中或中译英练习
+{ "question": "练习题目原文", "hint": "语境提示（可选）", "answer": "参考译文" }
 
 【输出 JSON】
-{ "title": "...", "fullTranslation": "...", "sentences": [...], "patterns": [...], "phrases": [...], "properNouns": [...], "vocab": [...] }
+{ "title": "...", "fullTranslation": "...", "sentences": [...], "patterns": [...], "phrases": [...], "properNouns": [...], "vocab": [...], "comparative_analysis": [...], "exercise": { "question": "...", "hint": "...", "answer": "..." } }
 
 【待分析原文】
 ${text}`;
@@ -1657,6 +1731,7 @@ function mergeAnalyses(parts) {
     title: parts[0]?.title || 'Untitled',
     fullTranslation: parts.map(p => p.fullTranslation || '').filter(Boolean).join('\n\n'),
     sentences: [], patterns: [], phrases: [], properNouns: [], vocab: [],
+    comparative_analysis: [], exercise: {},
   };
   let sentenceOffset = 0;
   for (const p of parts) {
@@ -1666,6 +1741,10 @@ function mergeAnalyses(parts) {
     (p.phrases || []).forEach(x => { if (!merged.phrases.find(y => y.phrase === x.phrase)) merged.phrases.push(x); });
     (p.properNouns || []).forEach(x => { if (!merged.properNouns.find(y => y.name === x.name)) merged.properNouns.push(x); });
     (p.vocab || []).forEach(x => { if (!merged.vocab.find(y => y.word === x.word)) merged.vocab.push(x); });
+    (p.comparative_analysis || []).forEach(x => {
+      if (!merged.comparative_analysis.find(y => y.word_a === x.word_a && y.word_b === x.word_b)) merged.comparative_analysis.push(x);
+    });
+    if (!merged.exercise?.question && p.exercise?.question) merged.exercise = p.exercise;
   }
   return merged;
 }
@@ -1746,6 +1825,8 @@ function robustJsonParse(text) {
       phrases: extractArrayItems(cleaned, 'phrases'),
       properNouns: extractArrayItems(cleaned, 'properNouns'),
       vocab: extractArrayItems(cleaned, 'vocab'),
+      comparative_analysis: extractArrayItems(cleaned, 'comparative_analysis'),
+      exercise: (() => { try { const s = extractStringField(cleaned, 'exercise'); return s ? JSON.parse(s) : {}; } catch { return {}; } })(),
     };
   } catch (e) {}
   throw new Error('JSON 解析失败，模型可能返回了非结构化内容');
@@ -2040,7 +2121,10 @@ function buildSentenceHTML(s, a) {
   let grHtml = '';
   if (s.grammar?.skeleton) {
     const notesHtml = (s.grammar.notes || []).map(n => `<li>${n.replace(/【([^】]+)】/g, '<span class="gr-tag">$1</span>')}</li>`).join('');
-    grHtml = `<div class="gr-skeleton"><span class="gr-skeleton-label">Skeleton</span>${escapeHtml(s.grammar.skeleton)}</div><ul class="gr-list">${notesHtml}</ul>`;
+    const ruleSummaryHtml = s.grammar.rule_summary
+      ? `<div class="rule-summary"><span class="rule-summary-label">RULE</span>${escapeHtml(s.grammar.rule_summary)}</div>`
+      : '';
+    grHtml = `<div class="gr-skeleton"><span class="gr-skeleton-label">Skeleton</span>${escapeHtml(s.grammar.skeleton)}</div><ul class="gr-list">${notesHtml}</ul>${ruleSummaryHtml}`;
   } else if (typeof s.grammar === 'string') grHtml = escapeHtml(s.grammar);
   const textHtml = highlightSentenceHTML(s, a);
   return `<div class="sent-inner">
@@ -2097,6 +2181,34 @@ function renderSentences() {
     attachSentenceEvents(row, s);
     box.appendChild(row);
   });
+  const ca = a.comparative_analysis;
+  if (Array.isArray(ca) && ca.length) {
+    const compPanel = document.createElement('div');
+    compPanel.className = 'comparative-panel';
+    compPanel.innerHTML = `<div class="panel-title">▸ 易混淆词汇辨析</div>` +
+      ca.map(item => `<div class="comp-item">
+        <div><div class="comp-word">${escapeHtml(item.word_a || '')}</div><div class="comp-zh">${escapeHtml(item.translation_a || '')}</div></div>
+        <div><div class="comp-word">${escapeHtml(item.word_b || '')}</div><div class="comp-zh">${escapeHtml(item.translation_b || '')}</div></div>
+        ${item.difference ? `<div class="comp-diff">${escapeHtml(item.difference)}</div>` : ''}
+      </div>`).join('');
+    box.insertBefore(compPanel, box.firstChild);
+  }
+  const ex = a.exercise;
+  if (ex?.question) {
+    const exPanel = document.createElement('div');
+    exPanel.className = 'exercise-panel';
+    exPanel.innerHTML = `<div class="panel-title">▸ 商业情境翻译练习</div>
+      <div class="exercise-q">${escapeHtml(ex.question)}</div>
+      ${ex.hint ? `<div class="exercise-hint">提示：${escapeHtml(ex.hint)}</div>` : ''}
+      <button class="exercise-reveal-btn">▾ 查看参考答案</button>
+      <div class="exercise-answer">${escapeHtml(ex.answer || '')}</div>`;
+    exPanel.querySelector('.exercise-reveal-btn').addEventListener('click', function () {
+      const ans = this.nextElementSibling;
+      ans.classList.toggle('visible');
+      this.textContent = ans.classList.contains('visible') ? '▲ 收起答案' : '▾ 查看参考答案';
+    });
+    box.appendChild(exPanel);
+  }
 }
 
 function buildVocabCardHTML(w, isSaved, showSrs = false, showHistory = false) {
@@ -2179,6 +2291,7 @@ function buildVocabCardHTML(w, isSaved, showSrs = false, showHistory = false) {
         ${phoneticHtml} ${posHtml} ${srsBadgeHtml} ${historyBadgeHtml}
       </div>
       <div class="zh">${escapeHtml(w.translation || '')}</div>
+      ${w.deep_analysis ? `<div class="deep-analysis"><span class="deep-analysis-label">DEEP</span>${escapeHtml(w.deep_analysis)}</div>` : ''}
       ${w.note ? `<div class="note">${escapeHtml(w.note)}</div>` : ''}
       ${synHtml} ${collocHtml} ${similarHtml} ${historyHtml} ${examplesHtml}
     </div>
