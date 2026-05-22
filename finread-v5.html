@@ -1044,6 +1044,7 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
           <div class="input-label">Source Text</div>
           <div style="display:flex;gap:8px;">
             <button class="btn-base" id="btnFetchNews">⚡ 快讯</button>
+            <button class="btn-base" id="btnFetchLink">🔗 链接</button>
             <button class="btn-base" id="btnPaste">📋 粘贴</button>
             <button class="btn-base" id="btnSample">✦ 示例</button>
             <button class="btn-base hidden" id="btnClear">✕ 清空</button>
@@ -1543,6 +1544,42 @@ const show = (s) => $(s).classList.remove('hidden');
 const hide = (s) => $(s).classList.add('hidden');
 const escapeHtml = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const hasChinese = (s) => /[\u4e00-\u9fa5]/.test(s);
+const isUrl = s => /^https?:\/\/.{4}/i.test(s.trim());
+
+function extractArticleText(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  // \u79fb\u9664\u566a\u97f3\u5143\u7d20
+  ['script','style','noscript','nav','header','footer','aside','iframe',
+   '.nav','.navigation','.sidebar','.ad','.advertisement',
+   '.breadcrumb','.related','.recommend','.comment','.share','.social'].forEach(sel => {
+    try { doc.querySelectorAll(sel).forEach(el => el.remove()); } catch {}
+  });
+  const cleanText = el => {
+    el.querySelectorAll('script,style,noscript').forEach(e => e.remove());
+    return el.textContent.replace(/[ \t]{2,}/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+  };
+  // \u4f18\u5148\u5c1d\u8bd5\u8bed\u4e49\u5316\u6b63\u6587\u5bb9\u5668
+  const SELECTORS = [
+    'article', 'main', '[role="main"]',
+    '.article-content', '.article-body', '.article-detail', '#article-content',
+    '.post-content', '.entry-content', '.content-body', '.news-content',
+    '.detail-content', '#content', '#main', '.content',
+  ];
+  for (const sel of SELECTORS) {
+    try {
+      const el = doc.querySelector(sel);
+      if (!el) continue;
+      const t = cleanText(el);
+      if (t.length > 150) return t;
+    } catch {}
+  }
+  // \u56de\u9000\uff1a\u62fc\u63a5\u6240\u6709\u6bb5\u843d
+  const paras = [...doc.querySelectorAll('p')]
+    .map(p => p.textContent.trim()).filter(t => t.length > 25).join('\n\n');
+  if (paras.length > 100) return paras;
+  // \u6700\u7ec8\u515c\u5e95\uff1abody \u5168\u6587
+  return cleanText(doc.body);
+}
 const getEnText = (original, translation) => hasChinese(original) ? translation : original;
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 
@@ -3421,6 +3458,46 @@ function bindEvents() {
     } finally {
       btn.disabled = false;
       btn.textContent = '⚡ 快讯';
+    }
+  });
+  $('#btnFetchLink').addEventListener('click', async () => {
+    const raw = $('#newsInput').value.trim();
+    if (!isUrl(raw)) {
+      toast('请先在输入框中粘贴文章链接（以 http 开头）', 'error');
+      $('#newsInput').focus();
+      return;
+    }
+    const btn = $('#btnFetchLink');
+    btn.disabled = true;
+    btn.textContent = '获取中...';
+    try {
+      const PROXIES = [
+        u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+        u => 'https://corsproxy.io/?' + encodeURIComponent(u),
+      ];
+      const fetchTO = (url, ms = 12000) => {
+        const ctrl = new AbortController();
+        const id = setTimeout(() => ctrl.abort(), ms);
+        return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(id));
+      };
+      let html = null;
+      for (const mkProxy of PROXIES) {
+        try {
+          const res = await fetchTO(mkProxy(raw));
+          if (res.ok) { html = await res.text(); break; }
+        } catch {}
+      }
+      if (!html) throw new Error('无法获取页面，请确认链接可访问');
+      const text = extractArticleText(html);
+      if (!text || text.length < 80) throw new Error('未能提取到有效正文，该网站可能需要登录或有反爬限制');
+      $('#newsInput').value = text;
+      onInputChange();
+      toast(`文章获取成功（${text.length} 字符）`, 'success');
+    } catch (err) {
+      toast('获取失败：' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '🔗 链接';
     }
   });
   $('#btnClear').addEventListener('click', () => { $('#newsInput').value = ''; onInputChange(); });
