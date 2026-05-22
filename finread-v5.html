@@ -921,15 +921,49 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
   .meta-bar { padding:7px 20px; }
 }
 @media (max-width: 480px) {
+  /* ── 1. 全局导航与顶栏 ── */
+  .masthead-inner { padding:10px 14px; gap:8px; }
+  /* 横向平滑滚动，隐藏滚动条 */
+  nav.tabs { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none; }
+  nav.tabs::-webkit-scrollbar { display:none; }
+  nav.tabs button { flex:0 0 auto; padding:6px 12px; font-size:11px; }
+  /* 隐藏次要状态：日期 + 模型驱动 + 同步指示点 */
+  #dateLabel { display:none; }
+  .meta-stat:has(#modelBadge) { display:none; }
+  #syncStatusInline { display:none; }
+  .meta-bar { padding:6px 14px; }
+  .meta-stats { gap:10px; }
+
+  /* ── 2. 控制栏按钮网格化 ── */
+  .controls-group {
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:5px;
+  }
+  .controls-group .btn-base,
+  .controls-group .toggle-pill {
+    width:100%; text-align:center; justify-content:center;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    padding:5px 4px;
+  }
+
+  /* ── 3. 全局留白缩减 ── */
+  main { padding:20px 14px max(56px, calc(48px + env(safe-area-inset-bottom))); }
+  .article-header { margin-bottom:20px; padding-bottom:16px; }
+  .full-translation-box { padding:16px; margin-bottom:22px; }
+  .sent { padding:12px 14px; margin:0 -14px 4px; }
+
+  /* ── 4. 字体排版微调 ── */
+  .article-body { font-size:15.5px; line-height:1.75; }
+  .full-translation-box { font-size:14px; line-height:1.65; }
+
+  /* ── 5. 保留原有小屏覆盖 ── */
   .hero-title { font-size:28px; }
-  .tier-intro { grid-template-columns:1fr; }
   .vocab-head h1 { font-size:28px; }
   .flip-card { height:360px; }
   .flip-word { font-size:28px; }
   .vocab-card { padding:18px; }
   .modal { padding:24px; }
-  .masthead-inner { padding:12px 16px; }
-  main { padding:24px 16px 56px; }
 }
 </style>
 </head>
