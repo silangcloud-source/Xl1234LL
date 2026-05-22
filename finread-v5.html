@@ -6142,6 +6142,7 @@
         <button class="icon-toggle hdr-util" id="btnClearAll" title="清空全部缓存">⊘ 清空</button>
         <button class="icon-toggle notion-btn" id="notionBtn" title="Notion 同步">N</button>
         <button class="icon-toggle notion-btn" id="gistBtn" title="GitHub Gist 同步">G</button>
+        <button class="icon-toggle notion-btn" id="jsonbinBtn" title="JSONBin 同步">J</button>
         <button class="icon-toggle" id="themeToggle" title="主题切换">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="5" />
@@ -6859,6 +6860,73 @@
     </div>
   </div>
 
+  <!-- ── JSONBin 同步 Modal ── -->
+  <div id="jsonbinModal" class="modal-bg hidden">
+    <div class="modal">
+      <h2>☁ JSONBin 同步</h2>
+      <p class="modal-sub">免费云端同步，无需服务器。词卡 + 复习日志跨设备实时共享。</p>
+      <div class="notion-status-row" id="jbStatusRow">
+        <span class="dot"></span>
+        <span id="jbStatusText">未连接</span>
+        <span id="jbStatusMeta" style="margin-left:auto;font-size:11px;color:var(--text-soft);"></span>
+      </div>
+
+      <div class="modal-tabs" style="margin:14px 0 10px;">
+        <button class="active" data-jb-tab="config">配置</button>
+        <button data-jb-tab="sync">同步</button>
+        <button data-jb-tab="help">说明</button>
+      </div>
+
+      <!-- 配置 Tab -->
+      <div id="jbTabConfig">
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">Master API Key <span style="font-weight:400;color:var(--text-soft);">（必填）</span></label>
+        <input id="jbApiKeyInput" type="password" placeholder="$2a$10$..." style="width:100%;margin-bottom:10px;font-family:monospace;" />
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">Bin ID <span style="font-weight:400;color:var(--text-soft);">（首次推送后自动填入）</span></label>
+        <input id="jbBinIdInput" type="text" placeholder="留空 → 首次推送自动创建" style="width:100%;margin-bottom:14px;font-family:monospace;" />
+        <div style="display:flex;gap:8px;">
+          <button class="btn-base" id="jbTestBtn" style="flex:1;">🔗 测试连接</button>
+          <button class="btn-primary" id="jbSaveBtn" style="flex:1;">保存</button>
+        </div>
+        <div style="margin-top:14px;padding:10px 12px;background:var(--bg-soft);border-radius:var(--r-md);font-size:11px;color:var(--text-soft);line-height:1.7;">
+          📌 获取 API Key：注册 <strong>jsonbin.io</strong> → 右上角 API Keys → 复制 Master Key（以 $2a$ 开头）
+        </div>
+      </div>
+
+      <!-- 同步 Tab -->
+      <div id="jbTabSync" class="hidden">
+        <button class="btn-primary" id="jbPushBtn" disabled style="width:100%;padding:11px;margin-bottom:8px;">⬆ 推送本地 → JSONBin（全量覆盖）</button>
+        <button class="btn-base" id="jbPullBtn" disabled style="width:100%;padding:11px;margin-bottom:14px;">⬇ 拉取 JSONBin → 本地（智能合并）</button>
+        <label style="font-size:11px;font-weight:600;color:var(--text-soft);">同步日志</label>
+        <textarea id="jbSyncLog" rows="7" readonly
+          style="width:100%;margin-top:4px;font-family:monospace;font-size:11px;background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--r-md);padding:8px;resize:none;color:var(--text-soft);"></textarea>
+      </div>
+
+      <!-- 说明 Tab -->
+      <div id="jbTabHelp" class="hidden">
+        <div style="font-size:12px;line-height:1.8;color:var(--text-soft);">
+          <p style="margin-bottom:8px;"><strong>📋 使用步骤</strong></p>
+          <ol style="padding-left:18px;margin-bottom:12px;">
+            <li>访问 <strong>jsonbin.io</strong> 免费注册</li>
+            <li>右上角 → API Keys → 复制 Master Key</li>
+            <li>粘贴到「配置」→ 保存</li>
+            <li>点「⬆ 推送」完成首次同步，Bin ID 自动填入</li>
+            <li>换台设备：填入同一 Master Key + Bin ID → 点「⬇ 拉取」</li>
+          </ol>
+          <p style="margin-bottom:8px;"><strong>⚠ 注意</strong></p>
+          <ul style="padding-left:18px;">
+            <li>免费套餐限 100 KB/次，超出时词卡仍会同步，文章正文会被省略</li>
+            <li>wordHistory（例句缓存）不同步，可在设备上重新生成</li>
+            <li>推送是全量覆盖，拉取是智能合并（不会丢失本地更新）</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="modal-actions" style="margin-top:16px;">
+        <button class="btn-base" id="jbCloseBtn">关闭</button>
+      </div>
+    </div>
+  </div>
+
   <div id="settingsModal" class="modal-bg hidden">
     <div class="modal">
       <h2>引擎配置</h2>
@@ -7004,6 +7072,7 @@
       chunkThreshold: 'finread:chunkThreshold',
       notion: 'finread:notion',
       gist: 'finread:gist',
+      jsonbin: 'finread:jsonbin',
       studyMode: 'finread:studyMode',
       voice: 'finread:voice',
       reminderTime: 'finread:reminderTime',
@@ -7025,6 +7094,7 @@
       streaming: true, chunkThreshold: DEFAULT_CHUNK_THRESHOLD,
       notion: { token: '', pageId: '', parentId: NOTION_PARENT_DEFAULT, proxyUrl: '', autoSync: 'off', lastSync: 0 },
       gist: { token: '', gistId: '', filename: 'finread-data.json', autoSync: 'off', lastSync: 0 },
+      jsonbin: { apiKey: '', binId: '', lastSync: 0 },
       studyMode: 'en2zh',
       activeId: null, flipIdx: 0, flipped: false,
       showZh: true, showGr: false, showFullTrans: false,
@@ -7370,6 +7440,7 @@
     }
     function persistNotion() { localStorage.setItem(STORE.notion, JSON.stringify(state.notion)); }
     function persistGist() { localStorage.setItem(STORE.gist, JSON.stringify(state.gist)); }
+    function persistJsonbin() { localStorage.setItem(STORE.jsonbin, JSON.stringify(state.jsonbin)); }
 
     function countByTier(tier) { return state.vocab.filter(v => v.tier === tier).length; }
     function getReviewPool() { return state.vocab.filter(v => !v.lastReview || v.due <= Date.now()); }
@@ -9834,6 +9905,197 @@ ${wordList}
       }
     }
 
+    // ══════════════════════════════════════════════════════
+    //  JSONBin.io sync
+    // ══════════════════════════════════════════════════════
+    const JB_BASE = 'https://api.jsonbin.io/v3';
+    const JB_MAX_BYTES = 90 * 1024; // 90 KB safety margin (free tier = 100 KB)
+
+    function jbLog(msg) {
+      const ta = $('#jbSyncLog');
+      if (!ta) return;
+      const ts = new Date().toLocaleTimeString();
+      ta.value = `[${ts}] ${msg}\n` + ta.value;
+    }
+
+    function jbHeaders(extra = {}) {
+      return { 'Content-Type': 'application/json', 'X-Master-Key': state.jsonbin.apiKey, ...extra };
+    }
+
+    function jbBuildPayload(full = true) {
+      const base = {
+        version: 6, updatedAt: Date.now(),
+        vocab: state.vocab,
+        reviewLog: state.reviewLog,
+      };
+      if (full) {
+        // Include articles without full text to save space
+        base.articles = state.articles.map(a => ({
+          id: a.id, title: a.title, url: a.url || '', addedAt: a.addedAt,
+          source: a.source || '', wordCount: a.wordCount || 0,
+        }));
+      }
+      return base;
+    }
+
+    async function jsonbinPush() {
+      if (!state.jsonbin.apiKey) { toast('请先配置 JSONBin API Key', 'error'); return; }
+      switchJsonbinTab('sync');
+      jbLog('开始推送...');
+      $('#jbPushBtn').disabled = true;
+      try {
+        let payload = jbBuildPayload(true);
+        let body = JSON.stringify(payload);
+        if (new Blob([body]).size > JB_MAX_BYTES) {
+          jbLog('数据超过 90KB，省略文章列表后重试...');
+          payload = jbBuildPayload(false);
+          body = JSON.stringify(payload);
+        }
+        let res, data;
+        if (state.jsonbin.binId) {
+          res = await fetch(`${JB_BASE}/b/${state.jsonbin.binId}`, {
+            method: 'PUT', headers: jbHeaders(), body,
+          });
+        } else {
+          res = await fetch(`${JB_BASE}/b`, {
+            method: 'POST',
+            headers: jbHeaders({ 'X-Bin-Name': 'FinRead', 'X-Bin-Private': 'true' }),
+            body,
+          });
+        }
+        if (!res.ok) throw new Error(`HTTP ${res.status} ${await res.text()}`);
+        data = await res.json();
+        if (!state.jsonbin.binId) {
+          state.jsonbin.binId = data.metadata?.id || data.record?.id || data.id;
+          $('#jbBinIdInput').value = state.jsonbin.binId;
+          jbLog(`✓ 已创建 Bin: ${state.jsonbin.binId}`);
+        }
+        state.jsonbin.lastSync = Date.now();
+        persistJsonbin();
+        jbLog(`✓ 推送完成 · ${state.vocab.length} 卡 · ${state.reviewLog.length} 条复习记录`);
+        toast('JSONBin 推送成功 ✓', 'success');
+        updateJsonbinStatus(true);
+      } catch (e) {
+        jbLog(`✗ 推送失败: ${e.message}`);
+        toast('推送失败: ' + e.message.slice(0, 80), 'error', 4000);
+      } finally {
+        $('#jbPushBtn').disabled = false;
+      }
+    }
+
+    async function jsonbinPull() {
+      if (!state.jsonbin.apiKey || !state.jsonbin.binId) { toast('请先配置 API Key 和 Bin ID', 'error'); return; }
+      switchJsonbinTab('sync');
+      jbLog('开始拉取...');
+      $('#jbPullBtn').disabled = true;
+      try {
+        const res = await fetch(`${JB_BASE}/b/${state.jsonbin.binId}/latest`, {
+          headers: { 'X-Master-Key': state.jsonbin.apiKey },
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        const remote = json.record;
+        if (!remote?.vocab) { jbLog('远端无词卡数据，跳过'); toast('远端无数据', 'warning'); return; }
+        jbLog(`远端: ${remote.vocab.length} 卡 · ${remote.reviewLog?.length || 0} 条记录`);
+        // Smart merge
+        const localMap = new Map(state.vocab.map(v => [`${v.tier}::${v.word}`, v]));
+        let added = 0, updated = 0;
+        remote.vocab.forEach(rv => {
+          const k = `${rv.tier}::${rv.word}`;
+          const lv = localMap.get(k);
+          if (!lv) { state.vocab.push(rv); added++; }
+          else if ((rv.lastReview || 0) > (lv.lastReview || 0)) { Object.assign(lv, rv); updated++; }
+        });
+        const tsSet = new Set(state.reviewLog.map(r => r.ts));
+        (remote.reviewLog || []).forEach(r => { if (!tsSet.has(r.ts)) state.reviewLog.push(r); });
+        state.reviewLog.sort((a, b) => a.ts - b.ts);
+        persistVocab(); persistReviewLog();
+        state.jsonbin.lastSync = Date.now();
+        persistJsonbin();
+        jbLog(`✓ 合并完成 · 新增 ${added} 卡 · 更新 ${updated} 卡`);
+        toast(`JSONBin 已合并: +${added} 卡`, 'success');
+        updateJsonbinStatus(true);
+        if (state.view === 'vocab') renderVocabBook();
+        else if (state.view === 'history') renderHistoryView();
+        else if (state.view === 'stats') renderStatsView();
+      } catch (e) {
+        jbLog(`✗ 拉取失败: ${e.message}`);
+        toast('拉取失败: ' + e.message.slice(0, 80), 'error', 4000);
+      } finally {
+        $('#jbPullBtn').disabled = false;
+      }
+    }
+
+    async function jsonbinTest() {
+      if (!state.jsonbin.apiKey) { toast('请先填入 API Key', 'warning'); return; }
+      jbLog('测试连接...');
+      try {
+        const res = await fetch(`${JB_BASE}/b?sortBy=lastModified&order=desc&limit=1`, {
+          headers: { 'X-Master-Key': state.jsonbin.apiKey },
+        });
+        if (res.ok) {
+          jbLog('✓ API Key 有效，连接正常');
+          toast('JSONBin 连接成功 ✓', 'success');
+          updateJsonbinStatus(true);
+        } else {
+          jbLog(`✗ API Key 无效 (${res.status})`);
+          toast('API Key 无效', 'error');
+        }
+      } catch (e) {
+        jbLog(`✗ 连接失败: ${e.message}`);
+        toast('连接失败: ' + e.message.slice(0, 60), 'error');
+      }
+    }
+
+    function updateJsonbinStatus(connected) {
+      const row = $('#jbStatusRow');
+      if (!row) return;
+      if (connected) {
+        row.classList.add('connected');
+        $('#jbStatusText').textContent = '已连接';
+        if (state.jsonbin.lastSync) {
+          const min = Math.round((Date.now() - state.jsonbin.lastSync) / 60000);
+          $('#jbStatusMeta').textContent = min < 1 ? '刚刚同步' : `${min} 分钟前同步`;
+        }
+        $('#jbPushBtn').disabled = false;
+        $('#jbPullBtn').disabled = !state.jsonbin.binId;
+        $('#jsonbinBtn').classList.add('synced');
+      } else {
+        row.classList.remove('connected');
+        $('#jbStatusText').textContent = '未连接';
+        $('#jbPushBtn').disabled = true;
+        $('#jbPullBtn').disabled = true;
+        $('#jsonbinBtn').classList.remove('synced');
+      }
+    }
+
+    function openJsonbinModal() {
+      $('#jbApiKeyInput').value = state.jsonbin.apiKey;
+      $('#jbBinIdInput').value = state.jsonbin.binId;
+      switchJsonbinTab('config');
+      updateJsonbinStatus(!!(state.jsonbin.apiKey && state.jsonbin.lastSync));
+      $('#jsonbinModal').classList.remove('hidden');
+    }
+
+    function closeJsonbinModal() { $('#jsonbinModal').classList.add('hidden'); }
+
+    function switchJsonbinTab(tab) {
+      $$('#jsonbinModal .modal-tabs button').forEach(b => b.classList.toggle('active', b.dataset.jbTab === tab));
+      ['config', 'sync', 'help'].forEach(t => {
+        const el = $(`#jbTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (el) el.classList.toggle('hidden', t !== tab);
+      });
+    }
+
+    function saveJsonbinConfig() {
+      state.jsonbin.apiKey = $('#jbApiKeyInput').value.trim();
+      state.jsonbin.binId = $('#jbBinIdInput').value.trim();
+      persistJsonbin();
+      updateJsonbinStatus(!!state.jsonbin.apiKey);
+      toast('JSONBin 配置已保存', 'success');
+      if (state.jsonbin.apiKey) jsonbinTest();
+    }
+
     let _gistPushTimer = null;
     function gistPushDebounced() {
       if (!state.gist.token) return;
@@ -10591,6 +10853,14 @@ ${tierInstruction}`;
       $('#notionPullBtn').addEventListener('click', notionPull);
       $('#notionExportBtn').addEventListener('click', notionCopyJson);
       $('#gistBtn').addEventListener('click', openGistModal);
+      $('#jsonbinBtn').addEventListener('click', openJsonbinModal);
+      $('#jbCloseBtn').addEventListener('click', closeJsonbinModal);
+      $('#jsonbinModal').addEventListener('click', e => { if (e.target.id === 'jsonbinModal') closeJsonbinModal(); });
+      $$('#jsonbinModal .modal-tabs button').forEach(b => b.addEventListener('click', () => switchJsonbinTab(b.dataset.jbTab)));
+      $('#jbTestBtn').addEventListener('click', jsonbinTest);
+      $('#jbSaveBtn').addEventListener('click', saveJsonbinConfig);
+      $('#jbPushBtn').addEventListener('click', jsonbinPush);
+      $('#jbPullBtn').addEventListener('click', jsonbinPull);
       $('#gistCloseBtn').addEventListener('click', closeGistModal);
       $$('#gistModal .modal-tabs button').forEach(b => { b.addEventListener('click', () => switchGistTab(b.dataset.modalTab)); });
       $('#gistTestBtn').addEventListener('click', gistTestConnection);
@@ -10665,6 +10935,7 @@ ${tierInstruction}`;
           if (!$('#settingsModal').classList.contains('hidden')) { closeSettings(); return; }
           if (!$('#notionModal').classList.contains('hidden')) { closeNotionModal(); return; }
           if (!$('#gistModal').classList.contains('hidden')) { closeGistModal(); return; }
+          if (!$('#jsonbinModal').classList.contains('hidden')) { closeJsonbinModal(); return; }
           if (!$('#customAddModal').classList.contains('hidden')) { hide('#customAddModal'); return; }
         }
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
@@ -10750,6 +11021,10 @@ ${tierInstruction}`;
         const g = JSON.parse(localStorage.getItem(STORE.gist) || '{}');
         state.gist = { ...state.gist, ...g };
       } catch { }
+      try {
+        const jb = JSON.parse(localStorage.getItem(STORE.jsonbin) || '{}');
+        state.jsonbin = { ...state.jsonbin, ...jb };
+      } catch { }
       state.apiKey = localStorage.getItem(STORE.apiKey) || '';
       state.provider = localStorage.getItem(STORE.provider) || 'openrouter';
       state.model = localStorage.getItem(STORE.model) || 'deepseek/deepseek-chat-v3.1';
@@ -10782,6 +11057,7 @@ ${tierInstruction}`;
       updateGoalsBanner();
       updateNotionStatus(!!(state.notion.token && state.notion.lastSync));
       updateGistStatus(!!(state.gist.token && state.gist.lastSync));
+      updateJsonbinStatus(!!(state.jsonbin.apiKey && state.jsonbin.lastSync));
       bindEvents();
       bindKeyboard();
       if (!state.apiKey) openSettings();
