@@ -8836,6 +8836,53 @@ ${wordList}
     }
 
     /* ============================================================
+     *  SHARED SYNC HELPERS  (used by both Notion and JSONBin)
+     * ============================================================ */
+    // Append a timestamped log line to a sync-log textarea
+    function appendSyncLog(selector, msg) {
+      const el = $(selector);
+      if (!el) return;
+      el.value = `[${new Date().toLocaleTimeString()}] ${msg}\n` + el.value;
+    }
+
+    // Smart-merge a remote sync payload into local state.
+    // Returns { added, updated, articleAdded } so callers can report.
+    function mergeRemoteData(remote) {
+      const localMap = new Map(state.vocab.map(v => [`${v.tier}::${v.word}`, v]));
+      let added = 0, updated = 0;
+      (remote.vocab || []).forEach(rv => {
+        const k = `${rv.tier}::${rv.word}`;
+        const lv = localMap.get(k);
+        if (!lv) { state.vocab.push(rv); added++; }
+        else if ((rv.lastReview || 0) > (lv.lastReview || 0)) { Object.assign(lv, rv); updated++; }
+      });
+      const articleIds = new Set(state.articles.map(a => a.id));
+      let articleAdded = 0;
+      (remote.articles || []).forEach(ra => { if (!articleIds.has(ra.id)) { state.articles.push(ra); articleAdded++; } });
+      if (articleAdded) state.articles.sort((a, b) => b.addedAt - a.addedAt);
+      Object.entries(remote.wordHistory || {}).forEach(([k, v]) => {
+        if (!state.wordHistory[k]) state.wordHistory[k] = [];
+        v.forEach(rh => {
+          if (!state.wordHistory[k].find(lh => lh.articleId === rh.articleId && lh.sentenceId === rh.sentenceId)) {
+            state.wordHistory[k].push(rh);
+          }
+        });
+      });
+      const tsSet = new Set(state.reviewLog.map(r => r.ts));
+      (remote.reviewLog || []).forEach(r => { if (!tsSet.has(r.ts)) state.reviewLog.push(r); });
+      state.reviewLog.sort((a, b) => a.ts - b.ts);
+      persistVocab(); persistArticles(); persistWordHistory(); persistReviewLog();
+      return { added, updated, articleAdded };
+    }
+
+    // Re-render whichever data view the user is currently looking at
+    function rerenderActiveDataView() {
+      if (state.view === 'vocab') renderVocabBook();
+      else if (state.view === 'history') renderHistoryView();
+      else if (state.view === 'stats') renderStatsView();
+    }
+
+    /* ============================================================
      *  NOTION SYNC MODULE
      * ============================================================ */
     function notionFetch(endpoint, opts = {}) {
@@ -8862,12 +8909,7 @@ ${wordList}
       return fetch(url, { ...opts, headers });
     }
 
-    function notionLog(msg) {
-      const el = $('#notionSyncLog');
-      if (!el) return;
-      const ts = new Date().toLocaleTimeString();
-      el.value = `[${ts}] ${msg}\n` + el.value;
-    }
+    const notionLog = msg => appendSyncLog('#notionSyncLog', msg);
 
     async function notionTestConnection() {
       if (!state.notion.token) { toast('请先填入 Token', 'error'); return; }
@@ -8985,37 +9027,13 @@ ${wordList}
           toast('远端无数据', 'warning'); return;
         }
         notionLog(`远端: ${remote.vocab?.length || 0} 卡 · ${remote.articles?.length || 0} 文章 · 更新于 ${new Date(remote.updatedAt).toLocaleString()}`);
-        const localMap = new Map(state.vocab.map(v => [`${v.tier}::${v.word}`, v]));
-        let added = 0, updated = 0;
-        (remote.vocab || []).forEach(rv => {
-          const k = `${rv.tier}::${rv.word}`;
-          const lv = localMap.get(k);
-          if (!lv) { state.vocab.push(rv); added++; }
-          else if ((rv.lastReview || 0) > (lv.lastReview || 0)) { Object.assign(lv, rv); updated++; }
-        });
-        const articleIds = new Set(state.articles.map(a => a.id));
-        let articleAdded = 0;
-        (remote.articles || []).forEach(ra => { if (!articleIds.has(ra.id)) { state.articles.push(ra); articleAdded++; } });
-        state.articles.sort((a, b) => b.addedAt - a.addedAt);
-        Object.entries(remote.wordHistory || {}).forEach(([k, v]) => {
-          if (!state.wordHistory[k]) state.wordHistory[k] = [];
-          v.forEach(rh => {
-            if (!state.wordHistory[k].find(lh => lh.articleId === rh.articleId && lh.sentenceId === rh.sentenceId)) {
-              state.wordHistory[k].push(rh);
-            }
-          });
-        });
-        const tsSet = new Set(state.reviewLog.map(r => r.ts));
-        (remote.reviewLog || []).forEach(r => { if (!tsSet.has(r.ts)) state.reviewLog.push(r); });
-        state.reviewLog.sort((a, b) => a.ts - b.ts);
-        persistVocab(); persistArticles(); persistWordHistory(); persistReviewLog();
+        const { added, updated, articleAdded } = mergeRemoteData(remote);
         state.notion.lastSync = Date.now();
         persistNotion();
         notionLog(`✓ 合并完成 · 新增 ${added} 卡 · 更新 ${updated} 卡 · 新增 ${articleAdded} 文章`);
         toast(`已合并: +${added} 卡, +${articleAdded} 文章`, 'success');
         updateNotionStatus(true);
-        if (state.view === 'vocab') renderVocabBook();
-        else if (state.view === 'history') renderHistoryView();
+        rerenderActiveDataView();
       } catch (e) {
         notionLog(`✗ 拉取失败: ${e.message}`);
         toast('拉取失败: ' + e.message.slice(0, 80), 'error', 4000);
@@ -9069,12 +9087,7 @@ ${wordList}
     const JB_BASE = 'https://api.jsonbin.io/v3';
     const JB_MAX_BYTES = 90 * 1024; // 90 KB safety margin (free tier = 100 KB)
 
-    function jbLog(msg) {
-      const ta = $('#jbSyncLog');
-      if (!ta) return;
-      const ts = new Date().toLocaleTimeString();
-      ta.value = `[${ts}] ${msg}\n` + ta.value;
-    }
+    const jbLog = msg => appendSyncLog('#jbSyncLog', msg);
 
     function jbHeaders(extra = {}) {
       return { 'Content-Type': 'application/json', 'X-Master-Key': state.jsonbin.apiKey, ...extra };
@@ -9155,27 +9168,13 @@ ${wordList}
         const remote = json.record;
         if (!remote?.vocab) { jbLog('远端无词卡数据，跳过'); toast('远端无数据', 'warning'); return; }
         jbLog(`远端: ${remote.vocab.length} 卡 · ${remote.reviewLog?.length || 0} 条记录`);
-        // Smart merge
-        const localMap = new Map(state.vocab.map(v => [`${v.tier}::${v.word}`, v]));
-        let added = 0, updated = 0;
-        remote.vocab.forEach(rv => {
-          const k = `${rv.tier}::${rv.word}`;
-          const lv = localMap.get(k);
-          if (!lv) { state.vocab.push(rv); added++; }
-          else if ((rv.lastReview || 0) > (lv.lastReview || 0)) { Object.assign(lv, rv); updated++; }
-        });
-        const tsSet = new Set(state.reviewLog.map(r => r.ts));
-        (remote.reviewLog || []).forEach(r => { if (!tsSet.has(r.ts)) state.reviewLog.push(r); });
-        state.reviewLog.sort((a, b) => a.ts - b.ts);
-        persistVocab(); persistReviewLog();
+        const { added, updated } = mergeRemoteData(remote);
         state.jsonbin.lastSync = Date.now();
         persistJsonbin();
         jbLog(`✓ 合并完成 · 新增 ${added} 卡 · 更新 ${updated} 卡`);
         toast(`JSONBin 已合并: +${added} 卡`, 'success');
         updateJsonbinStatus(true);
-        if (state.view === 'vocab') renderVocabBook();
-        else if (state.view === 'history') renderHistoryView();
-        else if (state.view === 'stats') renderStatsView();
+        rerenderActiveDataView();
       } catch (e) {
         jbLog(`✗ 拉取失败: ${e.message}`);
         toast('拉取失败: ' + e.message.slice(0, 80), 'error', 4000);
