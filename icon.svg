@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" fill="#6366f1"/>
+  <!-- F spine -->
+  <rect x="56" y="38" width="22" height="116" rx="5" fill="white"/>
+  <!-- F top bar -->
+  <rect x="56" y="38" width="84" height="23" rx="5" fill="white"/>
+  <!-- F middle bar -->
+  <rect x="56" y="93" width="66" height="20" rx="4" fill="white"/>
+  <!-- subtle tagline dot -->
+  <circle cx="152" cy="152" r="7" fill="rgba(255,255,255,0.35)"/>
+</svg>
