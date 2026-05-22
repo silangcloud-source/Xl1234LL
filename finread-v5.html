@@ -1009,6 +1009,7 @@ footer { border-top:1px solid var(--border); margin-top:60px; background: var(--
         <div class="input-head">
           <div class="input-label">Source Text</div>
           <div style="display:flex;gap:8px;">
+            <button class="btn-base" id="btnFetchNews">⚡ 快讯</button>
             <button class="btn-base" id="btnPaste">📋 粘贴</button>
             <button class="btn-base" id="btnSample">✦ 示例</button>
             <button class="btn-base hidden" id="btnClear">✕ 清空</button>
@@ -3318,6 +3319,31 @@ function bindEvents() {
     catch (e) { toast('粘贴失败，请手动 Ctrl+V'); }
   });
   $('#btnSample').addEventListener('click', () => { $('#newsInput').value = SAMPLE; onInputChange(); });
+  $('#btnFetchNews').addEventListener('click', async () => {
+    const btn = $('#btnFetchNews');
+    btn.disabled = true;
+    btn.textContent = '获取中...';
+    try {
+      const proxy = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://rsshub.app/jin10/topic/71');
+      const res = await fetch(proxy);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const xml = await res.text();
+      const doc = new DOMParser().parseFromString(xml, 'text/xml');
+      const item = doc.querySelector('item');
+      if (!item) throw new Error('RSS 中未找到 item');
+      const strip = s => (s || '').replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').replace(/&#\d+;/g, '').trim();
+      const title = strip(item.querySelector('title')?.textContent);
+      const desc  = strip(item.querySelector('description')?.textContent);
+      $('#newsInput').value = [title, desc].filter(Boolean).join('\n\n');
+      onInputChange();
+      toast('快讯获取成功', 'success');
+    } catch (err) {
+      toast('获取失败: ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '⚡ 快讯';
+    }
+  });
   $('#btnClear').addEventListener('click', () => { $('#newsInput').value = ''; onInputChange(); });
   $('#btnAnalyze').addEventListener('click', doAnalyze);
   $('#btnCancel').addEventListener('click', cancelAnalyze);
