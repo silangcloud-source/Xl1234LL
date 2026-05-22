@@ -9771,15 +9771,21 @@ ${wordList}
       btn.disabled = true;
       btn.textContent = '恢复中…';
       try {
-        // Try with token first (private gists), fall back to anonymous
+        // Raw revision URLs are public; Authorization header triggers CORS preflight
+        // which gist.githubusercontent.com rejects — so try anonymous first,
+        // fall back to token only if needed.
         let res;
-        if (state.gist.token) {
-          res = await fetch(url, { headers: { Authorization: `Bearer ${state.gist.token}`, Accept: 'application/json' } });
-        }
-        if (!res || !res.ok) {
+        try {
           res = await fetch(url);
+        } catch (_) {}
+        if (!res || !res.ok) {
+          if (state.gist.token) {
+            try {
+              res = await fetch(url, { headers: { Authorization: `Bearer ${state.gist.token}` } });
+            } catch (_) {}
+          }
         }
-        if (!res.ok) throw new Error(`HTTP ${res.status} — 无法访问该 URL`);
+        if (!res || !res.ok) throw new Error(`无法访问该 URL (HTTP ${res?.status ?? 'network error'})`);
         const remote = await res.json();
         if (!remote.vocab && !remote.articles) {
           gistLog('此快照不含词卡或文章数据，已跳过');
