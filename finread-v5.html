@@ -991,6 +991,44 @@ aside.sticky::-webkit-scrollbar-thumb { background: var(--border); border-radius
 .flip-mode-toggle button { flex:1; background:transparent; border:none; cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; color: var(--text-muted); padding:6px 5px; border-radius:7px; transition:all .15s; }
 .flip-mode-toggle button.active { background: var(--bg-card); color: var(--accent); box-shadow: var(--shadow-sm); }
 
+/* ── Pomodoro Session ── */
+.pomo-bar {
+  display:flex; align-items:center; gap:10px;
+  background:var(--accent-light); border:1px solid var(--accent);
+  border-radius:var(--r-md); padding:10px 14px; margin-bottom:12px;
+}
+.pomo-timer {
+  font-family:'Fraunces',Georgia,serif; font-size:24px; font-weight:700;
+  color:var(--accent); min-width:58px; letter-spacing:-.02em; line-height:1;
+  font-variant-numeric: tabular-nums;
+}
+.pomo-timer.urgent { color:var(--bear); animation:pulse 1s infinite; }
+.pomo-meta { flex:1; display:flex; flex-direction:column; gap:2px; }
+.pomo-round { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; color:var(--accent); }
+.pomo-prog  { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--text-muted); }
+.pomo-stop {
+  background:none; border:1px solid var(--border-strong); border-radius:var(--r-sm);
+  padding:4px 9px; font-size:11px; font-family:'JetBrains Mono',monospace;
+  color:var(--text-muted); cursor:pointer; transition:all .15s; flex-shrink:0;
+}
+.pomo-stop:hover { background:var(--bear-light); border-color:var(--bear); color:var(--bear); }
+.pomo-start-btn {
+  width:100%; padding:11px 10px; margin-bottom:12px;
+  background:linear-gradient(135deg, var(--accent), var(--accent-hover));
+  color:#fff; border:none; border-radius:var(--r-md); cursor:pointer;
+  font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600;
+  letter-spacing:.04em; transition:all .2s; box-shadow:var(--shadow-sm);
+}
+.pomo-start-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:var(--shadow-glow); }
+.pomo-start-btn:disabled { opacity:.5; cursor:not-allowed; }
+.pomo-start-btn.no-due { background:linear-gradient(135deg, var(--bull), #047857); }
+.pomo-round-badge {
+  display:inline-block; padding:1px 6px; border-radius:10px;
+  background:var(--accent-light); color:var(--accent);
+  font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:600;
+  margin-left:6px; vertical-align:middle;
+}
+
 /* ================================================================
    HISTORY / STATS VIEWS
    ================================================================ */
@@ -2213,6 +2251,17 @@ nav.tabs button:active { transform: scale(.95); }
       <aside class="sticky">
         <div class="kicker" style="margin-bottom:6px;">Spaced Repetition · SM-2</div>
         <div class="side-title" style="margin-bottom:16px;">闪卡复习</div>
+        <!-- ⏱ Pomodoro timer strip (hidden until session starts) -->
+        <div id="pomoBar" class="pomo-bar hidden">
+          <div class="pomo-timer" id="pomoTimer">25:00</div>
+          <div class="pomo-meta">
+            <span class="pomo-round" id="pomoRound">第 1 轮</span>
+            <span class="pomo-prog" id="pomoProg">0 / 0 已复习</span>
+          </div>
+          <button class="pomo-stop" id="pomoStop">结束</button>
+        </div>
+        <!-- Start button (hidden when session is active) -->
+        <button id="pomoStart" class="pomo-start-btn" title="最多 50 词 · 25 分钟番茄钟 · 快速多轮">⚡ 开始番茄复习 <span id="pomoDueHint"></span></button>
         <div class="flip-mode-toggle">
           <button class="active" data-mode="en2zh">🇺🇸 → 🇨🇳 看英猜中</button>
           <button data-mode="zh2en">🇨🇳 → 🇺🇸 中译英</button>
@@ -2680,8 +2729,9 @@ nav.tabs button:active { transform: scale(.95); }
 const SAMPLE = `The Federal Reserve held interest rates steady on Wednesday, signaling a more cautious approach as policymakers grapple with persistent inflation and a softening labor market. Chair Jerome Powell emphasized that the central bank's decisions would remain data-dependent, with markets now pricing in only one rate cut by year-end. The yield on the 10-year U.S. Treasury note climbed 8 basis points to 4.32%, while the S&P 500 pared earlier gains to close marginally lower. European Central Bank officials are expected to follow suit, maintaining their hawkish stance amid rising commodity prices.`;
 
 const VERSION_CONFIG = {
-  current: 'v6.0',
+  current: 'v6.1',
   changelog: [
+    '2026-05-22  v6.1  番茄复习：25分钟倒计时 · 50词单次上限 · 快速多轮巩固未掌握词 · 自动翻面重置',
     '2026-05-22  v6.0  GitHub Gist 跨设备同步：卡组/档案/复习日志 · 智能合并 · 启动拉取+变化推送',
     '2026-05-22  v5.9  修复电脑/手机精读空白：两处lookbehind正则兼容旧Safari · finalizeAnalysis容错保护',
     '2026-05-22  v5.8  AI造句：自动将10个词编成金融英语例句 · 词语高亮 · 一键重新生成',
@@ -3101,6 +3151,7 @@ function updateAllCounts() {
   const phPct = Math.min(100, Math.round(phCount / PHRASE_GOAL * 100));
   $('#phraseProgressFill').style.width = phPct + '%';
   $('#phraseProgressLabel').textContent = `完成度 ${phPct}%`;
+  pomoUpdateStartHint();
 }
 
 function extractArrayItems(text, key) {
@@ -4359,7 +4410,143 @@ function renderVocabPagination(container, totalPages, totalItems) {
   container.parentNode.insertBefore(nav, container.nextSibling);
 }
 
+/* ============================================================
+ *  POMODORO SESSION
+ * ============================================================ */
+const POMO_DURATION    = 25 * 60; // seconds
+const POMO_LIMIT       = 50;      // max cards per session
+
+let _pomo = {
+  active: false, queue: [], idx: 0, round: 1,
+  againQueue: [], remaining: POMO_DURATION, intervalId: null,
+};
+
+function pomoFmt(secs) {
+  const m = Math.floor(secs / 60), s = secs % 60;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function pomoTick() {
+  _pomo.remaining--;
+  const el = $('#pomoTimer');
+  if (el) { el.textContent = pomoFmt(_pomo.remaining); el.classList.toggle('urgent', _pomo.remaining <= 60); }
+  if (_pomo.remaining <= 0) { pomoPause(); pomoOnTimerEnd(); }
+}
+
+function pomoOnTimerEnd() {
+  toast('⏰ 25分钟到！休息5分钟再继续', 'success');
+  pomoShowRoundSummary(true);
+}
+
+function pomoUpdateProgress() {
+  const el = $('#pomoProg');
+  if (el) el.textContent = `${_pomo.idx} / ${_pomo.queue.length} 已复习`;
+  const re = $('#pomoRound');
+  if (re) re.textContent = `第 ${_pomo.round} 轮`;
+}
+
+function pomoUpdateStartHint() {
+  const dueCount = getReviewPool().length;
+  const hint = $('#pomoDueHint');
+  if (!hint) return;
+  if (dueCount > 0) {
+    hint.textContent = `· ${Math.min(dueCount, POMO_LIMIT)} 词`;
+    hint.style.opacity = '.7';
+  } else {
+    hint.textContent = '';
+  }
+}
+
+function pomoStart() {
+  if (!state.vocab.length) { toast('卡组为空，请先添加词汇', 'warning'); return; }
+  const due = getReviewPool();
+  let queue;
+  if (due.length > 0) {
+    queue = [...due].sort((a, b) => (a.due || 0) - (b.due || 0)).slice(0, POMO_LIMIT);
+  } else {
+    // No due cards — shuffle all for a free review round
+    queue = [...state.vocab].sort(() => Math.random() - .5).slice(0, POMO_LIMIT);
+    toast(`当前没有到期词汇，随机抽取 ${queue.length} 词复习`, 'info');
+  }
+  _pomo.active    = true;
+  _pomo.queue     = queue;
+  _pomo.idx       = 0;
+  _pomo.round     = 1;
+  _pomo.againQueue = [];
+  _pomo.remaining = POMO_DURATION;
+  state.flipIdx   = 0;
+  state.flipped   = false;
+  $('#flipInner').classList.remove('flipped');
+  show('#pomoBar');
+  hide('#pomoStart');
+  $('#pomoTimer').textContent = pomoFmt(_pomo.remaining);
+  $('#pomoTimer').classList.remove('urgent');
+  pomoUpdateProgress();
+  _pomo.intervalId = setInterval(pomoTick, 1000);
+  renderFlipCard();
+  if (due.length > 0) toast(`开始复习！${queue.length} 词 · 25分钟番茄钟 · 加油`, 'success');
+}
+
+function pomoPause() {
+  if (_pomo.intervalId) { clearInterval(_pomo.intervalId); _pomo.intervalId = null; }
+}
+
+function pomoStop() {
+  pomoPause();
+  _pomo.active = false;
+  _pomo.queue  = [];
+  hide('#pomoBar');
+  show('#pomoStart');
+  state.flipIdx = 0;
+  state.flipped = false;
+  $('#flipInner').classList.remove('flipped');
+  pomoUpdateStartHint();
+  renderFlipCard();
+}
+
+function pomoShowRoundSummary(timerExpired) {
+  pomoPause();
+  const total      = _pomo.queue.length;
+  const againCount = _pomo.againQueue.length;
+  const goodCount  = total - againCount;
+  const prefix     = timerExpired ? '⏰ 时间到！\n' : '';
+  if (againCount > 0) {
+    showDialog({
+      title:       `第 ${_pomo.round} 轮完成`,
+      message:     `${prefix}✓ 掌握 ${goodCount} 词　✗ 待巩固 ${againCount} 词\n\n继续第 ${_pomo.round + 1} 轮复习这 ${againCount} 个词，或结束本次番茄？`,
+      icon:        'success',
+      confirmText: `开始第 ${_pomo.round + 1} 轮（${againCount} 词）`,
+      cancelText:  '结束本次复习',
+    }).then(ok => { if (ok) pomoNextRound(); else pomoStop(); });
+  } else {
+    showDialog({
+      title:       '全部掌握！',
+      message:     `${prefix}🎉 ${total} 词全部掌握！\n本次番茄复习圆满完成。`,
+      icon:        'success',
+      confirmText: '太棒了',
+    }).then(() => pomoStop());
+  }
+}
+
+function pomoNextRound() {
+  _pomo.round++;
+  _pomo.queue     = [..._pomo.againQueue];
+  _pomo.againQueue = [];
+  _pomo.idx       = 0;
+  _pomo.remaining = POMO_DURATION;
+  state.flipIdx   = 0;
+  state.flipped   = false;
+  $('#flipInner').classList.remove('flipped');
+  $('#pomoTimer').textContent = pomoFmt(_pomo.remaining);
+  $('#pomoTimer').classList.remove('urgent');
+  pomoUpdateProgress();
+  _pomo.intervalId = setInterval(pomoTick, 1000);
+  renderFlipCard();
+  toast(`第 ${_pomo.round} 轮开始！${_pomo.queue.length} 词需要巩固`, 'warning');
+}
+
 function getFlipPool() {
+  if (_pomo.active) return _pomo.queue;
   return state.vocab.filter(w => {
     if (state.vocabFilter === 'due') return !w.lastReview || w.due <= Date.now();
     if (['pattern', 'phrase', 'proper', 'vocab'].includes(state.vocabFilter)) return w.tier === state.vocabFilter;
@@ -4454,11 +4641,27 @@ function reviewCard(quality) {
   Object.assign(w, updates);
   state.reviewLog.push({ ts: Date.now(), tier: w.tier, word: w.word, quality });
   persistReviewLog(); persistVocab();
-  state.flipIdx = (state.flipIdx + 1) % pool.length;
-  renderFlipCard(); renderVocabBook();
-  updateStreakBadge(); updateGoalsBanner();
   const labels = { 0: 'Again', 3: 'Hard', 4: 'Good', 5: 'Easy' };
   toast(`${labels[quality]} · 下次 ${previewInterval(w, quality)}`, quality < 3 ? 'warning' : 'success');
+  state.flipped = false;
+  $('#flipInner').classList.remove('flipped');
+  updateStreakBadge(); updateGoalsBanner();
+  if (_pomo.active) {
+    if (quality < 3) _pomo.againQueue.push(w);
+    _pomo.idx++;
+    pomoUpdateProgress();
+    if (_pomo.idx >= _pomo.queue.length) {
+      state.flipIdx = 0;
+      renderFlipCard(); renderVocabBook();
+      pomoShowRoundSummary(false);
+    } else {
+      state.flipIdx = _pomo.idx;
+      renderFlipCard(); renderVocabBook();
+    }
+  } else {
+    state.flipIdx = (state.flipIdx + 1) % pool.length;
+    renderFlipCard(); renderVocabBook();
+  }
 }
 function nextCard() { const pool = getFlipPool(); if (!pool.length) return; state.flipIdx = (state.flipIdx + 1) % pool.length; renderFlipCard(); }
 function prevCard() { const pool = getFlipPool(); if (!pool.length) return; state.flipIdx = (state.flipIdx - 1 + pool.length) % pool.length; renderFlipCard(); }
@@ -5790,6 +5993,11 @@ function bindEvents() {
     });
   });
   $$('.srs-btn').forEach(btn => { btn.addEventListener('click', () => reviewCard(parseInt(btn.dataset.quality))); });
+  $('#pomoStart').addEventListener('click', pomoStart);
+  $('#pomoStop').addEventListener('click', () => {
+    showDialog({ title: '结束番茄复习', message: '确定要结束本次番茄复习吗？当前进度将不被保存。', icon: 'warn', confirmText: '结束', cancelText: '继续', danger: true })
+      .then(ok => { if (ok) pomoStop(); });
+  });
   $('#searchInput').addEventListener('input', debounce((e) => { state.vocabSearch = e.target.value.toLowerCase(); _vocabPage = 1; renderVocabBook(); }, 220));
   $$('.filter-pill').forEach(p => {
     p.addEventListener('click', () => {
