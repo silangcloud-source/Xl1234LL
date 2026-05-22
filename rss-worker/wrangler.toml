@@ -1,0 +1,18 @@
+name       = "finread-rss-worker"
+main       = "worker.js"
+# Workers require at least compatibility_date 2023-03-01 for ES module + scheduled
+compatibility_date = "2024-01-01"
+
+[triggers]
+# Run every 2 hours — adjust as needed (standard cron syntax)
+crons = ["0 */2 * * *"]
+
+# ── Optional plain-text env vars (non-sensitive) ──────────────────────────────
+# Sensitive values (NOTION_TOKEN) must be set via `wrangler secret put`, NOT here.
+[vars]
+PROP_TITLE   = "Name"       # Notion DB title property name
+PROP_LINK    = "Link"       # Notion DB URL property name
+PROP_DATE    = "PubDate"    # Notion DB date property name
+PROP_STATUS  = "Status"     # Notion DB select property name
+STATUS_VALUE = "待精读"
+MAX_ITEMS    = "20"         # Max RSS items processed per run
