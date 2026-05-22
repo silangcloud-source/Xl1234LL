@@ -9615,8 +9615,36 @@ ${wordList}
 
     async function gistEnsureExists() {
       if (state.gist.gistId) return state.gist.gistId;
-      gistLog('未配置 gistId, 正在创建新 gist...');
       const filename = state.gist.filename || 'finread-data.json';
+
+      // ── 先搜索已有 Gist，避免重复创建 ──
+      gistLog('未配置 gistId, 搜索已有 FinRead Gist...');
+      try {
+        let page = 1, found = null;
+        while (!found && page <= 5) {
+          const res = await gistFetch(`/gists?per_page=100&page=${page}`);
+          if (!res.ok) break;
+          const list = await res.json();
+          if (!list.length) break;
+          found = list.find(g =>
+            g.files?.[filename] ||
+            (g.description || '').includes('FinRead')
+          );
+          page++;
+        }
+        if (found) {
+          state.gist.gistId = found.id;
+          persistGist();
+          gistLog(`✓ 找到已有 Gist (${found.id.slice(0, 8)}...)，复用，不再新建`);
+          toast('已自动关联已有 Gist ✓', 'success');
+          return found.id;
+        }
+      } catch (e) {
+        gistLog(`搜索已有 Gist 失败 (${e.message})，将新建`);
+      }
+
+      // ── 确实不存在，才新建 ──
+      gistLog('未找到已有 Gist，正在创建新 Gist...');
       const initial = { version: 5.9, init: true, createdAt: Date.now() };
       const res = await gistFetch('/gists', {
         method: 'POST',
