@@ -637,12 +637,15 @@ h1.title {
 .ex-tts:hover { color: var(--accent); border-color: var(--accent); }
 .syn-block { margin:10px 0 12px; padding:12px 14px; background: var(--vocab-bg); border-left:2px solid var(--vocab-color); border-radius: var(--r-sm); font-size:12.5px; }
 .syn-head { font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.08em; color: var(--vocab-color); font-weight:600; text-transform:uppercase; margin-bottom:8px; }
-.syn-item { padding:5px 0; border-bottom:1px dashed var(--border); }
-.syn-item:last-child { border-bottom:none; }
-.syn-row { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.syn-item { padding:7px 0; border-bottom:1px dashed var(--border); }
+.syn-item:last-child { border-bottom:none; padding-bottom:0; }
+.syn-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
 .syn-word { font-family:'Fraunces',Georgia,serif; font-weight:700; font-size:14px; color: var(--text-main); }
 .syn-zh   { font-family:'Noto Sans SC',system-ui,sans-serif; color: var(--text-muted); font-size:12px; }
-.syn-diff { font-family:'Noto Sans SC',system-ui,sans-serif; color: var(--text-soft); font-size:12px; margin-top:3px; line-height:1.5; }
+.syn-diff { font-family:'Noto Sans SC',system-ui,sans-serif; color: var(--text-soft); font-size:12px; margin-top:4px; line-height:1.6; }
+.syn-add-btn { margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:600; padding:2px 8px; border-radius:6px; cursor:pointer; border:1px solid var(--vocab-color); color:var(--vocab-color); background:transparent; transition:all .12s; white-space:nowrap; flex-shrink:0; }
+.syn-add-btn:hover:not(:disabled) { background:var(--vocab-color); color:#fff; }
+.syn-add-btn:disabled { opacity:.45; cursor:default; border-color:var(--border); color:var(--text-muted); }
 .colloc-block { margin:10px 0; }
 .colloc-head { font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.08em; color: var(--phrase-color); font-weight:600; text-transform:uppercase; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
 .colloc-count { background: var(--phrase-bg); color: var(--phrase-color); padding:1px 5px; border-radius:8px; font-size:9px; }
@@ -1845,7 +1848,11 @@ ${chunkNote}
 · 必须是单个词（含连字符合成词如 risk-averse），不可是短语或句型
 · 仅收录文本中实际出现、具有学习价值的专业词，不得凑数
 · 禁止：多词短语进入此层（归 phrases）；专有名词进入此层（归 properNouns）
-对每个必须给 synonyms 数组（近义词附 Collins 风格辨析）、deep_analysis（词根分析或深度语境解析，1-2 句），并评估备考价值：
+对每个必须给 synonyms 数组（2-4 个近义词，每个附朗文/Collins 风格辨析）、deep_analysis（词根分析或深度语境解析，1-2 句），并评估备考价值。
+synonyms.diff 要求：1-2 句，说明该词与主词的核心语义差异、语体色彩、使用场合。仿照词典辨析风格，如：
+  read: 最普通用词，含义广泛，既指朗读又可指默读。
+  devour: 指贪婪地读，暗含对某些作者或作品迷恋之意。
+  scan: 指快速扫视文章等以抓住其要旨。
   · examTags: 从 ["CET-4","CET-6","考研","雅思"] 中选适用标签，无考点价值则留空数组
   · freq: "高频"/"中频"/"低频"，无把握则省略此字段
   · wordFamily: 同根词数组，每项 {"word":"...","pos":"..."}，最多 4 个，仅列真实存在的英语词（如 regulate→regulation/regulatory/deregulate）
@@ -2442,13 +2449,24 @@ function buildVocabCardHTML(w, isSaved, showSrs = false, showHistory = false) {
   if (w.synonyms && Array.isArray(w.synonyms) && w.synonyms.length) {
     synHtml = `<div class="syn-block">
       <div class="syn-head">近义辨析</div>
-      ${w.synonyms.map(s => `<div class="syn-item">
-        <div class="syn-row">
-          <span class="syn-word">${escapeHtml(s.word)}</span>
-          ${s.zh ? `<span class="syn-zh">${escapeHtml(s.zh)}</span>` : ''}
-        </div>
-        ${s.diff ? `<div class="syn-diff">${escapeHtml(s.diff)}</div>` : ''}
-      </div>`).join('')}
+      ${w.synonyms.map(s => {
+        const alreadySaved = state.vocab.some(v => v.word === s.word);
+        return `<div class="syn-item">
+          <div class="syn-row">
+            <span class="syn-word">${escapeHtml(s.word)}</span>
+            ${s.zh ? `<span class="syn-zh">${escapeHtml(s.zh)}</span>` : ''}
+            <button class="syn-add-btn" data-act="syn-save"
+              data-word="${escapeHtml(s.word)}"
+              data-zh="${escapeHtml(s.zh || '')}"
+              data-pos="${escapeHtml(w.pos || '')}"
+              data-diff="${escapeHtml(s.diff || '')}"
+              ${alreadySaved ? 'disabled' : ''}>
+              ${alreadySaved ? '✓ 已收藏' : '+ 收藏'}
+            </button>
+          </div>
+          ${s.diff ? `<div class="syn-diff">${escapeHtml(s.diff)}</div>` : ''}
+        </div>`;
+      }).join('')}
     </div>`;
   } else if (w.replacements) {
     synHtml = `<div class="syn-block"><div class="syn-head">同义词</div><div style="font-size:12px;color:var(--text-soft);">${escapeHtml(w.replacements)}</div></div>`;
@@ -2575,6 +2593,26 @@ function bindVocabEvents(card, w, mode) {
           toast('已删除', 'warning');
         }
       } else if (act === 'show-history') showHistoryPopup(w);
+      else if (act === 'syn-save') {
+        const sword = btn.dataset.word;
+        if (state.vocab.some(v => v.word === sword)) {
+          btn.textContent = '✓ 已收藏'; btn.disabled = true; return;
+        }
+        addVocabInternal({
+          tier: 'vocab',
+          word: sword,
+          pos: btn.dataset.pos || '',
+          translation: btn.dataset.zh || '',
+          note: btn.dataset.diff || '',
+          phonetic: '', examples: [], synonyms: [], examTags: [],
+          sourceArticleId: state.currentArticleId,
+          addedAt: Date.now(),
+        });
+        persistVocab();
+        btn.textContent = '✓ 已收藏';
+        btn.disabled = true;
+        toast(`已收藏「${sword}」`, 'success');
+      }
     });
   });
   card.querySelectorAll('.ex-tts').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); speak(b.dataset.tts, 0.9, b); }));
