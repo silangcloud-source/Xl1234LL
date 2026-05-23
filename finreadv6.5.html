@@ -5281,6 +5281,89 @@
       border: 2px solid var(--bg-nav);
     }
 
+    /* ── More drawer ── */
+    .more-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 95;
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+    }
+    .more-backdrop.open { display: block; }
+    .more-drawer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 96;
+      background: var(--bg-card);
+      border-radius: 20px 20px 0 0;
+      border-top: 1px solid var(--border);
+      box-shadow: 0 -8px 40px rgba(0,0,0,.18);
+      padding: 0 0 calc(16px + env(safe-area-inset-bottom));
+      transform: translateY(100%);
+      transition: transform .32s cubic-bezier(.4,0,.2,1);
+      pointer-events: none;
+    }
+    .more-drawer.open { transform: translateY(0); pointer-events: all; }
+    .more-drawer-handle {
+      width: 36px; height: 4px;
+      background: var(--border-strong);
+      border-radius: 2px;
+      margin: 12px auto 8px;
+    }
+    .more-drawer-body {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      padding: 8px 20px 4px;
+    }
+    .more-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      padding: 14px 6px;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      cursor: pointer;
+      color: var(--text);
+      font-family: inherit;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .18s, background .18s;
+    }
+    .more-item:active { transform: scale(.91); background: var(--bg-card); }
+    .more-item-icon { font-size: 22px; line-height: 1; font-weight: 700; }
+    .more-item-label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+    /* ── Mine inner tabs ── */
+    .mine-inner-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+      gap: 0;
+    }
+    .mine-itab {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: inherit;
+      transition: color .2s, border-color .2s;
+      touch-action: manipulation;
+    }
+    .mine-itab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .mine-itab:hover:not(.active) { color: var(--text); }
+
     /* ================================================================
    MOBILE OPTIMIZATIONS — v6.3 Enhanced Touch & Gestures
    ================================================================ */
@@ -5360,8 +5443,17 @@
       }
 
       /* hide some lesser utilities to free space */
-      #btnClearAll {
+      #btnClearAll,
+      #btnImport,
+      #btnSettings,
+      #jsonbinBtn,
+      #webdavBtn {
         display: none;
+      }
+      #btnMore {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
       }
 
       /* ── Main 安全区域适配 ── */
@@ -5915,6 +6007,7 @@
         <button class="icon-toggle hdr-util" id="btnClearAll" title="清空全部缓存">⊘ 清空</button>
         <button class="icon-toggle" id="jsonbinBtn" title="JSONBin 同步">J</button>
         <button class="icon-toggle" id="webdavBtn" title="WebDAV 同步（坚果云）">W</button>
+        <button class="icon-toggle" id="btnMore" title="更多功能" style="display:none;font-size:20px;letter-spacing:-.05em;">···</button>
         <button class="icon-toggle" id="themeToggle" title="主题切换">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="5" />
@@ -6248,6 +6341,14 @@
     </section>
 
     <!-- ── HISTORY VIEW ── -->
+    <!-- ── MINE VIEW (档案 + 统计 composite) ── -->
+    <section id="viewMine" class="hidden">
+      <nav class="mine-inner-tabs" id="mineInnerTabs">
+        <button class="mine-itab active" data-mine="history">档案</button>
+        <button class="mine-itab" data-mine="stats">统计</button>
+      </nav>
+    </section>
+
     <section id="viewHistory" class="hidden">
       <div class="vocab-head">
         <div>
@@ -6639,16 +6740,45 @@
         <span class="bt-label">卡组</span>
         <span class="bt-badge hidden" id="btVocabBadge">0</span>
       </button>
-      <button class="bt-btn" data-view="history">
-        <span class="bt-icon">⎙</span>
-        <span class="bt-label">档案</span>
+      <button class="bt-btn" data-view="review" id="btTabReview">
+        <span class="bt-icon">↺</span>
+        <span class="bt-label">复习</span>
+        <span class="bt-badge hidden" id="btReviewBadge">0</span>
       </button>
-      <button class="bt-btn" data-view="stats">
-        <span class="bt-icon">◷</span>
-        <span class="bt-label">统计</span>
+      <button class="bt-btn" data-view="mine">
+        <span class="bt-icon">◉</span>
+        <span class="bt-label">我的</span>
       </button>
     </div>
   </nav>
+
+  <!-- ── MORE DRAWER (mobile only) ── -->
+  <div class="more-backdrop" id="moreBackdrop"></div>
+  <div class="more-drawer" id="moreDrawer">
+    <div class="more-drawer-handle"></div>
+    <div class="more-drawer-body">
+      <button class="more-item" id="moreImport">
+        <span class="more-item-icon">↑</span>
+        <span class="more-item-label">导入</span>
+      </button>
+      <button class="more-item" id="moreSettings">
+        <span class="more-item-icon">⚙</span>
+        <span class="more-item-label">配置</span>
+      </button>
+      <button class="more-item" id="moreClear">
+        <span class="more-item-icon">⊘</span>
+        <span class="more-item-label">清空</span>
+      </button>
+      <button class="more-item" id="moreJsonbin">
+        <span class="more-item-icon">J</span>
+        <span class="more-item-label">JSONBin</span>
+      </button>
+      <button class="more-item" id="moreWebdav">
+        <span class="more-item-icon">W</span>
+        <span class="more-item-label">WebDAV</span>
+      </button>
+    </div>
+  </div>
 
   <!-- ── FOOTER ── -->
   <footer>
@@ -7337,6 +7467,11 @@
         if (due > 0) { badge.textContent = due > 99 ? '99+' : due; badge.classList.remove('hidden'); }
         else badge.classList.add('hidden');
       }
+      const reviewBadge = $('#btReviewBadge');
+      if (reviewBadge) {
+        if (due > 0) { reviewBadge.textContent = due > 99 ? '99+' : due; reviewBadge.classList.remove('hidden'); }
+        else reviewBadge.classList.add('hidden');
+      }
       const pCount = countByTier('pattern');
       const phCount = countByTier('phrase');
       $('#headerPatternCount').textContent = pCount;
@@ -7975,17 +8110,29 @@ ${text}`;
     function setView(name) {
       state.view = name;
       document.body.classList.toggle('review-focus', name === 'review');
-      hide('#viewInput'); hide('#viewAnalysis'); hide('#viewVocab'); hide('#viewHistory'); hide('#viewStats');
+      hide('#viewInput'); hide('#viewAnalysis'); hide('#viewVocab'); hide('#viewMine'); hide('#viewHistory'); hide('#viewStats');
       $$('nav.tabs button').forEach(b => b.classList.toggle('active', b.dataset.view === name));
-      $$('.bottom-tabbar .bt-btn').forEach(b => b.classList.toggle('active', b.dataset.view === name));
+      $$('.bottom-tabbar .bt-btn').forEach(b => {
+        const mineActive = b.dataset.view === 'mine' && (name === 'mine');
+        b.classList.toggle('active', b.dataset.view === name || mineActive);
+      });
       if (name === 'input') { show('#viewInput'); if (!state.currentRequest) hide('#progressBox'); }
       else if (name === 'analysis') { show('#viewAnalysis'); renderAnalysis(); }
       else if (name === 'vocab') { show('#viewVocab'); renderVocabBook(); }
       else if (name === 'review') { show('#viewVocab'); renderVocabBook(); }
       else if (name === 'history') { show('#viewHistory'); renderHistoryView(); }
       else if (name === 'stats') { show('#viewStats'); renderStatsView(); }
+      else if (name === 'mine') { show('#viewMine'); setMineTab(state.mineTab || 'history'); }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    function setMineTab(tab) {
+      state.mineTab = tab;
+      $$('.mine-itab').forEach(b => b.classList.toggle('active', b.dataset.mine === tab));
+      if (tab === 'history') { show('#viewHistory'); hide('#viewStats'); renderHistoryView(); }
+      else { hide('#viewHistory'); show('#viewStats'); renderStatsView(); }
+    }
+    window.setMineTab = setMineTab;
 
     function renderAnalysis() {
       if (!state.analysis) return;
@@ -10075,7 +10222,10 @@ ${tierInstruction}`;
      * ============================================================ */
     function bindEvents() {
       $$('nav.tabs button').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
-      $$('.bottom-tabbar .bt-btn').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
+      $$('.bottom-tabbar .bt-btn').forEach(btn => btn.addEventListener('click', () => {
+        if (btn.dataset.view === 'review') { enterReviewFocus(); return; }
+        setView(btn.dataset.view);
+      }));
       $('#newsInput').addEventListener('input', onInputChange);
       $('#btnPaste').addEventListener('click', async () => {
         try { $('#newsInput').value = await navigator.clipboard.readText(); onInputChange(); }
@@ -10262,6 +10412,25 @@ ${tierInstruction}`;
         });
       });
       $('#btnExport').addEventListener('click', exportVocab);
+      // ── More drawer ──
+      function openMoreDrawer() {
+        $('#moreDrawer').classList.add('open');
+        $('#moreBackdrop').classList.add('open');
+      }
+      function closeMoreDrawer() {
+        $('#moreDrawer').classList.remove('open');
+        $('#moreBackdrop').classList.remove('open');
+      }
+      $('#btnMore').addEventListener('click', openMoreDrawer);
+      $('#moreBackdrop').addEventListener('click', closeMoreDrawer);
+      $('#moreImport').addEventListener('click', () => { closeMoreDrawer(); importVocab(); });
+      $('#moreSettings').addEventListener('click', () => { closeMoreDrawer(); openSettings(); });
+      $('#moreClear').addEventListener('click', () => { closeMoreDrawer(); $('#btnClearAll').click(); });
+      $('#moreJsonbin').addEventListener('click', () => { closeMoreDrawer(); openJsonbinModal(); });
+      $('#moreWebdav').addEventListener('click', () => { closeMoreDrawer(); openWebdavModal(); });
+      // ── Mine inner tabs ──
+      $$('.mine-itab').forEach(btn => btn.addEventListener('click', () => setMineTab(btn.dataset.mine)));
+
       $('#btnImport').addEventListener('click', importVocab);
       $('#themeToggle').addEventListener('click', toggleTheme);
       $('#btnSettings').addEventListener('click', openSettings);
