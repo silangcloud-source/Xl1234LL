@@ -5918,6 +5918,7 @@
         <button class="icon-toggle hdr-util" id="btnSettings" title="引擎配置">⚙ 配置</button>
         <button class="icon-toggle hdr-util" id="btnClearAll" title="清空全部缓存">⊘ 清空</button>
         <button class="icon-toggle" id="jsonbinBtn" title="JSONBin 同步">J</button>
+        <button class="icon-toggle" id="webdavBtn" title="WebDAV 同步（坚果云）">W</button>
         <button class="icon-toggle" id="themeToggle" title="主题切换">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="5" />
@@ -6494,10 +6495,86 @@
     </div>
   </div>
 
+  <!-- ── WebDAV SYNC MODAL ── -->
+  <div id="webdavModal" class="modal-bg hidden">
+    <div class="modal">
+      <h2>☁ WebDAV 同步</h2>
+      <p class="modal-sub">通过 WebDAV 协议同步词卡到坚果云、NextCloud 等私有存储，数据完全在你掌控之中。</p>
+      <div class="notion-status-row" id="wdStatusRow">
+        <span class="dot"></span>
+        <span id="wdStatusText">未连接</span>
+        <span id="wdStatusMeta" style="margin-left:auto;font-size:11px;color:var(--text-soft);"></span>
+      </div>
+
+      <div class="modal-tabs" style="margin:14px 0 10px;">
+        <button class="active" data-wd-tab="config">配置</button>
+        <button data-wd-tab="sync">同步</button>
+        <button data-wd-tab="help">说明</button>
+      </div>
+
+      <!-- 配置 Tab -->
+      <div id="wdTabConfig">
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">WebDAV 服务器地址</label>
+        <input id="wdUrlInput" type="url" placeholder="https://dav.jianguoyun.com/dav/" style="width:100%;margin-bottom:10px;font-family:monospace;" />
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">用户名（坚果云账号邮箱）</label>
+        <input id="wdUsernameInput" type="text" placeholder="your@email.com" style="width:100%;margin-bottom:10px;" />
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">应用密码 <span style="font-weight:400;color:var(--text-soft);">（非登录密码，在安全设置中生成）</span></label>
+        <input id="wdPasswordInput" type="password" placeholder="坚果云应用密码" style="width:100%;margin-bottom:10px;" />
+        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;">文件路径</label>
+        <input id="wdPathInput" type="text" placeholder="/finread-sync.json" style="width:100%;margin-bottom:14px;font-family:monospace;" />
+        <div style="display:flex;gap:8px;">
+          <button class="btn-base" id="wdTestBtn" style="flex:1;">🔗 测试连接</button>
+          <button class="btn-primary" id="wdSaveBtn" style="flex:1;">保存</button>
+        </div>
+        <div style="margin-top:14px;padding:10px 12px;background:var(--bg-soft);border-radius:var(--r-md);font-size:11px;color:var(--text-soft);line-height:1.7;">
+          📌 坚果云应用密码：登录 jianguoyun.com → 账号信息 → 安全选项 → 添加应用密码
+        </div>
+      </div>
+
+      <!-- 同步 Tab -->
+      <div id="wdTabSync" class="hidden">
+        <button class="btn-primary" id="wdPushBtn" disabled style="width:100%;padding:11px;margin-bottom:8px;">⬆ 推送本地 → WebDAV（全量覆盖）</button>
+        <button class="btn-base" id="wdPullBtn" disabled style="width:100%;padding:11px;margin-bottom:14px;">⬇ 拉取 WebDAV → 本地（智能合并）</button>
+        <label style="font-size:11px;font-weight:600;color:var(--text-soft);">同步日志</label>
+        <textarea id="wdSyncLog" rows="7" readonly
+          style="width:100%;margin-top:4px;font-family:monospace;font-size:11px;background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--r-md);padding:8px;resize:none;color:var(--text-soft);"></textarea>
+      </div>
+
+      <!-- 说明 Tab -->
+      <div id="wdTabHelp" class="hidden">
+        <div style="font-size:12px;line-height:1.8;color:var(--text-soft);">
+          <p style="margin-bottom:8px;"><strong>📋 坚果云设置步骤</strong></p>
+          <ol style="padding-left:18px;margin-bottom:12px;">
+            <li>访问 <strong>jianguoyun.com</strong> 注册/登录</li>
+            <li>右上角头像 → 账号信息 → 安全选项</li>
+            <li>「第三方应用管理」→ 添加应用密码，记录生成的密码</li>
+            <li>回到此页「配置」Tab，填入：<br>
+              服务器：<code style="font-family:monospace;">https://dav.jianguoyun.com/dav/</code><br>
+              用户名：坚果云账号邮箱<br>
+              应用密码：刚才生成的密码</li>
+            <li>点「保存」→ 切换到「同步」→「⬆ 推送」完成首次同步</li>
+            <li>换台设备填入同一配置 → 点「⬇ 拉取」即可</li>
+          </ol>
+          <p style="margin-bottom:8px;"><strong>⚠ 注意</strong></p>
+          <ul style="padding-left:18px;">
+            <li>推送是全量覆盖，拉取是智能合并（不丢失本地进度）</li>
+            <li>坚果云免费版 1 GB 存储，词卡文件约 50–200 KB，完全够用</li>
+            <li>应用密码存于本地 localStorage，仅限本设备使用</li>
+            <li>同样支持 NextCloud、Alist、群晖等兼容 WebDAV 的服务</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="modal-actions" style="margin-top:16px;">
+        <button class="btn-base" id="wdCloseBtn">关闭</button>
+      </div>
+    </div>
+  </div>
+
   <div id="settingsModal" class="modal-bg hidden">
     <div class="modal">
       <h2>引擎配置</h2>
-      <p class="modal-sub">所有数据存于本地 localStorage。云同步：N (Notion) 或 J (JSONBin) 按钮。</p>
+      <p class="modal-sub">所有数据存于本地 localStorage。云同步：J (JSONBin) 或 W (WebDAV/坚果云) 按钮。</p>
       <div class="warn">⚠️ API Key 明文存于本地。仅供个人开发测试。</div>
       <label>驱动节点 (Provider)</label>
       <select id="providerSelect">
@@ -6645,6 +6722,7 @@
       streaming: 'finread:streaming',
       chunkThreshold: 'finread:chunkThreshold',
       jsonbin: 'finread:jsonbin',
+      webdav: 'finread:webdav',
       studyMode: 'finread:studyMode',
       voice: 'finread:voice',
       reminderTime: 'finread:reminderTime',
@@ -6665,6 +6743,7 @@
       apiKey: '', provider: 'openrouter', model: 'openai/gpt-5.5',
       streaming: true, chunkThreshold: DEFAULT_CHUNK_THRESHOLD,
       jsonbin: { apiKey: '', binId: '', lastSync: 0 },
+      webdav: { url: 'https://dav.jianguoyun.com/dav/', username: '', password: '', path: '/finread-sync.json', lastSync: 0 },
       studyMode: 'en2zh',
       activeId: null, flipIdx: 0, flipped: false,
       showZh: true, showGr: false, showFullTrans: false,
@@ -7016,6 +7095,7 @@
       renderV64Dashboard();
     }
     function persistJsonbin() { localStorage.setItem(STORE.jsonbin, JSON.stringify(state.jsonbin)); }
+    function persistWebdav() { localStorage.setItem(STORE.webdav, JSON.stringify(state.webdav)); }
 
     function countByTier(tier) { return state.vocab.filter(v => v.tier === tier).length; }
     function getReviewPool() { return state.vocab.filter(v => !v.lastReview || v.due <= Date.now()); }
@@ -9413,6 +9493,272 @@ ${tierInstruction}`;
     }
 
     /* ============================================================
+     *  JSONBIN SYNC
+     * ============================================================ */
+    function updateJsonbinStatus(ok) {
+      const row = $('#jbStatusRow');
+      if (!row) return;
+      const dot = row.querySelector('.dot');
+      dot.style.background = ok ? 'var(--bull)' : 'var(--text-faint)';
+      $('#jbStatusText').textContent = ok ? '已连接' : (state.jsonbin.apiKey ? '未同步' : '未连接');
+      $('#jbStatusMeta').textContent = state.jsonbin.lastSync
+        ? `上次: ${new Date(state.jsonbin.lastSync).toLocaleString()}` : '';
+    }
+
+    function openJsonbinModal() {
+      $('#jbApiKeyInput').value = state.jsonbin.apiKey;
+      $('#jbBinIdInput').value = state.jsonbin.binId;
+      const has = !!(state.jsonbin.apiKey);
+      $('#jbPushBtn').disabled = !has;
+      $('#jbPullBtn').disabled = !(has && state.jsonbin.binId);
+      show('#jsonbinModal');
+    }
+
+    function closeJsonbinModal() { hide('#jsonbinModal'); }
+
+    function switchJsonbinTab(tab) {
+      $$('#jsonbinModal .modal-tabs button').forEach(b => b.classList.toggle('active', b.dataset.jbTab === tab));
+      $('#jbTabConfig').classList.toggle('hidden', tab !== 'config');
+      $('#jbTabSync').classList.toggle('hidden', tab !== 'sync');
+      $('#jbTabHelp').classList.toggle('hidden', tab !== 'help');
+    }
+
+    const jbLog = msg => appendSyncLog('#jbSyncLog', msg);
+
+    function saveJsonbinConfig() {
+      state.jsonbin.apiKey = $('#jbApiKeyInput').value.trim();
+      state.jsonbin.binId = $('#jbBinIdInput').value.trim();
+      persistJsonbin();
+      const has = !!(state.jsonbin.apiKey);
+      $('#jbPushBtn').disabled = !has;
+      $('#jbPullBtn').disabled = !(has && state.jsonbin.binId);
+      updateJsonbinStatus(!!(state.jsonbin.apiKey && state.jsonbin.lastSync));
+      toast('JSONBin 配置已保存', 'success');
+    }
+
+    async function jsonbinTest() {
+      const key = $('#jbApiKeyInput').value.trim();
+      if (!key) return toast('请先填写 API Key', 'error');
+      const btn = $('#jbTestBtn');
+      btn.disabled = true; btn.textContent = '测试中...';
+      try {
+        const r = await fetch('https://api.jsonbin.io/v3/b', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Master-Key': key, 'X-Bin-Name': 'finread-test' },
+          body: JSON.stringify({ test: true }),
+        });
+        if (r.ok) toast('连接成功！', 'success');
+        else { const j = await r.json().catch(() => ({})); toast(`连接失败：${j.message || r.status}`, 'error'); }
+      } catch (e) { toast('网络错误：' + e.message, 'error'); }
+      finally { btn.disabled = false; btn.textContent = '🔗 测试连接'; }
+    }
+
+    async function jsonbinPush() {
+      if (!state.jsonbin.apiKey) return toast('请先配置 API Key', 'error');
+      const btn = $('#jbPushBtn');
+      btn.disabled = true; btn.textContent = '推送中...';
+      jbLog('开始推送...');
+      try {
+        const payload = buildSyncPayload({ includeArticles: true, limitReviewLog: 200 });
+        const body = JSON.stringify({ record: payload });
+        const isNew = !state.jsonbin.binId;
+        const url = isNew
+          ? 'https://api.jsonbin.io/v3/b'
+          : `https://api.jsonbin.io/v3/b/${state.jsonbin.binId}`;
+        const headers = { 'Content-Type': 'application/json', 'X-Master-Key': state.jsonbin.apiKey };
+        if (isNew) headers['X-Bin-Name'] = 'finread-sync';
+        const r = await fetch(url, { method: isNew ? 'POST' : 'PUT', headers, body });
+        const json = await r.json();
+        if (!r.ok) throw new Error(json.message || r.status);
+        if (isNew) {
+          state.jsonbin.binId = json.metadata?.id || json.id || '';
+          $('#jbBinIdInput').value = state.jsonbin.binId;
+          $('#jbPullBtn').disabled = false;
+        }
+        state.jsonbin.lastSync = Date.now();
+        persistJsonbin();
+        updateJsonbinStatus(true);
+        jbLog(`推送成功 · ${state.vocab.length} 词卡 · Bin: ${state.jsonbin.binId}`);
+        toast('推送成功', 'success');
+      } catch (e) {
+        jbLog(`推送失败：${e.message}`);
+        toast('推送失败：' + e.message, 'error');
+      } finally {
+        btn.disabled = false; btn.textContent = '⬆ 推送本地 → JSONBin（全量覆盖）';
+      }
+    }
+
+    async function jsonbinPull() {
+      if (!state.jsonbin.apiKey || !state.jsonbin.binId) return toast('请先配置 API Key 和 Bin ID', 'error');
+      const btn = $('#jbPullBtn');
+      btn.disabled = true; btn.textContent = '拉取中...';
+      jbLog('开始拉取...');
+      try {
+        const r = await fetch(`https://api.jsonbin.io/v3/b/${state.jsonbin.binId}/latest`, {
+          headers: { 'X-Master-Key': state.jsonbin.apiKey },
+        });
+        const json = await r.json();
+        if (!r.ok) throw new Error(json.message || r.status);
+        const remote = json.record || json;
+        const { added, updated, articleAdded } = mergeRemoteData(remote);
+        state.jsonbin.lastSync = Date.now();
+        persistJsonbin();
+        updateJsonbinStatus(true);
+        rerenderActiveDataView();
+        updateAllCounts();
+        jbLog(`拉取成功 · 新词 ${added} · 更新 ${updated} · 文章 ${articleAdded}`);
+        toast(`同步完成 · 新词 +${added}`, 'success');
+      } catch (e) {
+        jbLog(`拉取失败：${e.message}`);
+        toast('拉取失败：' + e.message, 'error');
+      } finally {
+        btn.disabled = false; btn.textContent = '⬇ 拉取 JSONBin → 本地（智能合并）';
+      }
+    }
+
+    /* ============================================================
+     *  WEBDAV SYNC
+     * ============================================================ */
+    function updateWebdavStatus(ok) {
+      const row = $('#wdStatusRow');
+      if (!row) return;
+      const dot = row.querySelector('.dot');
+      dot.style.background = ok ? 'var(--bull)' : 'var(--text-faint)';
+      $('#wdStatusText').textContent = ok ? '已连接' : (state.webdav.username ? '未同步' : '未连接');
+      $('#wdStatusMeta').textContent = state.webdav.lastSync
+        ? `上次: ${new Date(state.webdav.lastSync).toLocaleString()}` : '';
+    }
+
+    function openWebdavModal() {
+      $('#wdUrlInput').value = state.webdav.url;
+      $('#wdUsernameInput').value = state.webdav.username;
+      $('#wdPasswordInput').value = state.webdav.password;
+      $('#wdPathInput').value = state.webdav.path;
+      const has = !!(state.webdav.username && state.webdav.password);
+      $('#wdPushBtn').disabled = !has;
+      $('#wdPullBtn').disabled = !has;
+      show('#webdavModal');
+    }
+
+    function closeWebdavModal() { hide('#webdavModal'); }
+
+    function switchWebdavTab(tab) {
+      $$('#webdavModal .modal-tabs button').forEach(b => b.classList.toggle('active', b.dataset.wdTab === tab));
+      $('#wdTabConfig').classList.toggle('hidden', tab !== 'config');
+      $('#wdTabSync').classList.toggle('hidden', tab !== 'sync');
+      $('#wdTabHelp').classList.toggle('hidden', tab !== 'help');
+    }
+
+    const wdLog = msg => appendSyncLog('#wdSyncLog', msg);
+
+    function saveWebdavConfig() {
+      state.webdav.url = $('#wdUrlInput').value.trim() || 'https://dav.jianguoyun.com/dav/';
+      state.webdav.username = $('#wdUsernameInput').value.trim();
+      state.webdav.password = $('#wdPasswordInput').value;
+      state.webdav.path = $('#wdPathInput').value.trim() || '/finread-sync.json';
+      persistWebdav();
+      const has = !!(state.webdav.username && state.webdav.password);
+      $('#wdPushBtn').disabled = !has;
+      $('#wdPullBtn').disabled = !has;
+      updateWebdavStatus(!!(state.webdav.username && state.webdav.lastSync));
+      toast('WebDAV 配置已保存', 'success');
+    }
+
+    function _wdAuthHeader() {
+      return 'Basic ' + btoa(state.webdav.username + ':' + state.webdav.password);
+    }
+
+    function _wdFileUrl() {
+      const base = state.webdav.url.replace(/\/$/, '');
+      const path = state.webdav.path.startsWith('/') ? state.webdav.path : '/' + state.webdav.path;
+      return base + path;
+    }
+
+    async function webdavTest() {
+      const u = $('#wdUsernameInput').value.trim();
+      const p = $('#wdPasswordInput').value;
+      const base = ($('#wdUrlInput').value.trim() || 'https://dav.jianguoyun.com/dav/').replace(/\/$/, '') + '/';
+      if (!u || !p) return toast('请先填写用户名和应用密码', 'error');
+      const btn = $('#wdTestBtn');
+      btn.disabled = true; btn.textContent = '测试中...';
+      try {
+        const r = await fetch(base, {
+          method: 'PROPFIND',
+          headers: { 'Authorization': 'Basic ' + btoa(u + ':' + p), 'Depth': '0' },
+        });
+        if (r.ok || r.status === 207) {
+          toast('连接成功！', 'success');
+          wdLog('连接测试成功');
+        } else if (r.status === 401) {
+          toast('认证失败：用户名或应用密码错误', 'error');
+        } else {
+          toast(`连接失败 (${r.status})`, 'error');
+        }
+      } catch {
+        wdLog('测试完成（浏览器 CORS 限制，推送时会实际验证）');
+        toast('CORS 预检受限，请直接尝试推送验证', 'warning');
+      } finally {
+        btn.disabled = false; btn.textContent = '🔗 测试连接';
+      }
+    }
+
+    async function webdavPush() {
+      if (!state.webdav.username || !state.webdav.password) return toast('请先配置用户名和应用密码', 'error');
+      const btn = $('#wdPushBtn');
+      btn.disabled = true; btn.textContent = '推送中...';
+      wdLog('开始推送...');
+      try {
+        const payload = buildSyncPayload({ includeArticles: true, limitReviewLog: 200 });
+        const body = JSON.stringify(payload);
+        const r = await fetch(_wdFileUrl(), {
+          method: 'PUT',
+          headers: { 'Authorization': _wdAuthHeader(), 'Content-Type': 'application/json' },
+          body,
+        });
+        if (!r.ok && r.status !== 201 && r.status !== 204) throw new Error(`HTTP ${r.status}`);
+        state.webdav.lastSync = Date.now();
+        persistWebdav();
+        updateWebdavStatus(true);
+        wdLog(`推送成功 · ${state.vocab.length} 词卡 · ${(body.length / 1024).toFixed(1)} KB`);
+        toast('推送成功', 'success');
+      } catch (e) {
+        wdLog(`推送失败：${e.message}`);
+        toast('推送失败：' + e.message, 'error');
+      } finally {
+        btn.disabled = false; btn.textContent = '⬆ 推送本地 → WebDAV（全量覆盖）';
+      }
+    }
+
+    async function webdavPull() {
+      if (!state.webdav.username || !state.webdav.password) return toast('请先配置用户名和应用密码', 'error');
+      const btn = $('#wdPullBtn');
+      btn.disabled = true; btn.textContent = '拉取中...';
+      wdLog('开始拉取...');
+      try {
+        const r = await fetch(_wdFileUrl(), {
+          method: 'GET',
+          headers: { 'Authorization': _wdAuthHeader() },
+        });
+        if (r.status === 404) throw new Error('文件不存在，请先推送一次');
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const remote = await r.json();
+        const { added, updated, articleAdded } = mergeRemoteData(remote);
+        state.webdav.lastSync = Date.now();
+        persistWebdav();
+        updateWebdavStatus(true);
+        rerenderActiveDataView();
+        updateAllCounts();
+        wdLog(`拉取成功 · 新词 ${added} · 更新 ${updated} · 文章 ${articleAdded}`);
+        toast(`同步完成 · 新词 +${added}`, 'success');
+      } catch (e) {
+        wdLog(`拉取失败：${e.message}`);
+        toast('拉取失败：' + e.message, 'error');
+      } finally {
+        btn.disabled = false; btn.textContent = '⬇ 拉取 WebDAV → 本地（智能合并）';
+      }
+    }
+
+    /* ============================================================
      *  EVENT BINDINGS
      * ============================================================ */
     function bindEvents() {
@@ -9628,6 +9974,14 @@ ${tierInstruction}`;
       $('#jbSaveBtn').addEventListener('click', saveJsonbinConfig);
       $('#jbPushBtn').addEventListener('click', jsonbinPush);
       $('#jbPullBtn').addEventListener('click', jsonbinPull);
+      $('#webdavBtn').addEventListener('click', openWebdavModal);
+      $('#wdCloseBtn').addEventListener('click', closeWebdavModal);
+      $('#webdavModal').addEventListener('click', e => { if (e.target.id === 'webdavModal') closeWebdavModal(); });
+      $$('#webdavModal .modal-tabs button').forEach(b => b.addEventListener('click', () => switchWebdavTab(b.dataset.wdTab)));
+      $('#wdTestBtn').addEventListener('click', webdavTest);
+      $('#wdSaveBtn').addEventListener('click', saveWebdavConfig);
+      $('#wdPushBtn').addEventListener('click', webdavPush);
+      $('#wdPullBtn').addEventListener('click', webdavPull);
       $('#historySearch').addEventListener('input', debounce((e) => {
         state.historySearch = e.target.value;
         renderHistoryView();
@@ -9688,6 +10042,7 @@ ${tierInstruction}`;
           if ($('#wordDetailPopup').classList.contains('visible')) { closeWordDetailPopup(); return; }
           if (!$('#settingsModal').classList.contains('hidden')) { closeSettings(); return; }
           if (!$('#jsonbinModal').classList.contains('hidden')) { closeJsonbinModal(); return; }
+          if (!$('#webdavModal').classList.contains('hidden')) { closeWebdavModal(); return; }
           if (!$('#customAddModal').classList.contains('hidden')) { hide('#customAddModal'); return; }
         }
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
@@ -9765,6 +10120,10 @@ ${tierInstruction}`;
         const jb = JSON.parse(localStorage.getItem(STORE.jsonbin) || '{}');
         state.jsonbin = { ...state.jsonbin, ...jb };
       } catch { }
+      try {
+        const wd = JSON.parse(localStorage.getItem(STORE.webdav) || '{}');
+        state.webdav = { ...state.webdav, ...wd };
+      } catch { }
       state.apiKey = localStorage.getItem(STORE.apiKey) || '';
       state.provider = localStorage.getItem(STORE.provider) || 'openrouter';
       state.model = localStorage.getItem(STORE.model) || 'openai/gpt-5.5';
@@ -9797,6 +10156,7 @@ ${tierInstruction}`;
       updateGoalsBanner();
       renderV64Dashboard();
       updateJsonbinStatus(!!(state.jsonbin.apiKey && state.jsonbin.lastSync));
+      updateWebdavStatus(!!(state.webdav.username && state.webdav.lastSync));
       bindEvents();
       bindKeyboard();
       if (!state.apiKey) openSettings();
