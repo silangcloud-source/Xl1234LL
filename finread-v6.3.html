@@ -2920,6 +2920,124 @@
       z-index: 1;
     }
 
+    /* ── Progressive hint button ── */
+    .flip-hint-btn {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: var(--r-sm);
+      color: rgba(255,255,255,.65);
+      font-size: 11px;
+      padding: 3px 8px;
+      cursor: pointer;
+      transition: all .15s;
+      z-index: 3;
+    }
+    .flip-hint-btn:hover { background: rgba(255,255,255,.22); color: #fff; }
+    .flip-hint-display {
+      position: absolute;
+      bottom: 46px;
+      left: 0; right: 0;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 19px;
+      letter-spacing: .18em;
+      color: rgba(255,255,255,.9);
+      pointer-events: none;
+      z-index: 2;
+      padding: 0 16px;
+    }
+
+    /* ── Leech badge ── */
+    .leech-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(225,29,72,.92);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 20px;
+      letter-spacing: .03em;
+      z-index: 3;
+    }
+
+    /* ── Flip back extra content ── */
+    .flip-extra {
+      width: 100%;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      text-align: left;
+    }
+    .flip-deep {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      background: var(--bg-soft);
+      border-radius: var(--r-sm);
+      padding: 6px 10px;
+      border-left: 3px solid var(--accent);
+    }
+    .flip-wf {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .flip-mnem {
+      font-size: 11.5px;
+      color: var(--text-soft);
+      background: var(--warn-light);
+      border-radius: var(--r-sm);
+      padding: 6px 10px;
+      line-height: 1.55;
+      border-left: 3px solid var(--warn);
+    }
+
+    /* ── Spelling test mode ── */
+    .spell-wrap {
+      display: none;
+      margin-top: 10px;
+    }
+    .spell-wrap.active { display: block; }
+    .spell-input {
+      width: 100%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 17px;
+      text-align: center;
+      border: 2px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 9px 12px;
+      background: var(--bg-card);
+      color: var(--text-main);
+      outline: none;
+      transition: border .15s, background .15s;
+      box-sizing: border-box;
+    }
+    .spell-input:focus { border-color: var(--accent); }
+    .spell-input.correct { border-color: var(--bull); background: var(--bull-light); }
+    .spell-input.wrong   { border-color: var(--bear); background: var(--bear-light); }
+    .spell-feedback {
+      font-size: 12.5px;
+      text-align: center;
+      margin-top: 5px;
+      min-height: 18px;
+      color: var(--text-muted);
+    }
+
+    /* ── Today's story modal ── */
+    .story-output {
+      font-size: 15px;
+      line-height: 1.9;
+      color: var(--text-main);
+      white-space: pre-wrap;
+    }
+    .story-output strong { color: var(--accent); font-weight: 700; }
+
     /* ── SRS rating buttons ── */
     .srs-rating {
       display: grid;
@@ -6056,17 +6174,21 @@
           <div class="flip-mode-toggle">
             <button class="active" data-mode="en2zh">🇺🇸 → 🇨🇳 看英猜中</button>
             <button data-mode="zh2en">🇨🇳 → 🇺🇸 中译英</button>
+            <button data-mode="spell">✏️ 默写</button>
           </div>
           <div class="flip-card">
             <div class="flip-inner" id="flipInner">
               <div class="flip-front">
                 <div class="flip-tier-mark" id="flipTierMark">--</div>
+                <div id="flipLeechBadge" class="leech-badge hidden"></div>
                 <div class="flip-mode-mark" id="flipModeMarkFront">EN→ZH</div>
                 <div class="flip-label">Front</div>
                 <div class="flip-word" id="flipWord"></div>
                 <div class="flip-phonetic" id="flipPhonetic"></div>
                 <div class="flip-pos" id="flipPos"></div>
-                <div class="flip-hint">点击翻面查看答案</div>
+                <div class="flip-hint" id="flipClickHint">点击翻面查看答案</div>
+                <div id="flipHintDisplay" class="flip-hint-display"></div>
+                <button id="flipHintBtn" class="flip-hint-btn">💡 提示</button>
               </div>
               <div class="flip-back">
                 <div class="flip-tier-mark" id="flipTierMarkBack">--</div>
@@ -6075,8 +6197,13 @@
                 <div class="flip-zh" id="flipZh"></div>
                 <div class="flip-note" id="flipNote"></div>
                 <div id="flipExampleContainer" class="hidden flip-example-box"></div>
+                <div id="flipBackExtra" class="flip-extra"></div>
               </div>
             </div>
+          </div>
+          <div class="spell-wrap" id="spellWrap">
+            <input class="spell-input" id="spellInput" placeholder="输入英文单词，按 Enter 提交..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            <div class="spell-feedback" id="spellFeedback"></div>
           </div>
           <div class="srs-rating" id="srsRating">
             <button class="srs-btn again" data-quality="0"><strong>1</strong><span>Again</span><span
@@ -6094,6 +6221,7 @@
                 style="background:var(--bg-soft);padding:1px 4px;border-radius:3px;border:1px solid var(--border);">Space</kbd>
               翻面</span>
           </div>
+          <button id="storyBtn" class="btn-base" style="width:100%;margin-top:10px;font-size:13px;padding:9px 12px;">📖 今日故事</button>
         </aside>
       </div>
     </section>
@@ -6228,6 +6356,25 @@
   <div id="wordTooltip" class="hidden"></div>
   <div id="toast"></div>
   <button id="selectionAdd" class="selection-add-btn">添加到词库</button>
+
+  <!-- ── STORY MODAL ── -->
+  <div id="storyModal" class="modal-bg hidden">
+    <div class="modal" style="max-width:640px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;">
+        <div>
+          <div class="kicker">Memory Story</div>
+          <h2 style="margin:0;">📖 今日故事</h2>
+          <p class="modal-sub" id="storySubtitle" style="margin:4px 0 0;"></p>
+        </div>
+        <button class="modal-close" onclick="closeStoryModal()">✕</button>
+      </div>
+      <div id="storyOutput" class="story-output"></div>
+      <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end;">
+        <button class="btn-base" id="storyRegenBtn">🔄 重新生成</button>
+        <button class="btn-primary" onclick="closeStoryModal()">完成</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ── MODALS ── -->
   <div id="customAddModal" class="modal-bg hidden">
@@ -7790,7 +7937,9 @@ ${text}`;
 - 直接给出记忆法，不要任何前缀或解释`;
       const ctrl = new AbortController();
       try {
-        await streamRequestProgressive(prompt, ctrl, full => { contentEl.textContent = full; });
+        let finalText = '';
+        await streamRequestProgressive(prompt, ctrl, full => { contentEl.textContent = full; finalText = full; });
+        if (finalText) { w.mnemonic = finalText; persistVocab(); }
       } catch (e) {
         contentEl.textContent = '生成失败：' + e.message;
       }
@@ -8324,6 +8473,37 @@ ${wordList}
     }
 
     /* ============================================================
+     *  PROGRESSIVE HINT
+     * ============================================================ */
+    let _hintLevel = 0;
+    function resetHint() {
+      _hintLevel = 0;
+      const hd = $('#flipHintDisplay');
+      if (hd) hd.textContent = '';
+      const hb = $('#flipHintBtn');
+      if (hb) hb.textContent = '💡 提示';
+    }
+    function showHint(w) {
+      const word = (w.word || '').replace(/\(.*?\)/g, '').trim();
+      const hd = $('#flipHintDisplay');
+      const hb = $('#flipHintBtn');
+      if (!hd || !word) return;
+      _hintLevel++;
+      if (_hintLevel === 1) {
+        hd.textContent = word[0] + '_'.repeat(Math.max(0, word.length - 1));
+        if (hb) hb.textContent = '💡 再多一点';
+      } else if (_hintLevel === 2) {
+        const half = Math.ceil(word.length / 2);
+        hd.textContent = word.slice(0, half) + '_'.repeat(word.length - half);
+        if (hb) hb.textContent = '💡 揭晓';
+      } else {
+        hd.textContent = word;
+        _hintLevel = 0;
+        if (hb) hb.textContent = '💡 提示';
+      }
+    }
+
+    /* ============================================================
      *  POMODORO SESSION
      * ============================================================ */
     let _pomo = {
@@ -8487,12 +8667,16 @@ ${wordList}
     function renderFlipCard() {
       const pool = getFlipPool();
       $('#flipCount').textContent = `${state.flipIdx + 1} / ${pool.length || 0}`;
+      resetHint();
       if (!pool.length) {
         $('#flipWord').textContent = '— 空 —';
         $('#flipZh').textContent = '当前筛选下没有卡片';
         $('#flipPhonetic').textContent = ''; $('#flipPos').textContent = ''; $('#flipNote').textContent = '';
         $('#flipTierMark').textContent = '--'; $('#flipTierMarkBack').textContent = '--';
         $('#flipExampleContainer').classList.add('hidden');
+        $('#flipBackExtra').innerHTML = '';
+        const lb = $('#flipLeechBadge'); if (lb) lb.classList.add('hidden');
+        $('#spellWrap')?.classList.remove('active');
         return;
       }
       const w = pool[state.flipIdx % pool.length];
@@ -8501,9 +8685,32 @@ ${wordList}
       $('#flipTierMark').className = `flip-tier-mark t-${w.tier}`;
       $('#flipTierMarkBack').textContent = tierLabel;
       $('#flipTierMarkBack').className = `flip-tier-mark t-${w.tier}`;
-      const isZh2En = state.studyMode === 'zh2en';
-      $('#flipModeMarkFront').textContent = isZh2En ? 'ZH→EN' : 'EN→ZH';
+
+      // Leech badge
+      const lb = $('#flipLeechBadge');
+      if (lb) {
+        const hc = w.hardCount || 0;
+        if (hc >= 5) { lb.textContent = `🔥 难词 ×${hc}`; lb.classList.remove('hidden'); }
+        else lb.classList.add('hidden');
+      }
+
+      const isSpell = state.studyMode === 'spell';
+      const isZh2En = state.studyMode === 'zh2en' || isSpell;
+      $('#flipModeMarkFront').textContent = isSpell ? 'SPELL' : isZh2En ? 'ZH→EN' : 'EN→ZH';
       $('#flipModeMarkBack').textContent = 'ANSWER';
+      $('#flipClickHint').textContent = isSpell ? '输入单词后翻面查看答案' : '点击翻面查看答案';
+
+      // Spell mode input
+      const sw = $('#spellWrap');
+      if (sw) {
+        sw.classList.toggle('active', isSpell);
+        if (isSpell) {
+          const si = $('#spellInput');
+          if (si) { si.value = ''; si.className = 'spell-input'; si.focus(); }
+          $('#spellFeedback').textContent = '输入英文单词，按 Enter 提交';
+        }
+      }
+
       const flipWordEl = $('#flipWord');
       flipWordEl.className = 'flip-word';
       if (w.tier === 'pattern') flipWordEl.classList.add('pattern');
@@ -8511,7 +8718,9 @@ ${wordList}
       if (isZh2En) {
         flipWordEl.classList.add('front-zh');
         flipWordEl.textContent = w.translation || '—';
-        $('#flipPhonetic').textContent = w.pos ? `[${w.pos}] · 默写英文` : '默写英文';
+        $('#flipPhonetic').textContent = isSpell
+          ? (w.phonetic ? w.phonetic + ' · 请拼写' : '请拼写英文')
+          : (w.pos ? `[${w.pos}] · 默写英文` : '默写英文');
         $('#flipPos').textContent = tierLabel;
         let backHtml = `<div style="font-family:'Fraunces',serif;font-size:${w.tier === 'pattern' ? '20px' : '32px'};font-weight:700;color:var(--text-main);margin-bottom:10px;word-break:break-word;line-height:1.3;">${escapeHtml(w.word)}</div>`;
         if (w.phonetic) backHtml += `<div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);margin-bottom:8px;">${escapeHtml(w.phonetic)}</div>`;
@@ -8549,6 +8758,17 @@ ${wordList}
       }
       if (exHtml) { $('#flipExampleContainer').innerHTML = exHtml; $('#flipExampleContainer').classList.remove('hidden'); }
       else $('#flipExampleContainer').classList.add('hidden');
+
+      // Back extra: deep analysis + word family + mnemonic
+      const fbe = $('#flipBackExtra');
+      if (fbe) {
+        let extra = '';
+        if (w.deep_analysis) extra += `<div class="flip-deep">${escapeHtml(w.deep_analysis)}</div>`;
+        if (w.wordFamily?.length) extra += `<div class="flip-wf">${w.wordFamily.map(f => `<span class="wf-chip">${escapeHtml(f.word)} <em>${escapeHtml(f.pos||'')}</em></span>`).join('')}</div>`;
+        if (w.mnemonic) extra += `<div class="flip-mnem">💡 ${escapeHtml(w.mnemonic)}</div>`;
+        fbe.innerHTML = extra;
+      }
+
       $('#int3').textContent = previewInterval(w, 3);
       $('#int4').textContent = previewInterval(w, 4);
       $('#int5').textContent = previewInterval(w, 5);
@@ -8562,6 +8782,9 @@ ${wordList}
       const w = pool[state.flipIdx % pool.length];
       const updates = sm2(w, quality);
       Object.assign(w, updates);
+      // Track difficulty: leech threshold = hardCount >= 5
+      if (quality <= 3) w.hardCount = (w.hardCount || 0) + 1;
+      else w.hardCount = Math.max(0, (w.hardCount || 0) - 1);
       state.reviewLog.push({ ts: Date.now(), tier: w.tier, word: w.word, quality });
       persistReviewLog(); persistVocab();
       const labels = { 0: 'Again', 3: 'Hard', 4: 'Good', 5: 'Easy' };
@@ -9526,6 +9749,48 @@ ${tierInstruction}`;
       input.click();
     }
 
+    /* ============================================================
+     *  TODAY'S STORY
+     * ============================================================ */
+    let _storyCtrl = null;
+
+    function boldMarkdown(text) {
+      return escapeHtml(text).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    }
+
+    async function openStoryModal() {
+      if (!state.apiKey) { toast('请先配置 API Key', 'error'); return; }
+      const due = getReviewPool().slice(0, 8);
+      const words = due.length >= 3 ? due : [...state.vocab].sort(() => Math.random() - .5).slice(0, 8);
+      if (words.length < 3) { toast('至少需要 3 张词卡才能生成故事', 'warning'); return; }
+      show('#storyModal');
+      const subtitle = $('#storySubtitle');
+      const output = $('#storyOutput');
+      if (subtitle) subtitle.textContent = `融合 ${words.length} 个${due.length >= 3 ? '今日到期' : '随机'}词汇`;
+      if (output) { output.className = 'story-output'; output.innerHTML = '<span style="opacity:.5">生成中...</span>'; }
+      if (_storyCtrl) _storyCtrl.abort();
+      const wordList = words.map(w => `${w.word}（${w.translation || w.zh || ''}）`).join('、');
+      const prompt = `请用以下金融英语词汇写一段 130-160 字的财经英语新闻段落，每个词汇必须自然融入。
+词汇：${wordList}
+要求：
+- 模拟彭博/路透风格，逻辑连贯
+- 每个词汇用 **词** 加粗标出
+- 直接输出英文段落，不加任何前缀或说明`;
+      _storyCtrl = new AbortController();
+      try {
+        await streamRequestProgressive(prompt, _storyCtrl, full => {
+          if (output) output.innerHTML = boldMarkdown(full);
+        });
+      } catch (e) {
+        if (e.name !== 'AbortError' && output) output.textContent = '生成失败：' + e.message;
+      }
+    }
+
+    function closeStoryModal() {
+      hide('#storyModal');
+      if (_storyCtrl) { _storyCtrl.abort(); _storyCtrl = null; }
+    }
+
     function openSettings() {
       $('#providerSelect').value = state.provider;
       populateModelSelect();
@@ -9779,6 +10044,44 @@ ${tierInstruction}`;
           $('#flipInner').classList.toggle('flipped', state.flipped);
         }
       });
+
+      // Progressive hint button
+      $('#flipHintBtn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        const pool = getFlipPool();
+        if (!pool.length) return;
+        showHint(pool[state.flipIdx % pool.length]);
+      });
+
+      // Spell mode input
+      $('#spellInput').addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        const pool = getFlipPool();
+        if (!pool.length) return;
+        const w = pool[state.flipIdx % pool.length];
+        const typed = $('#spellInput').value.trim().toLowerCase();
+        const correct = (w.word || '').trim().toLowerCase();
+        const si = $('#spellInput');
+        const sf = $('#spellFeedback');
+        if (typed === correct) {
+          si.classList.add('correct');
+          sf.textContent = '✓ 正确！';
+          setTimeout(() => { state.flipped = true; $('#flipInner').classList.add('flipped'); }, 400);
+        } else {
+          si.classList.add('wrong');
+          sf.innerHTML = `✗ 正确：<strong>${escapeHtml(w.word)}</strong>`;
+          setTimeout(() => {
+            si.value = ''; si.className = 'spell-input';
+            sf.textContent = '再试一次，或点击卡片翻面查看';
+            state.flipped = true; $('#flipInner').classList.add('flipped');
+          }, 1400);
+        }
+      });
+
+      // Story button
+      $('#storyBtn').addEventListener('click', openStoryModal);
+      $('#storyRegenBtn').addEventListener('click', openStoryModal);
       $$('.flip-mode-toggle button').forEach(b => {
         b.addEventListener('click', () => {
           state.studyMode = b.dataset.mode;
@@ -9925,7 +10228,7 @@ ${tierInstruction}`;
         }
         if (e.key === 'D' && e.shiftKey) { toggleTheme(); return; }
         if (state.view === 'vocab' && getFlipPool().length) {
-          if (e.code === 'Space') {
+          if (e.code === 'Space' && document.activeElement !== $('#spellInput')) {
             e.preventDefault();
             state.flipped = !state.flipped;
             $('#flipInner').classList.toggle('flipped', state.flipped);
