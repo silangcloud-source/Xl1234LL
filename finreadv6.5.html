@@ -5498,6 +5498,23 @@
       flex-direction: column;
       gap: 14px;
     }
+    .sc-body input,
+    .sc-body select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--r-md);
+      background: var(--bg-soft);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color .15s;
+    }
+    .sc-body input:focus,
+    .sc-body select:focus {
+      border-color: var(--accent);
+    }
     .sc-field {
       display: flex;
       flex-direction: column;
@@ -9371,7 +9388,7 @@ ${text}`;
         if (!queue.length) { toast('暂无可复习词汇', 'warning'); return; }
         state.vocabFilter = 'all';
         state.studyMode = 'en2zh';
-        $('#flipModeToggle_en2zh')?.classList.add('active');
+        $$('.flip-mode-toggle button').forEach(b => b.classList.toggle('active', b.dataset.mode === 'en2zh'));
         enterReviewFocus();
         // Override pool with limited queue via pomo mechanism
         _pomo.active = true; _pomo.queue = queue; _pomo.idx = 0; _pomo.round = 1;
@@ -11286,11 +11303,13 @@ ${tierInstruction}`;
       else if (proto === 'https:') envType = 'https';
       else envType = 'http';
       const hasLS = (() => { try { localStorage.setItem('__ft', '1'); localStorage.removeItem('__ft'); return true; } catch { return false; } })();
+      // SW only registers on http/https — file:// won't work even if the API exists
+      const swEligible = 'serviceWorker' in navigator && (proto === 'http:' || proto === 'https:');
       return {
         envType,
         proto,
-        hasSW: 'serviceWorker' in navigator,
-        swActive: !!(navigator.serviceWorker && navigator.serviceWorker.controller),
+        hasSW: swEligible,
+        swActive: !!(swEligible && navigator.serviceWorker.controller),
         hasPWA: !!window._deferredInstallPrompt,
         hasClipboard: !!(navigator.clipboard && navigator.clipboard.writeText),
         notifPerm: 'Notification' in window ? Notification.permission : 'unavailable',
