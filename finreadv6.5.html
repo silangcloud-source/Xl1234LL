@@ -5447,6 +5447,325 @@
       }
     }
 
+    /* ================================================================
+   TRAINING CENTER — Phase 4
+   ================================================================ */
+    /* ── Layout ── */
+    #viewTraining {
+      padding: 0 var(--page-pad);
+    }
+    .tc-layout {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 36px 0 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .tc-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .tc-title {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -.028em;
+      line-height: 1.1;
+      margin: 0;
+    }
+
+    /* ── Stats strip ── */
+    .tc-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .tc-stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 14px 12px;
+      text-align: center;
+    }
+    .tc-stat-val {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+      color: var(--text-main);
+    }
+    .tc-stat-val.tc-highlight { color: var(--accent); }
+    .tc-stat-key {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: .04em;
+    }
+
+    /* ── Mode cards ── */
+    .tc-modes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .tc-mode-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      cursor: pointer;
+      text-align: left;
+      transition: border-color .18s, box-shadow .18s, transform .15s;
+      box-shadow: var(--shadow-xs);
+      position: relative;
+    }
+    .tc-mode-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .tc-mode-card:active { transform: translateY(0); }
+    .tc-mode-icon {
+      font-size: 26px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .tc-mode-info { flex: 1; min-width: 0; }
+    .tc-mode-title {
+      font-family: 'Noto Sans SC', system-ui, sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+    .tc-mode-desc {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+    .tc-mode-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 5px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tc-mode-badge.zero {
+      background: var(--bg-soft);
+      color: var(--text-muted);
+    }
+    .tc-mode-card.tc-soon {
+      opacity: .6;
+      cursor: default;
+    }
+    .tc-mode-card.tc-soon:hover {
+      border-color: var(--border);
+      box-shadow: var(--shadow-xs);
+      transform: none;
+    }
+    .tc-soon-label {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      background: var(--bg-soft);
+      border-radius: 4px;
+      padding: 2px 5px;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Full review button ── */
+    .tc-quick {}
+    .tc-full-review {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, var(--accent) 0%, #7c3aed 100%);
+      color: #fff;
+      border: none;
+      border-radius: var(--r-xl);
+      font-family: 'Noto Sans SC', system-ui, sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(99,102,241,.35);
+      transition: opacity .18s, transform .15s;
+    }
+    .tc-full-review:hover { opacity: .92; transform: translateY(-1px); }
+    .tc-full-review:active { transform: translateY(0); }
+    .tc-full-due {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      opacity: .8;
+    }
+
+    /* ── Empty state ── */
+    .tc-empty {
+      text-align: center;
+      padding: 48px 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+    }
+    .tc-empty-icon { font-size: 36px; margin-bottom: 16px; }
+    .tc-empty-title {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+    .tc-empty-desc {
+      font-family: 'Noto Sans SC', system-ui, sans-serif;
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    /* ── Session Report Overlay ── */
+    .session-report-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      z-index: 200;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .session-report {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 201;
+      width: min(480px, calc(100vw - 32px));
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 32px 28px 28px;
+      box-shadow: var(--shadow-xl);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .sr-header { text-align: center; }
+    .sr-emoji { font-size: 40px; margin-bottom: 8px; }
+    .sr-title {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+    .sr-subtitle {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+    .sr-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .sr-stat {
+      text-align: center;
+      background: var(--bg-soft);
+      border-radius: var(--r-md);
+      padding: 12px 8px;
+    }
+    .sr-val {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .sr-val.sr-good { color: var(--bull); }
+    .sr-val.sr-fuzzy { color: var(--warn); }
+    .sr-val.sr-bad { color: var(--bear); }
+    .sr-key {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      color: var(--text-muted);
+    }
+    .sr-bar-wrap {
+      background: var(--bg-soft);
+      border-radius: 99px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .sr-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--bull) 0%, var(--accent) 100%);
+      transition: width .6s cubic-bezier(.4,0,.2,1);
+    }
+    .sr-suggest {
+      font-family: 'Noto Sans SC', system-ui, sans-serif;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+    .sr-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .sr-actions .btn-primary { flex: 1; }
+    .sr-actions .btn-base { flex: 1; }
+
+    /* ── Mobile SRS button upgrade (review-focus mode) ── */
+    @media (max-width: 900px) {
+      body.review-focus .srs-btn {
+        padding: 16px 4px;
+        min-height: 64px;
+      }
+      body.review-focus .srs-btn strong {
+        font-size: 20px;
+      }
+      body.review-focus .srs-btn span:not(.srs-interval) {
+        font-size: 13px;
+      }
+      body.review-focus .srs-rating {
+        gap: 8px;
+      }
+      /* Training center mobile */
+      .tc-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .tc-title { font-size: 28px; }
+      .tc-modes {
+        grid-template-columns: 1fr;
+      }
+      .sr-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     /* ── Article vocab FAB (mobile only, analysis view) ── */
     #articleFab {
       display: none;
@@ -6556,6 +6875,88 @@
       </div>
     </section>
 
+    <!-- ── TRAINING CENTER VIEW ── -->
+    <section id="viewTraining" class="hidden">
+      <div class="tc-layout">
+        <div class="tc-header">
+          <div class="tc-eyebrow">Training Center · SM-2</div>
+          <h1 class="tc-title">训练中心</h1>
+        </div>
+
+        <!-- Stats strip -->
+        <div class="tc-stats" id="tcStats">
+          <div class="tc-stat-card">
+            <div class="tc-stat-val tc-highlight" id="tcDue">0</div>
+            <div class="tc-stat-key">待复习</div>
+          </div>
+          <div class="tc-stat-card">
+            <div class="tc-stat-val" id="tcDoneToday">0</div>
+            <div class="tc-stat-key">今日完成</div>
+          </div>
+          <div class="tc-stat-card">
+            <div class="tc-stat-val" id="tcAccuracy">--%</div>
+            <div class="tc-stat-key">正确率</div>
+          </div>
+          <div class="tc-stat-card">
+            <div class="tc-stat-val" id="tcStreak">0</div>
+            <div class="tc-stat-key">连续天数</div>
+          </div>
+        </div>
+
+        <!-- Training mode cards -->
+        <div class="tc-modes" id="tcModes">
+          <button class="tc-mode-card" id="tcModeDaily" onclick="launchTrainingMode('daily10')">
+            <div class="tc-mode-icon">⚡</div>
+            <div class="tc-mode-info">
+              <div class="tc-mode-title">今日 10 词</div>
+              <div class="tc-mode-desc">优先复习到期词汇</div>
+            </div>
+            <div class="tc-mode-badge zero" id="tcDailyBadge">0</div>
+          </button>
+          <button class="tc-mode-card" id="tcModeLeech" onclick="launchTrainingMode('leech')">
+            <div class="tc-mode-icon">🔥</div>
+            <div class="tc-mode-info">
+              <div class="tc-mode-title">易混词专项</div>
+              <div class="tc-mode-desc">专攻高频错误词汇</div>
+            </div>
+            <div class="tc-mode-badge zero" id="tcLeechBadge">0</div>
+          </button>
+          <button class="tc-mode-card" id="tcModePattern" onclick="launchTrainingMode('pattern')">
+            <div class="tc-mode-icon">✍</div>
+            <div class="tc-mode-info">
+              <div class="tc-mode-title">财经句式默写</div>
+              <div class="tc-mode-desc">句式 Tier · 默写模式</div>
+            </div>
+            <div class="tc-mode-badge zero" id="tcPatternBadge">0</div>
+          </button>
+          <button class="tc-mode-card" id="tcModeRetry" onclick="launchTrainingMode('retry')">
+            <div class="tc-mode-icon">↩</div>
+            <div class="tc-mode-info">
+              <div class="tc-mode-title">错题回顾</div>
+              <div class="tc-mode-desc">近 7 天 Again 词汇</div>
+            </div>
+            <div class="tc-mode-badge zero" id="tcRetryBadge">0</div>
+          </button>
+        </div>
+
+        <!-- Full review CTA -->
+        <div class="tc-quick" id="tcQuick">
+          <button class="tc-full-review" onclick="launchTrainingMode('full')">
+            <span>全库复习 · 番茄钟模式</span>
+            <span class="tc-full-due" id="tcFullDue">共 0 词</span>
+          </button>
+        </div>
+
+        <!-- Empty state (no vocab at all) -->
+        <div class="tc-empty hidden" id="tcEmpty">
+          <div class="tc-empty-icon">◆</div>
+          <div class="tc-empty-title">卡组为空</div>
+          <div class="tc-empty-desc">精读一篇文章，词汇将自动加入卡组</div>
+          <button class="btn-primary" onclick="setView('input')">开始精读</button>
+        </div>
+      </div>
+    </section>
+
     <!-- ── VOCAB BOOK VIEW ── -->
     <section id="viewVocab" class="hidden">
       <div class="vocab-head">
@@ -7105,6 +7506,28 @@
     </div>
   </div>
 
+  <!-- ── SESSION REPORT OVERLAY ── -->
+  <div class="session-report-backdrop hidden" id="sessionReportBackdrop"></div>
+  <div class="session-report hidden" id="sessionReport">
+    <div class="sr-header">
+      <div class="sr-emoji" id="srEmoji">🎉</div>
+      <div class="sr-title" id="srTitle">复习完成</div>
+      <div class="sr-subtitle" id="srSubtitle"></div>
+    </div>
+    <div class="sr-stats">
+      <div class="sr-stat"><div class="sr-val" id="srTotal">0</div><div class="sr-key">本次复习</div></div>
+      <div class="sr-stat"><div class="sr-val sr-good" id="srGood">0</div><div class="sr-key">已掌握</div></div>
+      <div class="sr-stat"><div class="sr-val sr-fuzzy" id="srFuzzy">0</div><div class="sr-key">模糊</div></div>
+      <div class="sr-stat"><div class="sr-val sr-bad" id="srBad">0</div><div class="sr-key">需加强</div></div>
+    </div>
+    <div class="sr-bar-wrap"><div class="sr-bar-fill" id="srBarFill" style="width:0%"></div></div>
+    <div class="sr-suggest" id="srSuggest"></div>
+    <div class="sr-actions">
+      <button class="btn-primary" id="srBtnContinue">继续复习</button>
+      <button class="btn-base" id="srBtnDone">完成</button>
+    </div>
+  </div>
+
   <!-- ── BOTTOM TAB BAR (mobile only) ── -->
   <nav class="bottom-tabbar" id="bottomTabbar" role="navigation" aria-label="主导航">
     <div class="bottom-tabbar-inner">
@@ -7290,6 +7713,8 @@
       storageStatus: { mode: 'localStorage', migrated: false, lastError: '' },
       dailyGoals: { reviewTarget: 20, articleTarget: 1 },
       historySearch: '',
+      trainingMode: 'full',
+      session: { active: false, startTs: null, reviewed: 0, good: 0, hard: 0, again: 0, mode: 'full' },
     };
 
     const $ = (s) => document.querySelector(s);
@@ -8438,6 +8863,7 @@ ${text}`;
       $('#v64PathSteps').innerHTML = steps.map((s, i) =>
         `<div class="v64-path-step ${i < stage.active ? 'done' : i === stage.active ? 'active' : ''}"><strong>${s[0]}</strong><span>${s[1]}</span></div>`
       ).join('');
+      if (state.view === 'training') renderTrainingCenter();
     }
 
 
@@ -8480,31 +8906,215 @@ ${text}`;
     function enterReviewFocus() {
       if (!state.vocab.length) {
         toast('先精读一篇文章并存入卡片', 'warning');
-        setView('vocab');
+        setView('training');
         return;
       }
       closeReviewOverlays();
+      state.session = { active: true, startTs: Date.now(), reviewed: 0, good: 0, hard: 0, again: 0, mode: state.trainingMode || 'full' };
       setView('review');
     }
 
     function exitReviewFocus() {
-      setView('vocab');
+      const sess = state.session;
+      state.session = { active: false, startTs: null, reviewed: 0, good: 0, hard: 0, again: 0, mode: 'full' };
+      if (sess.active && sess.reviewed > 0) {
+        showSessionReport(sess);
+      } else {
+        setView('training');
+      }
     }
+
+    /* ── Training Center ── */
+
+    function renderTrainingCenter() {
+      const ts = v64TodayStartTs();
+      const due = getReviewPool().length;
+      const doneToday = state.reviewLog.filter(r => r.ts >= ts).length;
+      const todayLogs = state.reviewLog.filter(r => r.ts >= ts);
+      const accuracy = todayLogs.length > 0
+        ? Math.round(todayLogs.filter(r => r.quality >= 3).length / todayLogs.length * 100)
+        : null;
+      const streak = calculateStreak();
+      const leechCount = state.vocab.filter(v => (v.hardCount || 0) >= 3).length;
+      const patternCount = state.vocab.filter(v => v.tier === 'pattern').length;
+      const sevenDaysAgo = Date.now() - 7 * 86400000;
+      const recentAgainWords = new Set(
+        state.reviewLog.filter(r => r.ts >= sevenDaysAgo && r.quality === 0).map(r => r.word)
+      );
+      const retryCount = state.vocab.filter(v => recentAgainWords.has(v.word)).length;
+      const isEmpty = state.vocab.length === 0;
+
+      $('#tcDue').textContent = due;
+      $('#tcDue').classList.toggle('tc-highlight', due > 0);
+      $('#tcDoneToday').textContent = doneToday;
+      $('#tcAccuracy').textContent = accuracy !== null ? accuracy + '%' : '--%';
+      $('#tcStreak').textContent = streak;
+
+      // badges
+      const setB = (id, n) => {
+        const el = $('#' + id);
+        if (!el) return;
+        el.textContent = n;
+        el.classList.toggle('zero', n === 0);
+      };
+      setB('tcDailyBadge', due);
+      setB('tcLeechBadge', leechCount);
+      setB('tcPatternBadge', patternCount);
+      setB('tcRetryBadge', retryCount);
+      $('#tcFullDue').textContent = `共 ${state.vocab.length} 词`;
+
+      // disable empty modes
+      const daily = $('#tcModeDaily');
+      if (daily) daily.style.opacity = '';
+      const leech = $('#tcModeLeech');
+      if (leech) leech.classList.toggle('tc-soon', leechCount === 0);
+      const pattern = $('#tcModePattern');
+      if (pattern) pattern.classList.toggle('tc-soon', patternCount === 0);
+      const retry = $('#tcModeRetry');
+      if (retry) retry.classList.toggle('tc-soon', retryCount === 0);
+
+      $('#tcModes')?.classList.toggle('hidden', isEmpty);
+      $('#tcQuick')?.classList.toggle('hidden', isEmpty);
+      $('#tcEmpty')?.classList.toggle('hidden', !isEmpty);
+    }
+    window.renderTrainingCenter = renderTrainingCenter;
+
+    function launchTrainingMode(mode) {
+      if (!state.vocab.length) { toast('卡组为空，先精读一篇文章', 'warning'); return; }
+      state.trainingMode = mode;
+      state.flipped = false;
+
+      if (mode === 'daily10') {
+        const due = getReviewPool();
+        const queue = due.length > 0
+          ? [...due].sort((a, b) => (a.due || 0) - (b.due || 0)).slice(0, 10)
+          : [...state.vocab].sort(() => Math.random() - .5).slice(0, 10);
+        if (!queue.length) { toast('暂无可复习词汇', 'warning'); return; }
+        state.vocabFilter = 'all';
+        state.studyMode = 'en2zh';
+        $('#flipModeToggle_en2zh')?.classList.add('active');
+        enterReviewFocus();
+        // Override pool with limited queue via pomo mechanism
+        _pomo.active = true; _pomo.queue = queue; _pomo.idx = 0; _pomo.round = 1;
+        _pomo.againQueue = []; _pomo.remaining = POMO_DURATION; _pomo.startedAt = null;
+        state.flipIdx = 0;
+        show('#pomoBar'); hide('#pomoStart');
+        $('#pomoTimer').textContent = pomoFmt(_pomo.remaining);
+        $('#pomoTimer').classList.remove('urgent');
+        pomoUpdateProgress();
+        renderFlipCard();
+        toast(`今日 10 词 · 共 ${queue.length} 张 · 加油！`, 'success');
+
+      } else if (mode === 'leech') {
+        const leeches = state.vocab.filter(v => (v.hardCount || 0) >= 3);
+        if (!leeches.length) { toast('暂无易混词，继续积累吧', 'info'); return; }
+        state.vocabFilter = 'all';
+        state.studyMode = 'en2zh';
+        enterReviewFocus();
+        _pomo.active = true; _pomo.queue = [...leeches].sort(() => Math.random() - .5).slice(0, POMO_LIMIT);
+        _pomo.idx = 0; _pomo.round = 1; _pomo.againQueue = [];
+        _pomo.remaining = POMO_DURATION; _pomo.startedAt = null;
+        state.flipIdx = 0;
+        show('#pomoBar'); hide('#pomoStart');
+        $('#pomoTimer').textContent = pomoFmt(_pomo.remaining);
+        $('#pomoTimer').classList.remove('urgent');
+        pomoUpdateProgress();
+        renderFlipCard();
+        toast(`易混词专项 · ${_pomo.queue.length} 词`, 'info');
+
+      } else if (mode === 'pattern') {
+        const patterns = state.vocab.filter(v => v.tier === 'pattern');
+        if (!patterns.length) { toast('暂无句式卡片', 'info'); return; }
+        state.vocabFilter = 'pattern';
+        state.studyMode = 'spell';
+        $$('.flip-mode-toggle button').forEach(b => b.classList.toggle('active', b.dataset.mode === 'spell'));
+        enterReviewFocus();
+        renderFlipCard();
+        toast(`财经句式默写 · ${patterns.length} 句式`, 'info');
+
+      } else if (mode === 'retry') {
+        const sevenDaysAgo = Date.now() - 7 * 86400000;
+        const againWords = new Set(state.reviewLog.filter(r => r.ts >= sevenDaysAgo && r.quality === 0).map(r => r.word));
+        const retryCards = state.vocab.filter(v => againWords.has(v.word));
+        if (!retryCards.length) { toast('近 7 天无错题记录，继续加油', 'info'); return; }
+        state.vocabFilter = 'all';
+        state.studyMode = 'en2zh';
+        enterReviewFocus();
+        _pomo.active = true; _pomo.queue = [...retryCards].sort(() => Math.random() - .5).slice(0, POMO_LIMIT);
+        _pomo.idx = 0; _pomo.round = 1; _pomo.againQueue = [];
+        _pomo.remaining = POMO_DURATION; _pomo.startedAt = null;
+        state.flipIdx = 0;
+        show('#pomoBar'); hide('#pomoStart');
+        $('#pomoTimer').textContent = pomoFmt(_pomo.remaining);
+        $('#pomoTimer').classList.remove('urgent');
+        pomoUpdateProgress();
+        renderFlipCard();
+        toast(`错题回顾 · ${_pomo.queue.length} 词`, 'info');
+
+      } else {
+        // 'full' — normal pomo start
+        state.vocabFilter = 'all';
+        state.studyMode = 'en2zh';
+        $$('.flip-mode-toggle button').forEach(b => b.classList.toggle('active', b.dataset.mode === 'en2zh'));
+        enterReviewFocus();
+        pomoStart();
+      }
+    }
+    window.launchTrainingMode = launchTrainingMode;
+
+    function showSessionReport(sess) {
+      const total = sess.reviewed;
+      const good = sess.good;
+      const fuzzy = sess.hard;
+      const bad = sess.again;
+      const pct = total > 0 ? Math.round((good + fuzzy * 0.5) / total * 100) : 0;
+
+      const modeLabel = { daily10: '今日 10 词', leech: '易混词专项', pattern: '财经句式默写', retry: '错题回顾', full: '全库复习' }[sess.mode] || '专注复习';
+
+      $('#srEmoji').textContent = pct >= 80 ? '🎉' : pct >= 50 ? '💪' : '📖';
+      $('#srTitle').textContent = pct >= 80 ? '掌握得不错！' : pct >= 50 ? '继续努力！' : '再练一练';
+      $('#srSubtitle').textContent = `${modeLabel} · ${total} 张卡片`;
+      $('#srTotal').textContent = total;
+      $('#srGood').textContent = good;
+      $('#srFuzzy').textContent = fuzzy;
+      $('#srBad').textContent = bad;
+      $('#srBarFill').style.width = pct + '%';
+
+      let suggest = '';
+      if (bad > 0) suggest = `${bad} 词需加强 — 明日优先复习这些词汇。`;
+      else if (fuzzy > 0) suggest = `模糊词 ${fuzzy} 个，明天安排一次强化复习。`;
+      else suggest = '全部掌握！今天的复习做得很好。';
+      if (good === total) suggest = '完美！全部掌握，继续精读积累新词。';
+      $('#srSuggest').textContent = suggest;
+
+      $('#sessionReportBackdrop').classList.remove('hidden');
+      $('#sessionReport').classList.remove('hidden');
+    }
+
+    function closeSessionReport() {
+      $('#sessionReportBackdrop').classList.add('hidden');
+      $('#sessionReport').classList.add('hidden');
+    }
+    window.closeSessionReport = closeSessionReport;
+
+    /* ── end Training Center ── */
 
     function setView(name) {
       state.view = name;
       document.body.classList.toggle('review-focus', name === 'review');
       document.body.classList.toggle('view-analysis', name === 'analysis');
-      hide('#viewInput'); hide('#viewAnalysis'); hide('#viewVocab'); hide('#viewMine'); hide('#viewHistory'); hide('#viewStats');
+      hide('#viewInput'); hide('#viewAnalysis'); hide('#viewVocab'); hide('#viewTraining'); hide('#viewMine'); hide('#viewHistory'); hide('#viewStats');
       $$('nav.tabs button').forEach(b => b.classList.toggle('active', b.dataset.view === name));
       $$('.bottom-tabbar .bt-btn').forEach(b => {
         const mineActive = b.dataset.view === 'mine' && (name === 'mine');
-        b.classList.toggle('active', b.dataset.view === name || mineActive);
+        const reviewActive = b.dataset.view === 'review' && (name === 'review' || name === 'training');
+        b.classList.toggle('active', b.dataset.view === name || mineActive || reviewActive);
       });
       if (name === 'input') { show('#viewInput'); if (!state.currentRequest) hide('#progressBox'); }
       else if (name === 'analysis') { show('#viewAnalysis'); renderAnalysis(); }
       else if (name === 'vocab') { show('#viewVocab'); renderVocabBook(); }
       else if (name === 'review') { show('#viewVocab'); renderVocabBook(); }
+      else if (name === 'training') { show('#viewTraining'); renderTrainingCenter(); }
       else if (name === 'history') { show('#viewHistory'); renderHistoryView(); }
       else if (name === 'stats') { show('#viewStats'); renderStatsView(); }
       else if (name === 'mine') { show('#viewMine'); setMineTab(state.mineTab || 'history'); }
@@ -9638,6 +10248,12 @@ ${text}`;
       if (quality <= 3) w.hardCount = (w.hardCount || 0) + 1;
       else w.hardCount = Math.max(0, (w.hardCount || 0) - 1);
       state.reviewLog.push({ ts: Date.now(), tier: w.tier, word: w.word, quality });
+      if (state.session?.active) {
+        state.session.reviewed++;
+        if (quality === 5 || quality === 4) state.session.good++;
+        else if (quality === 3) state.session.hard++;
+        else state.session.again++;
+      }
       persistReviewLog(); persistVocab();
       const labels = { 0: 'Again', 3: 'Hard', 4: 'Good', 5: 'Easy' };
       toast(`${labels[quality]} · 下次 ${previewInterval(w, quality)}`, quality < 3 ? 'warning' : 'success');
@@ -10671,7 +11287,7 @@ ${tierInstruction}`;
     function bindEvents() {
       $$('nav.tabs button').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
       $$('.bottom-tabbar .bt-btn').forEach(btn => btn.addEventListener('click', () => {
-        if (btn.dataset.view === 'review') { enterReviewFocus(); return; }
+        if (btn.dataset.view === 'review') { setView('training'); return; }
         setView(btn.dataset.view);
       }));
       $('#newsInput').addEventListener('input', onInputChange);
@@ -10681,7 +11297,7 @@ ${tierInstruction}`;
       });
       $('#btnSample').addEventListener('click', () => { $('#newsInput').value = SAMPLE; onInputChange(); });
       $('#btnV64LoadDaily')?.addEventListener('click', () => { $('#newsInput').value = V64_TOPIC_SAMPLES.fed; onInputChange(); $('#newsInput').focus(); toast('已载入 Fed 专题样例', 'success'); });
-      $('#btnV64StartReview')?.addEventListener('click', enterReviewFocus);
+      $('#btnV64StartReview')?.addEventListener('click', () => setView('training'));
       $('#btnFetchLink').addEventListener('click', async () => {
         const raw = $('#newsInput').value.trim();
         // 优先从文本中提取第一个 URL（兼容前后有 UTM 参数、换行等情况）
@@ -10841,9 +11457,12 @@ ${tierInstruction}`;
         });
       });
       $$('.srs-btn').forEach(btn => { btn.addEventListener('click', () => reviewCard(parseInt(btn.dataset.quality))); });
-      $('#btnReviewFocus')?.addEventListener('click', enterReviewFocus);
+      $('#btnReviewFocus')?.addEventListener('click', () => { state.trainingMode = 'full'; enterReviewFocus(); });
       $('#btnExitReview')?.addEventListener('click', exitReviewFocus);
-      $('#pomoStart').addEventListener('click', () => { if (state.view !== 'review') setView('review'); pomoStart(); });
+      $('#pomoStart').addEventListener('click', () => { if (state.view !== 'review') { state.trainingMode = 'full'; enterReviewFocus(); } pomoStart(); });
+      $('#srBtnDone')?.addEventListener('click', () => { closeSessionReport(); setView('training'); });
+      $('#srBtnContinue')?.addEventListener('click', () => { closeSessionReport(); launchTrainingMode(state.trainingMode || 'full'); });
+      $('#sessionReportBackdrop')?.addEventListener('click', () => { closeSessionReport(); setView('training'); });
       $('#pomoStop').addEventListener('click', () => {
         showDialog({ title: '结束番茄复习', message: '确定要结束本次番茄复习吗？当前进度将不被保存。', icon: 'warn', confirmText: '结束', cancelText: '继续', danger: true })
           .then(ok => { if (ok) pomoStop(); });
@@ -10984,6 +11603,7 @@ ${tierInstruction}`;
           if (!$('#jsonbinModal').classList.contains('hidden')) { closeJsonbinModal(); return; }
           if (!$('#webdavModal').classList.contains('hidden')) { closeWebdavModal(); return; }
           if (!$('#customAddModal').classList.contains('hidden')) { hide('#customAddModal'); return; }
+          if (!$('#sessionReport').classList.contains('hidden')) { closeSessionReport(); setView('training'); return; }
           if (state.view === 'review') { exitReviewFocus(); return; }
         }
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
