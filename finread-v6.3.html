@@ -2696,6 +2696,7 @@
       height: 100%;
       transition: transform .6s cubic-bezier(.35, .15, .15, 1);
       transform-style: preserve-3d;
+      will-change: transform;
       cursor: pointer;
     }
 
@@ -4024,27 +4025,6 @@
 
       .hero-title {
         font-size: 34px;
-      }
-
-      .masthead-inner {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-      }
-
-      nav.tabs {
-        width: 100%;
-        overflow-x: auto;
-        margin-right: 0;
-      }
-
-      nav.tabs button {
-        flex: 1;
-        text-align: center;
-      }
-
-      main {
-        padding: 28px 18px 64px;
       }
 
       .tier-stats {
@@ -6595,6 +6575,9 @@
     const PATTERN_GOAL = 80;
     const PHRASE_GOAL = 150;
     const DEFAULT_CHUNK_THRESHOLD = 8000;
+    const VOCAB_PAGE_SIZE = 60;
+    const POMO_DURATION = 25 * 60; // seconds
+    const POMO_LIMIT = 50;         // max cards per session
     const NOTION_PARENT_DEFAULT = '355df83ed13d80cd8cd1faf6c44d8e5c';
 
     const MODELS = {
@@ -6973,11 +6956,21 @@
       }
     }
 
+    let _persistVocabTimer = null;
     function persistVocab() {
-      safeLocalStorageSet(STORE.vocab, JSON.stringify(state.vocab));
       updateAllCounts();
       invalidateHighlightCache();
       if (state.notion.autoSync === 'onChange') notionPushDebounced();
+      clearTimeout(_persistVocabTimer);
+      _persistVocabTimer = setTimeout(() => {
+        safeLocalStorageSet(STORE.vocab, JSON.stringify(state.vocab));
+      }, 200);
+    }
+    function flushPersistVocab() {
+      if (_persistVocabTimer === null) return;
+      clearTimeout(_persistVocabTimer);
+      _persistVocabTimer = null;
+      safeLocalStorageSet(STORE.vocab, JSON.stringify(state.vocab));
     }
     function persistArticles() {
       safeLocalStorageSet(STORE.articles, JSON.stringify(state.articles));
@@ -8208,7 +8201,6 @@ ${wordList}
       });
     }
 
-    const VOCAB_PAGE_SIZE = 60;
     let _vocabPage = 1;
 
     function renderVocabBook() {
@@ -8334,12 +8326,10 @@ ${wordList}
     /* ============================================================
      *  POMODORO SESSION
      * ============================================================ */
-    const POMO_DURATION = 25 * 60; // seconds
-    const POMO_LIMIT = 50;      // max cards per session
-
     let _pomo = {
       active: false, queue: [], idx: 0, round: 1,
       againQueue: [], remaining: POMO_DURATION, intervalId: null,
+      startedAt: null, baseRemaining: 0,
     };
 
     function pomoFmt(secs) {
@@ -8348,7 +8338,8 @@ ${wordList}
     }
 
     function pomoTick() {
-      _pomo.remaining--;
+      if (!_pomo.startedAt) return;
+      _pomo.remaining = Math.max(0, _pomo.baseRemaining - Math.floor((Date.now() - _pomo.startedAt) / 1000));
       const el = $('#pomoTimer');
       if (el) { el.textContent = pomoFmt(_pomo.remaining); el.classList.toggle('urgent', _pomo.remaining <= 60); }
       if (_pomo.remaining <= 0) { pomoPause(); pomoOnTimerEnd(); }
@@ -8403,13 +8394,22 @@ ${wordList}
       $('#pomoTimer').textContent = pomoFmt(_pomo.remaining);
       $('#pomoTimer').classList.remove('urgent');
       pomoUpdateProgress();
+      _pomo.startedAt = Date.now();
+      _pomo.baseRemaining = POMO_DURATION;
       _pomo.intervalId = setInterval(pomoTick, 1000);
       renderFlipCard();
       if (due.length > 0) toast(`开始复习！${queue.length} 词 · 25分钟番茄钟 · 加油`, 'success');
     }
 
     function pomoPause() {
-      if (_pomo.intervalId) { clearInterval(_pomo.intervalId); _pomo.intervalId = null; }
+      if (_pomo.intervalId) {
+        clearInterval(_pomo.intervalId);
+        _pomo.intervalId = null;
+        if (_pomo.startedAt) {
+          _pomo.remaining = Math.max(0, _pomo.baseRemaining - Math.floor((Date.now() - _pomo.startedAt) / 1000));
+          _pomo.startedAt = null;
+        }
+      }
     }
 
     function pomoStop() {
@@ -8461,6 +8461,8 @@ ${wordList}
       $('#pomoTimer').textContent = pomoFmt(_pomo.remaining);
       $('#pomoTimer').classList.remove('urgent');
       pomoUpdateProgress();
+      _pomo.startedAt = Date.now();
+      _pomo.baseRemaining = POMO_DURATION;
       _pomo.intervalId = setInterval(pomoTick, 1000);
       renderFlipCard();
       toast(`第 ${_pomo.round} 轮开始！${_pomo.queue.length} 词需要巩固`, 'warning');
@@ -8859,6 +8861,30 @@ ${wordList}
       else if (state.view === 'stats') renderStatsView();
     }
 
+    function buildSyncPayload({
+      articleRaw = false, includeArticles = true,
+      limitReviewLog = 0, version = 6,
+      withWordHistory = false, withStats = false,
+    } = {}) {
+      const payload = {
+        version, updatedAt: Date.now(),
+        vocab: state.vocab,
+        reviewLog: limitReviewLog > 0 ? state.reviewLog.slice(-limitReviewLog) : state.reviewLog,
+      };
+      if (includeArticles) {
+        payload.articles = state.articles.map(a => articleRaw
+          ? { ...a, raw: a.raw.slice(0, 1500) }
+          : { id: a.id, title: a.title, url: a.url || '', addedAt: a.addedAt, source: a.source || '', wordCount: a.wordCount || 0 }
+        );
+      }
+      if (withWordHistory) payload.wordHistory = state.wordHistory;
+      if (withStats) payload.stats = {
+        vocab: state.vocab.length, articles: state.articles.length,
+        wordHistoryKeys: Object.keys(state.wordHistory).length, reviewLog: state.reviewLog.length,
+      };
+      return payload;
+    }
+
     /* ============================================================
      *  NOTION SYNC MODULE
      * ============================================================ */
@@ -8951,14 +8977,7 @@ ${wordList}
         if (!childRes.ok) throw new Error(`读取子块失败: ${childRes.status}`);
         const children = (await childRes.json()).results;
         const codeBlock = children.find(b => b.type === 'code');
-        const payload = {
-          version: 5, updatedAt: Date.now(),
-          stats: { vocab: state.vocab.length, articles: state.articles.length, wordHistoryKeys: Object.keys(state.wordHistory).length, reviewLog: state.reviewLog.length },
-          vocab: state.vocab,
-          articles: state.articles.map(a => ({ ...a, raw: a.raw.slice(0, 1500) })),
-          wordHistory: state.wordHistory,
-          reviewLog: state.reviewLog.slice(-500),
-        };
+        const payload = buildSyncPayload({ articleRaw: true, limitReviewLog: 500, version: 5, withWordHistory: true, withStats: true });
         const jsonStr = JSON.stringify(payload);
         notionLog(`数据大小: ${(jsonStr.length / 1024).toFixed(1)} KB`);
         const chunks = [];
@@ -9070,33 +9089,17 @@ ${wordList}
       return { 'Content-Type': 'application/json', 'X-Master-Key': state.jsonbin.apiKey, ...extra };
     }
 
-    function jbBuildPayload(full = true) {
-      const base = {
-        version: 6, updatedAt: Date.now(),
-        vocab: state.vocab,
-        reviewLog: state.reviewLog,
-      };
-      if (full) {
-        // Include articles without full text to save space
-        base.articles = state.articles.map(a => ({
-          id: a.id, title: a.title, url: a.url || '', addedAt: a.addedAt,
-          source: a.source || '', wordCount: a.wordCount || 0,
-        }));
-      }
-      return base;
-    }
-
     async function jsonbinPush() {
       if (!state.jsonbin.apiKey) { toast('请先配置 JSONBin API Key', 'error'); return; }
       switchJsonbinTab('sync');
       jbLog('开始推送...');
       $('#jbPushBtn').disabled = true;
       try {
-        let payload = jbBuildPayload(true);
+        let payload = buildSyncPayload({ includeArticles: true });
         let body = JSON.stringify(payload);
         if (new Blob([body]).size > JB_MAX_BYTES) {
           jbLog('数据超过 90KB，省略文章列表后重试...');
-          payload = jbBuildPayload(false);
+          payload = buildSyncPayload({ includeArticles: false });
           body = JSON.stringify(payload);
         }
         let res, data;
@@ -9513,30 +9516,11 @@ ${tierInstruction}`;
           const text = await file.text();
           const data = JSON.parse(text);
           if (!data.vocab) throw new Error('文件格式不正确');
-          const ok = await confirmDialog(`即将导入：\n• ${data.vocab.length} 张词卡\n• ${(data.articles || []).length} 篇文章\n\n数据将合并到现有库（不会覆盖已有卡片）。`, { title: '确认导入', icon: 'info', confirmText: '开始合并' });
+          const ok = await confirmDialog(`即将导入：\n• ${data.vocab.length} 张词卡\n• ${(data.articles || []).length} 篇文章\n\n合并策略：新卡直接加入，已有卡片仅在备份数据更新时才覆盖。`, { title: '确认导入', icon: 'info', confirmText: '开始合并' });
           if (!ok) return;
-          const localMap = new Map(state.vocab.map(v => [`${v.tier}::${v.word}`, v]));
-          let added = 0;
-          data.vocab.forEach(rv => {
-            const k = `${rv.tier}::${rv.word}`;
-            if (!localMap.has(k)) { state.vocab.push(rv); added++; }
-          });
-          const aIds = new Set(state.articles.map(a => a.id));
-          (data.articles || []).forEach(a => { if (!aIds.has(a.id)) state.articles.push(a); });
-          Object.entries(data.wordHistory || {}).forEach(([k, v]) => {
-            if (!state.wordHistory[k]) state.wordHistory[k] = [];
-            v.forEach(h => {
-              if (!state.wordHistory[k].find(x => x.articleId === h.articleId && x.sentenceId === h.sentenceId)) {
-                state.wordHistory[k].push(h);
-              }
-            });
-          });
-          const tsSet = new Set(state.reviewLog.map(r => r.ts));
-          (data.reviewLog || []).forEach(r => { if (!tsSet.has(r.ts)) state.reviewLog.push(r); });
-          persistVocab(); persistArticles(); persistWordHistory(); persistReviewLog();
-          toast(`已合并 +${added} 卡`, 'success');
-          if (state.view === 'vocab') renderVocabBook();
-          else if (state.view === 'history') renderHistoryView();
+          const { added, updated, articleAdded } = mergeRemoteData(data);
+          toast(`已合并 +${added} 卡，更新 ${updated} 卡`, 'success');
+          rerenderActiveDataView();
         } catch (e) { toast('导入失败: ' + e.message, 'error'); }
       };
       input.click();
@@ -9978,6 +9962,8 @@ ${tierInstruction}`;
         console.error('Unhandled promise rejection:', e.reason);
         toast('操作失败，请重试', 'error');
       });
+
+      document.addEventListener('visibilitychange', () => { if (document.hidden) flushPersistVocab(); });
 
       try { const v = localStorage.getItem(STORE.vocab); if (v) state.vocab = JSON.parse(v); }
       catch (e) { console.warn('vocab v5 load failed', e); }
