@@ -5281,6 +5281,135 @@
       border: 2px solid var(--bg-nav);
     }
 
+    /* ================================================================
+   HOME VIEW — Phase 2 redesign
+   ================================================================ */
+    .home-layout {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 36px 0 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .home-welcome {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 4px;
+    }
+
+    .home-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .home-headline {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -.028em;
+      line-height: 1.08;
+      margin: 0;
+      color: var(--text-main);
+    }
+
+    .home-headline em {
+      color: var(--accent);
+      font-style: normal;
+    }
+
+    .home-review-cta {
+      flex-shrink: 0;
+      background: var(--accent-light);
+      color: var(--accent);
+      border: 1px solid rgba(99,102,241,.3);
+      border-radius: var(--r-xl);
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .18s, transform .15s;
+      touch-action: manipulation;
+    }
+    .home-review-cta:hover { background: var(--accent-pale); }
+    .home-review-cta:active { transform: scale(.95); }
+
+    /* ── Status strip ── */
+    .home-status {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .hs-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 16px 10px 13px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .hs-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+    .hs-due {
+      border-color: var(--border);
+      background: var(--bg-card);
+    }
+
+    .hs-due.hs-active {
+      border-color: rgba(99,102,241,.35);
+      background: var(--accent-pale);
+    }
+
+    .hs-val {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .hs-due.hs-active .hs-val { color: var(--accent); }
+
+    .hs-key {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .055em;
+      font-weight: 600;
+    }
+
+    /* ── Input btn row (secondary actions) ── */
+    .input-btn-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .input-btn-row .btn-base {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    /* ── Guide strip in home-layout ── */
+    .home-layout .guide-strip {
+      margin-bottom: 0;
+    }
+
     /* ── More drawer ── */
     .more-backdrop {
       display: none;
@@ -5441,6 +5570,25 @@
         font-size: 9.5px;
         height: 30px;
       }
+
+      /* ── Home layout mobile ── */
+      .home-layout {
+        padding: 20px 0 100px;
+        gap: 12px;
+      }
+
+      .home-headline { font-size: 28px; }
+
+      .home-status {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      .hs-val { font-size: 22px; }
+
+      textarea#newsInput { min-height: 160px; }
+
+      .input-btn-row .btn-base { font-size: 11px; padding: 4px 9px; }
 
       /* hide some lesser utilities to free space */
       #btnClearAll,
@@ -6042,46 +6190,79 @@
 
     <!-- ── INPUT VIEW ── -->
     <section id="viewInput">
-      <div class="hero-layout">
-        <h1 class="hero-title">将财经新闻<br />转换为<em>每日学习闭环</em></h1>
+      <div class="home-layout">
 
+        <!-- ── 欢迎区 ── -->
+        <div class="home-welcome">
+          <div>
+            <div class="home-eyebrow">Financial English · Daily Loop</div>
+            <h1 class="home-headline">今日<em>精读</em></h1>
+          </div>
+          <button class="home-review-cta hidden" id="btnV64StartReview">↺ 开始复习</button>
+        </div>
 
-        <section class="v64-dashboard" id="v64Dashboard">
-          <div class="v64-dash-head">
-            <div>
-              <div class="v64-dash-kicker">Today Learning Loop</div>
-              <h2 class="v64-dash-title">今日学习首页</h2>
-              <div class="v64-dash-sub" id="v64DailyHint">精读、复习会在这里合成今日闭环。</div>
-            </div>
-            <div class="v64-dash-actions">
-              <button class="btn-base" id="btnV64StartReview">开始复习</button>
-              <button class="btn-base" id="btnV64LoadDaily">载入样例</button>
+        <!-- ── 状态条（4 格）── -->
+        <div class="home-status" id="v64Dashboard">
+          <div class="hs-card">
+            <div class="hs-val" id="v64ReadsToday">0/1</div>
+            <div class="hs-key">今日精读</div>
+          </div>
+          <div class="hs-card">
+            <div class="hs-val" id="v64DeckSize">0</div>
+            <div class="hs-key">卡组词汇</div>
+          </div>
+          <div class="hs-card hs-due" id="hsDueCard">
+            <div class="hs-val" id="v64DueCards">0</div>
+            <div class="hs-key">待复习</div>
+          </div>
+          <div class="hs-card">
+            <div class="hs-val" id="hsStreak">0</div>
+            <div class="hs-key">连续天</div>
+          </div>
+          <!-- 保留给 JS 的隐藏兼容元素 -->
+          <span hidden id="v64DailyHint"></span>
+          <span hidden id="v64PathTitle"></span>
+          <span hidden id="v64PathLevel"></span>
+          <div hidden id="v64PathSteps"></div>
+          <button hidden id="btnV64LoadDaily"></button>
+        </div>
+
+        <!-- ── 输入卡片（主角）── -->
+        <div class="input-box">
+          <div class="input-head">
+            <span class="input-label">粘贴文章，开始精读</span>
+            <div class="input-btn-row">
+              <button class="btn-base" id="btnPaste">📋 粘贴</button>
+              <button class="btn-base" id="btnFetchLink">🔗 链接</button>
+              <button class="btn-base" id="btnSample">✦ 示例</button>
+              <button class="btn-base hidden" id="btnClear">✕ 清空</button>
             </div>
           </div>
-          <div class="v64-metric-grid">
-            <div class="v64-metric"><div class="label">Due Cards</div><div class="value" id="v64DueCards">0</div><div class="hint">今天需要处理的记忆卡</div></div>
-            <div class="v64-metric"><div class="label">Today Reads</div><div class="value" id="v64ReadsToday">0/1</div><div class="hint">今日精读目标完成度</div></div>
-            <div class="v64-metric"><div class="label">Deck</div><div class="value" id="v64DeckSize">0</div><div class="hint">四层词库累计卡片</div></div>
-          </div>
-          <div class="v64-path" id="v64PathBox">
-            <div class="v64-path-top">
-              <div class="v64-path-title" id="v64PathTitle">学习路径生成中</div>
-              <div class="v64-path-level" id="v64PathLevel">Lv.1</div>
+          <textarea id="newsInput" placeholder="将英文财经文章贴入此处（路透 / 彭博 / WSJ），点击「开始精读」…"></textarea>
+          <div class="input-foot">
+            <div class="word-count">
+              <strong id="wordCount">0</strong> chars ·
+              <span id="lang-detect">--</span> ·
+              预估 <strong id="estTime">--</strong>
+              <span id="chunkWarn" class="chunk-warn hidden"></span>
             </div>
-            <div class="v64-path-steps" id="v64PathSteps"></div>
+            <button class="btn-primary" id="btnAnalyze" disabled>开始精读 →</button>
           </div>
+          <div id="urlHint" class="hidden"
+            style="margin-top:10px;padding:10px 14px;background:var(--warn-light);border:1px solid var(--warn);border-radius:var(--r-md);font-size:13px;color:var(--text-soft);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+            <span>🔗 检测到网址 — 建议用右侧按钮自动抓取文章正文</span>
+            <button class="btn-base" id="urlHintFetch"
+              style="white-space:nowrap;background:var(--warn);color:white;border-color:var(--warn);">用 🔗 链接 抓取 →</button>
+          </div>
+        </div>
 
-        </section>
-
+        <!-- ── 使用指南（默认折叠）── -->
         <details class="guide-strip">
           <summary>使用指南</summary>
           <ol class="steps">
             <li><span class="n">1</span> 贴入待读文本（中英皆可），引擎自动识别语言并解析。</li>
             <li><span class="n">2</span> 长文章会自动按段落切分多块并行解析，逐句流式渲染。</li>
-            <li><span class="n">3</span> 原文中<b
-                style="color:var(--proper-color);background:var(--proper-bg);padding:0 4px;border-radius:2px;">专名</b>、<b
-                style="color:var(--phrase-color);background:var(--phrase-bg);padding:0 4px;border-radius:2px;">短语</b>、<b
-                style="color:var(--vocab-color);border-bottom:1px dashed;">词汇</b>均可点击查询并存入。</li>
+            <li><span class="n">3</span> 原文中<b style="color:var(--proper-color);background:var(--proper-bg);padding:0 4px;border-radius:2px;">专名</b>、<b style="color:var(--phrase-color);background:var(--phrase-bg);padding:0 4px;border-radius:2px;">短语</b>、<b style="color:var(--vocab-color);border-bottom:1px dashed;">词汇</b>均可点击查询并存入。</li>
             <li><span class="n">4</span> <b>选中任意文本</b>，出现「＋ 添加到词库」浮动按钮。</li>
             <li><span class="n">5</span> 已存入的词在新文章中再次出现时，自动追加到历史例句库。</li>
             <li><span class="n">6</span> 卡组支持<b style="color:var(--accent);">中译英反向训练</b>：右上模式切换。</li>
@@ -6089,50 +6270,7 @@
           </ol>
         </details>
 
-        <div class="goals-banner" id="goalsBanner">
-          <div class="goals-item">
-            <div class="goals-label">今日复习 <span id="goalsReviewVal">0/20</span></div>
-            <div class="goals-progress">
-              <div class="goals-bar" id="goalsReviewBar" style="width:0%"></div>
-            </div>
-          </div>
-          <div class="goals-item">
-            <div class="goals-label">今日精读 <span id="goalsArticleVal">0/1</span></div>
-            <div class="goals-progress">
-              <div class="goals-bar" id="goalsArticleBar" style="width:0%"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="input-box">
-          <div class="input-head">
-            <div class="input-label">Source Text</div>
-            <div style="display:flex;gap:8px;">
-              <button class="btn-base" id="btnFetchLink">🔗 链接</button>
-              <button class="btn-base" id="btnPaste">📋 粘贴</button>
-              <button class="btn-base" id="btnSample">✦ 示例</button>
-              <button class="btn-base hidden" id="btnClear">✕ 清空</button>
-            </div>
-          </div>
-          <textarea id="newsInput" placeholder="贴入路透/彭博/华尔街日报英文原文，或财新/第一财经中文报道。超过 1500 词将自动分块处理..."></textarea>
-          <div class="input-foot">
-            <div class="word-count">
-              <strong id="wordCount">0</strong> chars ·
-              <span id="lang-detect">--</span> ·
-              预估 <strong id="estTime">--</strong>
-              <span id="chunkWarn" class="chunk-warn hidden">将分 N 块</span>
-            </div>
-            <button class="btn-primary" id="btnAnalyze" disabled>启动引擎 →</button>
-          </div>
-          <div id="urlHint" class="hidden"
-            style="margin-top:10px;padding:10px 14px;background:var(--warn-light);border:1px solid var(--warn);border-radius:var(--r-md);font-size:13px;color:var(--text-soft);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-            <span>🔗 检测到网址 — 直接解析网址通常无效，请点击右侧按钮自动抓取文章正文</span>
-            <button class="btn-base" id="urlHintFetch"
-              style="white-space:nowrap;background:var(--warn);color:white;border-color:var(--warn);">用 🔗 链接 抓取
-              →</button>
-          </div>
-        </div>
-
+        <!-- 进度 & 错误 -->
         <div id="progressBox" class="progress-box hidden">
           <div class="progress-head">
             <span class="progress-label" id="progressLabel">解析中...</span>
@@ -6152,6 +6290,19 @@
           </div>
         </div>
         <div id="errBox" class="err-box hidden"></div>
+
+        <!-- 保留给 JS 引用的 goals 元素（不显示）-->
+        <div style="display:none" id="goalsBanner">
+          <div class="goals-item">
+            <div class="goals-label">今日复习 <span id="goalsReviewVal">0/20</span></div>
+            <div class="goals-progress"><div class="goals-bar" id="goalsReviewBar" style="width:0%"></div></div>
+          </div>
+          <div class="goals-item">
+            <div class="goals-label">今日精读 <span id="goalsArticleVal">0/1</span></div>
+            <div class="goals-progress"><div class="goals-bar" id="goalsArticleBar" style="width:0%"></div></div>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -8043,6 +8194,9 @@ ${text}`;
       $('#v64DailyHint').textContent = due > 0
         ? `今日建议：先复习 ${due} 张卡，再精读 1 篇。`
         : `今日建议：完成 1 篇精读，积累词库卡片。`;
+      $('#hsDueCard')?.classList.toggle('hs-active', due > 0);
+      const reviewCta = $('#btnV64StartReview');
+      if (reviewCta) reviewCta.classList.toggle('hidden', due === 0);
       $('#v64PathTitle').textContent = stage.title;
       $('#v64PathLevel').textContent = stage.level;
       const steps = [
@@ -9267,10 +9421,13 @@ ${text}`;
     function updateStreakBadge() {
       const streak = calculateStreak();
       const el = $('#streakBadge');
-      if (!el) return;
-      el.textContent = `🔥 ${streak}天`;
-      el.title = streak > 0 ? `连续打卡 ${streak} 天！` : '今天还没有复习，加油！';
-      el.classList.toggle('streak-0', streak === 0);
+      if (el) {
+        el.textContent = `🔥 ${streak}天`;
+        el.title = streak > 0 ? `连续打卡 ${streak} 天！` : '今天还没有复习，加油！';
+        el.classList.toggle('streak-0', streak === 0);
+      }
+      const hsEl = $('#hsStreak');
+      if (hsEl) hsEl.textContent = streak;
     }
 
     function renderHistoryView() {
