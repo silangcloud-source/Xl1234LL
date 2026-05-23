@@ -5410,6 +5410,209 @@
       margin-bottom: 0;
     }
 
+    /* ================================================================
+   PHASE 3 — Analysis mobile experience
+   ================================================================ */
+
+    /* Mobile: hide sidebar, single-column article */
+    @media (max-width: 900px) {
+      #viewAnalysis aside.sticky {
+        display: none;
+      }
+      #viewAnalysis .grid-layout {
+        gap: 0;
+      }
+      /* Clean sentence spacing */
+      #viewAnalysis .sent {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 14px 2px;
+      }
+      /* Compact meta controls on mobile */
+      .controls-group {
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .controls-group .btn-base {
+        font-size: 11px;
+        padding: 5px 8px;
+      }
+      /* sent-actions: lighter touch on mobile */
+      .sent-actions {
+        opacity: 0;
+        transition: opacity .2s;
+      }
+      .sent.active .sent-actions {
+        opacity: 1;
+      }
+    }
+
+    /* ── Article vocab FAB (mobile only, analysis view) ── */
+    #articleFab {
+      display: none;
+      position: fixed;
+      bottom: calc(70px + env(safe-area-inset-bottom) + 16px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 82;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      padding: 13px 22px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      box-shadow: 0 4px 24px rgba(99,102,241,.5);
+      cursor: pointer;
+      white-space: nowrap;
+      gap: 8px;
+      align-items: center;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .15s, box-shadow .15s;
+    }
+    #articleFab:active { transform: translateX(-50%) scale(.93); }
+    .fab-count {
+      background: rgba(255,255,255,.22);
+      border-radius: 999px;
+      padding: 1px 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    @media (max-width: 900px) {
+      body.view-analysis #articleFab { display: flex; }
+    }
+
+    /* ── Card sheet (bottom drawer) ── */
+    .card-sheet-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.48);
+      z-index: 97;
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+    }
+    .card-sheet-backdrop.open { display: block; }
+
+    .card-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 98;
+      background: var(--bg-card);
+      border-radius: 20px 20px 0 0;
+      border-top: 1px solid var(--border);
+      max-height: 80svh;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+      pointer-events: none;
+      box-shadow: 0 -8px 40px rgba(0,0,0,.18);
+    }
+    .card-sheet.open { transform: translateY(0); pointer-events: all; }
+
+    .card-sheet-handle {
+      width: 36px; height: 4px;
+      background: var(--border-strong);
+      border-radius: 2px;
+      margin: 12px auto 0;
+      flex-shrink: 0;
+    }
+
+    .card-sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px 0;
+      flex-shrink: 0;
+    }
+
+    .card-sheet-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .card-sheet-close {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+      transition: background .15s;
+    }
+    .card-sheet-close:hover { background: var(--bg-card); }
+
+    .card-sheet-tabs {
+      display: flex;
+      gap: 3px;
+      margin: 10px 16px 0;
+      background: var(--bg-soft);
+      padding: 3px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .cs-tab {
+      flex: 1;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 4px;
+      border-radius: 7px;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      touch-action: manipulation;
+    }
+    .cs-tab.active {
+      background: var(--bg-card);
+      color: var(--accent);
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    }
+    .cs-count {
+      font-size: 9px;
+      background: var(--bg-soft);
+      padding: 1px 5px;
+      border-radius: 999px;
+    }
+    .cs-tab.active .cs-count {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .card-sheet-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .sheet-panel { display: none; }
+    .sheet-panel.active { display: block; }
+
     /* ── More drawer ── */
     .more-backdrop {
       display: none;
@@ -6875,6 +7078,33 @@
     </div>
   </div>
 
+  <!-- ── ARTICLE VOCAB FAB (mobile · analysis view only) ── -->
+  <button id="articleFab" aria-label="查看本篇词卡">
+    本篇词卡 <span class="fab-count" id="articleFabCount">0</span>
+  </button>
+
+  <!-- ── CARD SHEET (本篇词卡底部抽屉) ── -->
+  <div class="card-sheet-backdrop" id="cardSheetBackdrop"></div>
+  <div class="card-sheet" id="cardSheet" role="dialog" aria-modal="true" aria-label="本篇词卡">
+    <div class="card-sheet-handle"></div>
+    <div class="card-sheet-header">
+      <span class="card-sheet-title">本篇词卡</span>
+      <button class="card-sheet-close" id="cardSheetClose" aria-label="关闭">✕</button>
+    </div>
+    <div class="card-sheet-tabs">
+      <button class="cs-tab active" data-sheet-tier="pattern">句式<span class="cs-count" id="csCountPattern">0</span></button>
+      <button class="cs-tab" data-sheet-tier="phrase">短语<span class="cs-count" id="csCountPhrase">0</span></button>
+      <button class="cs-tab" data-sheet-tier="proper">专名<span class="cs-count" id="csCountProper">0</span></button>
+      <button class="cs-tab" data-sheet-tier="vocab">词汇<span class="cs-count" id="csCountVocab">0</span></button>
+    </div>
+    <div class="card-sheet-body">
+      <div class="sheet-panel active" id="sheetPatterns"></div>
+      <div class="sheet-panel" id="sheetPhrases"></div>
+      <div class="sheet-panel" id="sheetProperNouns"></div>
+      <div class="sheet-panel" id="sheetVocab"></div>
+    </div>
+  </div>
+
   <!-- ── BOTTOM TAB BAR (mobile only) ── -->
   <nav class="bottom-tabbar" id="bottomTabbar" role="navigation" aria-label="主导航">
     <div class="bottom-tabbar-inner">
@@ -8264,6 +8494,7 @@ ${text}`;
     function setView(name) {
       state.view = name;
       document.body.classList.toggle('review-focus', name === 'review');
+      document.body.classList.toggle('view-analysis', name === 'analysis');
       hide('#viewInput'); hide('#viewAnalysis'); hide('#viewVocab'); hide('#viewMine'); hide('#viewHistory'); hide('#viewStats');
       $$('nav.tabs button').forEach(b => b.classList.toggle('active', b.dataset.view === name));
       $$('.bottom-tabbar .bt-btn').forEach(b => {
@@ -8900,7 +9131,67 @@ ${text}`;
           box.appendChild(card);
         });
       });
+      // Update FAB count and sheet tab counts
+      const total = (a.patterns?.length||0)+(a.phrases?.length||0)+(a.properNouns?.length||0)+(a.vocab?.length||0);
+      const fabCount = $('#articleFabCount'); if (fabCount) fabCount.textContent = total;
+      const csp = $('#csCountPattern'); if (csp) csp.textContent = a.patterns?.length||0;
+      const csph = $('#csCountPhrase'); if (csph) csph.textContent = a.phrases?.length||0;
+      const cspr = $('#csCountProper'); if (cspr) cspr.textContent = a.properNouns?.length||0;
+      const csv = $('#csCountVocab'); if (csv) csv.textContent = a.vocab?.length||0;
     }
+
+    function renderCardSheetTab(tier) {
+      const a = state.analysis;
+      if (!a) return;
+      const map = {
+        pattern: { id: '#sheetPatterns', items: a.patterns, klass: 't-pattern', empty: '本文无句式', toCard: patternToVocab, keyField: 'pattern' },
+        phrase:  { id: '#sheetPhrases',  items: a.phrases,  klass: 't-phrase',  empty: '本文无短语', toCard: phraseToVocab,  keyField: 'phrase'  },
+        proper:  { id: '#sheetProperNouns', items: a.properNouns, klass: 't-proper', empty: '本文无专名', toCard: properToVocab, keyField: 'name' },
+        vocab:   { id: '#sheetVocab',   items: a.vocab,    klass: 't-vocab',   empty: '本文无新词', toCard: vocabToCard,    keyField: 'word'    },
+      };
+      const sec = map[tier];
+      if (!sec) return;
+      const box = $(sec.id);
+      if (!box || box.childElementCount > 0) return; // already rendered
+      if (!sec.items?.length) {
+        box.innerHTML = `<div class="empty" style="padding:40px 20px;text-align:center;"><div class="em">${sec.empty}</div></div>`;
+        return;
+      }
+      sec.items.forEach(it => {
+        const obj = sec.toCard(it);
+        const isSaved = state.vocab.some(v => v.tier === tier && v.word === it[sec.keyField]);
+        const card = document.createElement('div');
+        card.className = `vocab-card ${sec.klass}`;
+        card.innerHTML = buildVocabCardHTML(obj, isSaved);
+        bindVocabEvents(card, obj, 'toggle');
+        box.appendChild(card);
+      });
+    }
+
+    function openCardSheet() {
+      $('#cardSheet').classList.add('open');
+      $('#cardSheetBackdrop').classList.add('open');
+      const tier = state.cardSheetTier || 'pattern';
+      setCardSheetTab(tier);
+    }
+
+    function closeCardSheet() {
+      $('#cardSheet').classList.remove('open');
+      $('#cardSheetBackdrop').classList.remove('open');
+    }
+
+    function setCardSheetTab(tier) {
+      state.cardSheetTier = tier;
+      $$('.cs-tab').forEach(b => b.classList.toggle('active', b.dataset.sheetTier === tier));
+      $$('.sheet-panel').forEach(p => p.classList.remove('active'));
+      const panelMap = { pattern: '#sheetPatterns', phrase: '#sheetPhrases', proper: '#sheetProperNouns', vocab: '#sheetVocab' };
+      $(panelMap[tier])?.classList.add('active');
+      renderCardSheetTab(tier);
+    }
+
+    window.openCardSheet = openCardSheet;
+    window.closeCardSheet = closeCardSheet;
+    window.setCardSheetTab = setCardSheetTab;
 
     let _vocabPage = 1;
     let _vocabRenderToken = 0;
@@ -10587,6 +10878,13 @@ ${tierInstruction}`;
       $('#moreWebdav').addEventListener('click', () => { closeMoreDrawer(); openWebdavModal(); });
       // ── Mine inner tabs ──
       $$('.mine-itab').forEach(btn => btn.addEventListener('click', () => setMineTab(btn.dataset.mine)));
+
+      // ── Card sheet (本篇词卡) ──
+      $('#articleFab').addEventListener('click', openCardSheet);
+      $('#cardSheetBackdrop').addEventListener('click', closeCardSheet);
+      $('#cardSheetClose').addEventListener('click', closeCardSheet);
+      $$('.cs-tab').forEach(btn => btn.addEventListener('click', () => setCardSheetTab(btn.dataset.sheetTier)));
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCardSheet(); });
 
       $('#btnImport').addEventListener('click', importVocab);
       $('#themeToggle').addEventListener('click', toggleTheme);
