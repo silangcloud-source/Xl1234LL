@@ -5448,6 +5448,221 @@
     }
 
     /* ================================================================
+   SETTINGS CENTER — Phase 5
+   ================================================================ */
+    #viewSettings { padding: 0 var(--page-pad); }
+    .sc-layout {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 36px 0 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .sc-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .sc-title {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -.028em;
+      line-height: 1.1;
+      margin: 0;
+    }
+    .sc-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+    }
+    .sc-section-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .sc-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .sc-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .sc-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+    .sc-hint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: -4px;
+    }
+    .sc-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .sc-row:first-child { padding-top: 0; }
+    .sc-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .sc-row-info { flex: 1; min-width: 0; }
+    .sc-row-title { font-size: 14px; color: var(--text-main); font-weight: 500; }
+    .sc-row-desc { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+    /* API Key mode buttons */
+    .sc-keymode {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .sc-km-btn {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 10px 12px;
+      border-radius: var(--r-md);
+      border: 1.5px solid var(--border);
+      background: var(--bg-soft);
+      cursor: pointer;
+      text-align: left;
+      transition: border-color .15s, background .15s;
+      position: relative;
+    }
+    .sc-km-btn.active {
+      border-color: var(--accent);
+      background: var(--accent-pale);
+    }
+    .sc-km-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .sc-km-desc {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      color: var(--text-muted);
+    }
+    .sc-exp-badge {
+      font-size: 8.5px;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+    .sc-mode-note {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      padding: 10px 12px;
+      background: var(--bg-soft);
+      border-radius: var(--r-md);
+      border: 1px solid var(--border);
+    }
+    /* Warning box */
+    .sc-warning {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      background: var(--warn-light);
+      border: 1px solid var(--warn);
+      border-radius: var(--r-md);
+      font-size: 12.5px;
+      color: var(--text-main);
+      line-height: 1.55;
+    }
+    /* Danger zone action list */
+    .sc-danger-zone { display: flex; flex-direction: column; gap: 6px; }
+    .sc-danger-btn {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: var(--r-md);
+      border: 1px solid var(--border);
+      background: var(--bg-soft);
+      text-align: left;
+      cursor: pointer;
+      font-size: 13.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-main);
+      transition: border-color .15s, color .15s;
+      font-family: 'Noto Sans SC', system-ui, sans-serif;
+    }
+    .sc-danger-btn:hover { border-color: var(--accent); }
+    .sc-danger-btn.danger:hover { border-color: var(--bear); color: var(--bear); }
+    .sc-danger-arrow { opacity: .45; font-size: 13px; }
+    /* Environment grid */
+    .sc-env-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .sc-env-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px;
+      border-radius: var(--r-md);
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+    }
+    .sc-env-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .sc-env-dot.green { background: var(--bull); }
+    .sc-env-dot.yellow { background: var(--warn); }
+    .sc-env-dot.red { background: var(--bear); }
+    .sc-env-dot.gray { background: var(--border-strong); }
+    .sc-env-name { font-size: 12px; color: var(--text-main); font-weight: 500; }
+    .sc-env-val { font-size: 10.5px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+    .sc-env-advice {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      padding: 12px 14px;
+      background: var(--accent-pale);
+      border: 1px solid rgba(99,102,241,.2);
+      border-radius: var(--r-md);
+    }
+    /* Mobile overrides */
+    @media (max-width: 480px) {
+      .sc-title { font-size: 28px; }
+      .sc-env-grid { grid-template-columns: 1fr; }
+      .sc-keymode { grid-template-columns: 1fr; }
+    }
+
+    /* ================================================================
    TRAINING CENTER — Phase 4
    ================================================================ */
     /* ── Layout ── */
@@ -7096,11 +7311,12 @@
     </section>
 
     <!-- ── HISTORY VIEW ── -->
-    <!-- ── MINE VIEW (档案 + 统计 composite) ── -->
+    <!-- ── MINE VIEW (档案 + 统计 + 设置 composite) ── -->
     <section id="viewMine" class="hidden">
       <nav class="mine-inner-tabs" id="mineInnerTabs">
         <button class="mine-itab active" data-mine="history">档案</button>
         <button class="mine-itab" data-mine="stats">统计</button>
+        <button class="mine-itab" data-mine="settings">设置</button>
       </nav>
     </section>
 
@@ -7151,6 +7367,167 @@
       <div class="chart-block">
         <h3>近 14 天卡片增长</h3>
         <div class="bar-chart" id="growthChart"></div>
+      </div>
+    </section>
+
+    <!-- ── SETTINGS CENTER VIEW ── -->
+    <section id="viewSettings" class="hidden">
+      <div class="sc-layout">
+        <!-- Header -->
+        <div>
+          <div class="sc-eyebrow">Settings</div>
+          <h1 class="sc-title">设置中心</h1>
+        </div>
+
+        <!-- AI 引擎配置 -->
+        <div class="sc-section">
+          <div class="sc-section-header">AI 引擎配置</div>
+          <div class="sc-body">
+            <div class="sc-field">
+              <div class="sc-label">驱动节点 (Provider)</div>
+              <select id="scProvider">
+                <option value="openrouter">OpenRouter · 推荐聚合通道</option>
+                <option value="anthropic">Anthropic · 原生直连</option>
+                <option value="deepseek">DeepSeek · 原生直连</option>
+              </select>
+            </div>
+            <div class="sc-field">
+              <div class="sc-label">解析模型</div>
+              <select id="scModel"></select>
+              <div class="sc-hint" id="scPricingHint"></div>
+            </div>
+            <div class="sc-field">
+              <div class="sc-label">流式输出</div>
+              <select id="scStreaming">
+                <option value="true">开启 · 渐进显示（推荐）</option>
+                <option value="false">关闭 · 整段返回</option>
+              </select>
+            </div>
+            <div class="sc-field">
+              <div class="sc-label">长文分块阈值（字符数）</div>
+              <input type="number" id="scChunk" min="2000" max="20000" step="500" />
+              <div class="sc-hint">超过此长度自动按段落切分</div>
+            </div>
+            <button class="btn-primary" id="scBtnSaveAI" style="align-self:flex-end;padding:9px 20px;font-size:13px;">保存 AI 配置</button>
+          </div>
+        </div>
+
+        <!-- API Key -->
+        <div class="sc-section">
+          <div class="sc-section-header">API Key</div>
+          <div class="sc-body">
+            <div class="sc-field">
+              <div class="sc-label">API Key（当前 Provider）</div>
+              <input type="password" id="scApiKey" placeholder="sk-..." autocomplete="off" />
+            </div>
+            <div class="sc-field">
+              <div class="sc-label">保存方式</div>
+              <div class="sc-keymode" id="scKeyModeGroup">
+                <button class="sc-km-btn" data-mode="temp">
+                  <div class="sc-km-label">临时模式</div>
+                  <div class="sc-km-desc">关闭页面后清除</div>
+                </button>
+                <button class="sc-km-btn" data-mode="local">
+                  <div class="sc-km-label">本机模式</div>
+                  <div class="sc-km-desc">保存于当前浏览器</div>
+                </button>
+                <button class="sc-km-btn" data-mode="secure">
+                  <div class="sc-km-label">安全模式 <span class="sc-exp-badge">实验</span></div>
+                  <div class="sc-km-desc">加密存储，即将支持</div>
+                </button>
+              </div>
+            </div>
+            <div class="sc-mode-note" id="scApiKeyModeNote"></div>
+            <button class="btn-primary" id="scBtnSaveKey" style="align-self:flex-end;padding:9px 20px;font-size:13px;">保存 API Key</button>
+          </div>
+        </div>
+
+        <!-- 外观与偏好 -->
+        <div class="sc-section">
+          <div class="sc-section-header">外观与偏好</div>
+          <div class="sc-body">
+            <div class="sc-row">
+              <div class="sc-row-info">
+                <div class="sc-row-title">颜色主题</div>
+                <div class="sc-row-desc">浅色 / 深色模式</div>
+              </div>
+              <button class="btn-base" onclick="toggleTheme()" style="flex-shrink:0;">切换主题</button>
+            </div>
+            <div class="sc-field">
+              <div class="sc-label">朗读声音 (TTS Voice)</div>
+              <select id="scVoice"></select>
+              <div class="sc-hint" id="scVoiceHint"></div>
+            </div>
+            <div class="sc-field">
+              <div class="sc-label">每日复习提醒时间</div>
+              <input type="time" id="scReminder" style="font-family:monospace;" />
+            </div>
+            <div class="sc-field">
+              <div class="sc-label">系统复习提醒</div>
+              <select id="scNotifications">
+                <option value="false">关闭 · 只在 App 内提醒</option>
+                <option value="true">开启 · 到点后系统通知</option>
+              </select>
+            </div>
+            <button class="btn-primary" id="scBtnSavePrefs" style="align-self:flex-end;padding:9px 20px;font-size:13px;">保存偏好</button>
+          </div>
+        </div>
+
+        <!-- 云同步 -->
+        <div class="sc-section">
+          <div class="sc-section-header">云同步</div>
+          <div class="sc-body">
+            <div class="sc-row">
+              <div class="sc-row-info">
+                <div class="sc-row-title">JSONBin 云同步</div>
+                <div class="sc-row-desc" id="scJsonbinStatus">未配置</div>
+              </div>
+              <button class="btn-base" onclick="openJsonbinModal()" style="flex-shrink:0;">配置 →</button>
+            </div>
+            <div class="sc-warning">⚠️ WebDAV 账号信息（含密码）保存于当前浏览器本地存储，不建议在公共设备使用。可一键清除同步配置。</div>
+            <div class="sc-row">
+              <div class="sc-row-info">
+                <div class="sc-row-title">WebDAV 同步</div>
+                <div class="sc-row-desc" id="scWebdavStatus">未配置</div>
+              </div>
+              <button class="btn-base" onclick="openWebdavModal()" style="flex-shrink:0;">配置 →</button>
+            </div>
+            <button class="sc-danger-btn danger" id="scBtnClearSync">
+              <span>一键清除同步配置</span><span class="sc-danger-arrow">🗑</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 数据管理 -->
+        <div class="sc-section">
+          <div class="sc-section-header">数据管理</div>
+          <div class="sc-body">
+            <div class="sc-hint" id="scDataSummary" style="font-size:12.5px;"></div>
+            <div class="sc-danger-zone">
+              <button class="sc-danger-btn" id="scBtnExport">
+                <span>导出全部数据 (JSON)</span><span class="sc-danger-arrow">↓</span>
+              </button>
+              <button class="sc-danger-btn" id="scBtnImport">
+                <span>导入数据</span><span class="sc-danger-arrow">↑</span>
+              </button>
+              <button class="sc-danger-btn danger" id="scBtnClearKey">
+                <span>清除 API Key</span><span class="sc-danger-arrow">🗑</span>
+              </button>
+              <button class="sc-danger-btn danger" id="scBtnClearAll">
+                <span>清除全部学习数据</span><span class="sc-danger-arrow">⚠</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 运行环境 -->
+        <div class="sc-section">
+          <div class="sc-section-header">运行环境</div>
+          <div class="sc-body">
+            <div class="sc-env-grid" id="scEnvGrid"></div>
+            <div class="sc-env-advice" id="scEnvAdvice"></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -7681,6 +8058,7 @@
       notifications: 'finread:notifications',
       draft: 'finread:draft',
       dailyGoals: 'finread:dailyGoals',
+      apiKeyMode: 'finread:apiKeyMode',
     };
 
     const IDB_DATA_KEYS = new Set([STORE.vocab, STORE.articles, STORE.wordHistory, STORE.reviewLog]);
@@ -7713,6 +8091,7 @@
       storageStatus: { mode: 'localStorage', migrated: false, lastError: '' },
       dailyGoals: { reviewTarget: 20, articleTarget: 1 },
       historySearch: '',
+      apiKeyMode: 'local',
       trainingMode: 'full',
       session: { active: false, startTs: null, reviewed: 0, good: 0, hard: 0, again: 0, mode: 'full' },
     };
@@ -9103,7 +9482,7 @@ ${text}`;
       state.view = name;
       document.body.classList.toggle('review-focus', name === 'review');
       document.body.classList.toggle('view-analysis', name === 'analysis');
-      hide('#viewInput'); hide('#viewAnalysis'); hide('#viewVocab'); hide('#viewTraining'); hide('#viewMine'); hide('#viewHistory'); hide('#viewStats');
+      hide('#viewInput'); hide('#viewAnalysis'); hide('#viewVocab'); hide('#viewTraining'); hide('#viewMine'); hide('#viewHistory'); hide('#viewStats'); hide('#viewSettings');
       $$('nav.tabs button').forEach(b => b.classList.toggle('active', b.dataset.view === name));
       $$('.bottom-tabbar .bt-btn').forEach(b => {
         const mineActive = b.dataset.view === 'mine' && (name === 'mine');
@@ -9124,8 +9503,10 @@ ${text}`;
     function setMineTab(tab) {
       state.mineTab = tab;
       $$('.mine-itab').forEach(b => b.classList.toggle('active', b.dataset.mine === tab));
-      if (tab === 'history') { show('#viewHistory'); hide('#viewStats'); renderHistoryView(); }
-      else { hide('#viewHistory'); show('#viewStats'); renderStatsView(); }
+      hide('#viewHistory'); hide('#viewStats'); hide('#viewSettings');
+      if (tab === 'history') { show('#viewHistory'); renderHistoryView(); }
+      else if (tab === 'stats') { show('#viewStats'); renderStatsView(); }
+      else if (tab === 'settings') { show('#viewSettings'); renderSettingsPage(); }
     }
     window.setMineTab = setMineTab;
 
@@ -10892,6 +11273,199 @@ ${tierInstruction}`;
       if (_storyCtrl) { _storyCtrl.abort(); _storyCtrl = null; }
     }
 
+    /* ── Settings Center (Phase 5) ── */
+
+    window._deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); window._deferredInstallPrompt = e; });
+
+    function detectEnvironment() {
+      const proto = location.protocol;
+      let envType;
+      if (proto === 'file:') envType = 'file';
+      else if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') envType = 'localhost';
+      else if (proto === 'https:') envType = 'https';
+      else envType = 'http';
+      const hasLS = (() => { try { localStorage.setItem('__ft', '1'); localStorage.removeItem('__ft'); return true; } catch { return false; } })();
+      return {
+        envType,
+        proto,
+        hasSW: 'serviceWorker' in navigator,
+        swActive: !!(navigator.serviceWorker && navigator.serviceWorker.controller),
+        hasPWA: !!window._deferredInstallPrompt,
+        hasClipboard: !!(navigator.clipboard && navigator.clipboard.writeText),
+        notifPerm: 'Notification' in window ? Notification.permission : 'unavailable',
+        hasLS,
+        hasIDB: 'indexedDB' in window,
+      };
+    }
+
+    function renderScEnvGrid() {
+      const grid = $('#scEnvGrid'); if (!grid) return;
+      const e = detectEnvironment();
+      const envLabel = { file: 'file:// 本地文件', localhost: '本地服务器 (localhost)', https: 'HTTPS 安全', http: 'HTTP 非安全' }[e.envType] || e.proto;
+      const envDot = { file: 'yellow', localhost: 'yellow', https: 'green', http: 'red' }[e.envType] || 'gray';
+      const notifLabel = { granted: '已授权', denied: '已拒绝', default: '待请求', unavailable: '不支持' }[e.notifPerm] || e.notifPerm;
+      const notifDot = { granted: 'green', denied: 'red', default: 'yellow', unavailable: 'gray' }[e.notifPerm] || 'gray';
+      const items = [
+        { name: '运行协议', val: envLabel, dot: envDot },
+        { name: 'Service Worker', val: e.hasSW ? (e.swActive ? '已激活' : '可用·未激活') : '不可用', dot: e.hasSW ? (e.swActive ? 'green' : 'yellow') : 'red' },
+        { name: 'PWA 安装', val: e.hasPWA ? '可安装' : '已安装或不支持', dot: e.hasPWA ? 'green' : 'gray' },
+        { name: '剪贴板 API', val: e.hasClipboard ? '可用' : '受限或不可用', dot: e.hasClipboard ? 'green' : 'yellow' },
+        { name: '通知权限', val: notifLabel, dot: notifDot },
+        { name: '本地存储', val: e.hasLS ? '正常' : '不可用', dot: e.hasLS ? 'green' : 'red' },
+      ];
+      grid.innerHTML = items.map(it =>
+        `<div class="sc-env-item"><div class="sc-env-dot ${it.dot}"></div><div><div class="sc-env-name">${escapeHtml(it.name)}</div><div class="sc-env-val">${escapeHtml(it.val)}</div></div></div>`
+      ).join('');
+      const advice = { file: '基础精读、卡组和复习均可用。PWA 和剪贴板 API 在 file:// 下受浏览器限制，建议改用 localhost 或 HTTPS 以获得完整体验。', localhost: '适合本地开发调试。PWA 部分能力可用。推荐上线后切换至 HTTPS。', https: '完整体验。所有功能均处于最优状态。', http: '部分安全 API（剪贴板、通知、Service Worker）可能不可用。建议切换至 HTTPS。' }[e.envType] || '';
+      const advEl = $('#scEnvAdvice');
+      if (advEl) advEl.textContent = advice;
+    }
+
+    function populateScModelSelect() {
+      const el = $('#scModel'); if (!el) return;
+      const list = MODELS[state.provider] || [];
+      el.innerHTML = list.map(m => `<option value="${escapeHtml(m.id)}">${escapeHtml(m.label)}${m.recommended ? ' ★' : ''}</option>`).join('');
+    }
+
+    function updateScPricingHint() {
+      const pEl = $('#scPricingHint'); if (!pEl) return;
+      const provider = $('#scProvider')?.value || state.provider;
+      const model = $('#scModel')?.value;
+      const list = MODELS[provider] || [];
+      const m = list.find(x => x.id === model);
+      pEl.textContent = m ? m.cost : '';
+    }
+
+    function populateScVoiceSelect() {
+      const sel = $('#scVoice'); if (!sel) return;
+      if (!('speechSynthesis' in window)) { sel.innerHTML = '<option value="">当前浏览器不支持 TTS</option>'; return; }
+      const voices = speechSynthesis.getVoices();
+      if (voices.length) _voicesCache = voices;
+      const grouped = {};
+      _voicesCache.forEach(v => { (grouped[v.lang] = grouped[v.lang] || []).push(v); });
+      let html = '<option value="">自动（优先级智能匹配）</option>';
+      Object.keys(grouped).sort().forEach(lang => {
+        html += `<optgroup label="${escapeHtml(lang)}">`;
+        grouped[lang].forEach(v => { html += `<option value="${escapeHtml(v.name)}">${escapeHtml(v.name)}</option>`; });
+        html += '</optgroup>';
+      });
+      sel.innerHTML = html;
+      sel.value = state.selectedVoice || '';
+      const hint = $('#scVoiceHint');
+      if (hint) hint.textContent = _voicesCache.length ? `共 ${_voicesCache.length} 个系统声音` : '';
+    }
+
+    function setApiKeyMode(mode) {
+      state.apiKeyMode = mode;
+      $$('#scKeyModeGroup .sc-km-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+      const note = $('#scApiKeyModeNote');
+      if (!note) return;
+      const notes = {
+        temp: '临时模式：API Key 仅保留在当前页面内存，关闭标签页或刷新后自动清除。',
+        local: '本机模式：API Key 保存于当前浏览器 localStorage，下次访问时自动读取。⚠️ 明文存储，仅供个人设备使用。',
+        secure: '安全模式（实验功能）：加密存储尚未完整实现，当前行为与本机模式相同。',
+      };
+      note.textContent = notes[mode] || '';
+    }
+    window.setApiKeyMode = setApiKeyMode;
+
+    function renderSettingsPage() {
+      if ($('#scProvider')) { $('#scProvider').value = state.provider; }
+      populateScModelSelect();
+      if ($('#scModel')) $('#scModel').value = state.model;
+      updateScPricingHint();
+      if ($('#scStreaming')) $('#scStreaming').value = String(state.streaming);
+      if ($('#scChunk')) $('#scChunk').value = state.chunkThreshold;
+      if ($('#scApiKey')) $('#scApiKey').value = state.apiKey;
+      setApiKeyMode(state.apiKeyMode || 'local');
+      populateScVoiceSelect();
+      if ($('#scReminder')) $('#scReminder').value = state.reminderTime || '09:00';
+      if ($('#scNotifications')) $('#scNotifications').value = String(state.notificationsEnabled);
+      // Sync status
+      const jbEl = $('#scJsonbinStatus');
+      if (jbEl) jbEl.textContent = state.jsonbin.binId ? (state.jsonbin.lastSync > 0 ? `已配置 · 上次同步 ${new Date(state.jsonbin.lastSync).toLocaleDateString()}` : '已配置，未同步') : '未配置';
+      const wdEl = $('#scWebdavStatus');
+      if (wdEl) wdEl.textContent = (state.webdav.url && state.webdav.username) ? (state.webdav.lastSync > 0 ? `已配置 · 上次同步 ${new Date(state.webdav.lastSync).toLocaleDateString()}` : '已配置，未同步') : '未配置';
+      // Data summary
+      const sumEl = $('#scDataSummary');
+      if (sumEl) { const s = state.storageStatus; sumEl.textContent = `${state.vocab.length} 张词卡 · ${state.articles.length} 篇文章 · ${state.reviewLog.length} 条复习记录 · 存储：${s.mode}`; }
+      renderScEnvGrid();
+    }
+    window.renderSettingsPage = renderSettingsPage;
+
+    function saveScAI() {
+      if (!$('#scProvider')) return;
+      state.provider = $('#scProvider').value;
+      state.model = $('#scModel').value;
+      state.streaming = $('#scStreaming').value === 'true';
+      state.chunkThreshold = parseInt($('#scChunk').value) || DEFAULT_CHUNK_THRESHOLD;
+      safeLocalStorageSet(STORE.provider, state.provider);
+      safeLocalStorageSet(STORE.model, state.model);
+      safeLocalStorageSet(STORE.streaming, String(state.streaming));
+      safeLocalStorageSet(STORE.chunkThreshold, String(state.chunkThreshold));
+      // keep old modal in sync
+      if ($('#providerSelect')) { $('#providerSelect').value = state.provider; populateModelSelect(); if ($('#modelSelect')) $('#modelSelect').value = state.model; updatePricingHint(); }
+      renderModelBadge();
+      toast('AI 配置已保存', 'success');
+      onInputChange();
+    }
+
+    async function saveScApiKey() {
+      if (!$('#scApiKey')) return;
+      state.apiKey = $('#scApiKey').value.trim();
+      const mode = state.apiKeyMode || 'local';
+      safeLocalStorageSet(STORE.apiKeyMode, mode);
+      if (mode === 'temp') {
+        safeLocalStorageRemove(STORE.apiKey);
+      } else {
+        safeLocalStorageSet(STORE.apiKey, state.apiKey);
+        if (mode === 'secure') toast('安全加密模式为实验功能，当前等同本机模式', 'info');
+      }
+      if ($('#apiKeyInput')) $('#apiKeyInput').value = state.apiKey;
+      renderModelBadge();
+      toast('API Key 已保存', 'success');
+    }
+
+    async function saveScPrefs() {
+      if (!$('#scVoice')) return;
+      state.selectedVoice = $('#scVoice').value;
+      state.reminderTime = $('#scReminder').value || '09:00';
+      state.notificationsEnabled = $('#scNotifications').value === 'true';
+      if (state.notificationsEnabled) await ensureNotificationPermission();
+      safeLocalStorageSet(STORE.voice, state.selectedVoice);
+      safeLocalStorageSet(STORE.reminderTime, state.reminderTime);
+      safeLocalStorageSet(STORE.notifications, String(state.notificationsEnabled));
+      if ($('#reminderTimeInput')) $('#reminderTimeInput').value = state.reminderTime;
+      if ($('#notificationSelect')) $('#notificationSelect').value = String(state.notificationsEnabled);
+      toast('偏好已保存', 'success');
+      maybeShowReviewNotification();
+    }
+
+    async function clearSyncConfig() {
+      const ok = await confirmDialog('清除所有同步配置（JSONBin 和 WebDAV 账户信息）？\n学习数据不受影响。', { title: '清除同步配置', danger: true, confirmText: '清除' });
+      if (!ok) return;
+      state.jsonbin = { apiKey: '', binId: '', lastSync: 0 };
+      state.webdav = { url: '', username: '', password: '', path: '/finread-sync.json', lastSync: 0 };
+      safeLocalStorageRemove(STORE.jsonbin);
+      safeLocalStorageRemove(STORE.webdav);
+      renderSettingsPage();
+      toast('同步配置已清除', 'success');
+    }
+
+    async function clearApiKeyOnly() {
+      const ok = await confirmDialog('清除 API Key？学习数据不受影响。', { title: '清除 API Key', danger: true, confirmText: '清除' });
+      if (!ok) return;
+      state.apiKey = '';
+      safeLocalStorageRemove(STORE.apiKey);
+      if ($('#scApiKey')) $('#scApiKey').value = '';
+      if ($('#apiKeyInput')) $('#apiKeyInput').value = '';
+      renderModelBadge();
+      toast('API Key 已清除', 'success');
+    }
+
+    /* ── end Settings Center ── */
+
     function updateStorageStatusHint() {
       const el = $('#storageStatusHint');
       if (!el) return;
@@ -10907,18 +11481,8 @@ ${tierInstruction}`;
     }
 
     function openSettings() {
-      $('#providerSelect').value = state.provider;
-      populateModelSelect();
-      $('#modelSelect').value = state.model;
-      updatePricingHint();
-      $('#apiKeyInput').value = state.apiKey;
-      $('#streamingSelect').value = String(state.streaming);
-      $('#chunkThresholdInput').value = state.chunkThreshold;
-      populateVoiceSelect();
-      $('#reminderTimeInput').value = state.reminderTime || '09:00';
-      $('#notificationSelect').value = String(state.notificationsEnabled);
-      updateStorageStatusHint();
-      show('#settingsModal');
+      state.mineTab = 'settings';
+      setView('mine');
     }
     function closeSettings() { hide('#settingsModal'); }
 
@@ -11513,6 +12077,36 @@ ${tierInstruction}`;
       $('#providerSelect').addEventListener('change', onProviderChange);
       $('#modelSelect').addEventListener('change', updatePricingHint);
       $('#voiceSelect').addEventListener('change', updateVoiceHint);
+
+      // ── Settings Center Page buttons ──
+      $('#scBtnSaveAI')?.addEventListener('click', saveScAI);
+      $('#scBtnSaveKey')?.addEventListener('click', saveScApiKey);
+      $('#scBtnSavePrefs')?.addEventListener('click', saveScPrefs);
+      $('#scBtnClearSync')?.addEventListener('click', clearSyncConfig);
+      $('#scBtnExport')?.addEventListener('click', exportVocab);
+      $('#scBtnImport')?.addEventListener('click', importVocab);
+      $('#scBtnClearKey')?.addEventListener('click', clearApiKeyOnly);
+      $('#scBtnClearAll')?.addEventListener('click', async () => {
+        const ok = await confirmDialog(
+          `此操作将清除：\n• ${state.vocab.length} 张词卡及复习进度\n• ${state.articles.length} 篇归档文章\n• 所有本地学习数据\n\n⚠️ 不可恢复！建议先导出备份。`,
+          { title: '清除全部本地数据', danger: true, confirmText: '全部清除' }
+        );
+        if (!ok) return;
+        await clearFinreadDb();
+        Object.values(STORE).forEach(k => safeLocalStorageRemove(k));
+        [STORE.vocab, STORE.articles, STORE.wordHistory, STORE.reviewLog].forEach(k => safeLocalStorageRemove(`${k}:meta`));
+        sessionStorage.clear();
+        location.reload();
+      });
+      $('#scProvider')?.addEventListener('change', () => {
+        state.provider = $('#scProvider').value;
+        populateScModelSelect();
+        const list = MODELS[state.provider] || [];
+        if (list.length && $('#scModel')) { state.model = list[0].id; $('#scModel').value = state.model; }
+        updateScPricingHint();
+      });
+      $('#scModel')?.addEventListener('change', updateScPricingHint);
+      $$('#scKeyModeGroup .sc-km-btn').forEach(b => b.addEventListener('click', () => setApiKeyMode(b.dataset.mode)));
       $('#btnClearAll').addEventListener('click', async () => {
         const ok = await confirmDialog(
           `此操作将清除：\n• ${state.vocab.length} 张词卡及复习进度\n• ${state.articles.length} 篇归档文章\n• 所有本地学习数据\n\n⚠️ 不可恢复！建议先导出备份。`,
@@ -11694,6 +12288,7 @@ ${tierInstruction}`;
       state.studyMode = localStorage.getItem(STORE.studyMode) || 'en2zh';
       state.reminderTime = localStorage.getItem(STORE.reminderTime) || '09:00';
       state.notificationsEnabled = localStorage.getItem(STORE.notifications) === 'true';
+      state.apiKeyMode = localStorage.getItem(STORE.apiKeyMode) || 'local';
       try { const g = JSON.parse(localStorage.getItem(STORE.dailyGoals) || '{}'); state.dailyGoals = { ...state.dailyGoals, ...g }; } catch { }
       const savedDraft = localStorage.getItem(STORE.draft);
       if (savedDraft) {
