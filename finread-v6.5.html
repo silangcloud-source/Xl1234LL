@@ -322,12 +322,6 @@
       box-shadow: var(--shadow-xs);
     }
 
-    .icon-toggle.notion-btn {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
     .icon-toggle.synced {
       color: var(--bull);
     }
@@ -2498,173 +2492,6 @@
       border-color: var(--bear);
     }
 
-    /* ================================================================
-   WRITING CHALLENGE PANEL
-   ================================================================ */
-    .wc-panel {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--r-xl);
-      margin-bottom: 28px;
-      overflow: hidden;
-    }
-
-    .wc-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 22px;
-      gap: 12px;
-      flex-wrap: wrap;
-      border-bottom: 1px solid var(--border);
-      background: linear-gradient(135deg, var(--accent-pale) 0%, var(--bg-card) 100%);
-    }
-
-    .wc-title {
-      font-family: 'Fraunces', Georgia, serif;
-      font-size: 18px;
-      font-weight: 700;
-      margin: 0;
-      color: var(--text-main);
-      letter-spacing: -.015em;
-    }
-
-    .wc-sub {
-      font-size: 12px;
-      color: var(--text-muted);
-      font-family: 'JetBrains Mono', monospace;
-      margin-top: 2px;
-    }
-
-    .wc-header-actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .wc-body {
-      padding: 20px 22px;
-    }
-
-    .wc-words {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .wc-chip {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 6px 12px;
-      border-radius: var(--r-md);
-      border: 1px solid;
-      cursor: default;
-      font-family: 'JetBrains Mono', monospace;
-      transition: transform .15s;
-    }
-
-    .wc-chip:hover {
-      transform: translateY(-2px);
-    }
-
-    .wc-chip-word {
-      font-size: 13px;
-      font-weight: 700;
-      line-height: 1.3;
-    }
-
-    .wc-chip-zh {
-      font-size: 10px;
-      opacity: .7;
-      font-family: 'Noto Sans SC', sans-serif;
-      font-weight: 400;
-      line-height: 1.3;
-      margin-top: 1px;
-    }
-
-    .wc-chip.t-pattern {
-      background: var(--pattern-bg);
-      color: var(--pattern-color);
-      border-color: var(--pattern-color);
-    }
-
-    .wc-chip.t-phrase {
-      background: var(--phrase-bg);
-      color: var(--phrase-color);
-      border-color: var(--phrase-color);
-    }
-
-    .wc-chip.t-proper {
-      background: var(--proper-bg);
-      color: var(--proper-color);
-      border-color: var(--proper-color);
-    }
-
-    .wc-chip.t-vocab {
-      background: var(--vocab-bg);
-      color: var(--vocab-color);
-      border-color: var(--vocab-color);
-    }
-
-    .wc-chip.used {
-      opacity: .5;
-      text-decoration: line-through;
-    }
-
-    .wc-gen-wrap {
-      margin-top: 16px;
-    }
-
-    .wc-gen-text {
-      font-size: 15px;
-      line-height: 2;
-      color: var(--text-main);
-      padding: 18px 20px;
-      background: var(--bg-soft);
-      border-radius: var(--r-md);
-      border: 1px solid var(--border);
-      font-family: 'Newsreader', Georgia, serif;
-      white-space: pre-wrap;
-      min-height: 80px;
-    }
-
-    .wc-gen-text.loading {
-      color: var(--text-muted);
-      font-style: italic;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-    }
-
-    .wc-highlight {
-      border-radius: 3px;
-      padding: 1px 3px;
-      font-weight: 700;
-      font-style: normal;
-      cursor: pointer;
-    }
-
-    .wc-highlight.t-pattern {
-      background: var(--pattern-bg);
-      color: var(--pattern-color);
-    }
-
-    .wc-highlight.t-phrase {
-      background: var(--phrase-bg);
-      color: var(--phrase-color);
-    }
-
-    .wc-highlight.t-proper {
-      background: var(--proper-bg);
-      color: var(--proper-color);
-    }
-
-    .wc-highlight.t-vocab {
-      background: var(--vocab-bg);
-      color: var(--vocab-color);
-    }
-
     .empty {
       padding: 80px 20px;
       text-align: center;
@@ -4107,8 +3934,6 @@
       #btnSettings::before { content: '⚙'; font-size: 14px; }
       #btnClearAll { font-size: 0; }
       #btnClearAll::before { content: '⊘'; font-size: 14px; }
-      #btnShortcuts { font-size: 0; }
-      #btnShortcuts::before { content: '⌨'; font-size: 13px; }
     }
 
     /* ── Stats grid breakpoints: 5 → 3 cols at desktop, 2 at tablet ── */
@@ -4357,20 +4182,6 @@
       .flip-card { height: 380px; }
 
       .flip-word { font-size: 32px; }
-
-      .wc-header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-        padding: 16px 18px;
-      }
-
-      .wc-header-actions { justify-content: stretch; }
-
-      .wc-header-actions .btn-base,
-      .wc-header-actions .btn-primary { flex: 1; }
-
-      .wc-body { padding: 18px; }
 
       .goals-banner { padding: 14px 18px; }
 
@@ -4832,114 +4643,6 @@
     }
 
     /* ================================================================
-   v5.4 — KEYBOARD SHORTCUTS PANEL
-   ================================================================ */
-    #shortcutsPanel {
-      position: fixed;
-      inset: 0;
-      z-index: 999;
-      background: rgba(7, 16, 31, .58);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    #shortcutsPanel.visible {
-      display: flex;
-    }
-
-    .shortcuts-box {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--r-xl);
-      padding: 28px;
-      box-shadow: var(--shadow-xl);
-      max-width: 520px;
-      width: 100%;
-      max-height: 80vh;
-      overflow-y: auto;
-      animation: popIn .22s cubic-bezier(.34, 1.56, .64, 1);
-    }
-
-    .shortcuts-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
-    }
-
-    .shortcuts-header h3 {
-      font-family: 'Fraunces', Georgia, serif;
-      font-size: 20px;
-      font-weight: 700;
-      margin: 0;
-      letter-spacing: -.015em;
-    }
-
-    .shortcuts-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 6px;
-    }
-
-    .shortcut-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px dashed var(--border);
-    }
-
-    .shortcut-row:last-child {
-      border-bottom: none;
-    }
-
-    .shortcut-desc {
-      font-size: 13px;
-      color: var(--text-soft);
-    }
-
-    .shortcut-keys {
-      display: flex;
-      gap: 4px;
-    }
-
-    .kbd {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 24px;
-      height: 24px;
-      padding: 0 7px;
-      background: var(--bg-soft);
-      border: 1px solid var(--border-strong);
-      border-bottom-width: 2px;
-      border-radius: 5px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .shortcuts-section {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--text-muted);
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      font-weight: 700;
-      margin: 14px 0 6px;
-      padding-bottom: 4px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .shortcuts-section:first-child {
-      margin-top: 0;
-    }
-
-    /* ================================================================
    v5.4 — CONFETTI / CELEBRATION
    ================================================================ */
     @keyframes confettiFall {
@@ -5281,7 +4984,6 @@
     .heatmap-block,
     .guide-strip,
     .goals-banner,
-    .wc-panel,
     .input-box,
     .progress-box {
       border-radius: var(--r-xl);
@@ -5443,34 +5145,6 @@
     .goals-bar.done {
       background: linear-gradient(90deg, var(--bull) 0%, #34D399 100%);
       box-shadow: 0 0 8px rgba(16, 185, 129, .4);
-    }
-
-    /* ── AI sentence builder: editorial flair ── */
-    .wc-header {
-      padding: 20px 24px;
-      background:
-        linear-gradient(135deg, rgba(99, 102, 241, .06) 0%, transparent 60%),
-        linear-gradient(180deg, var(--bg-card) 0%, var(--bg-card) 100%);
-    }
-
-    .wc-title {
-      font-size: 20px;
-    }
-
-    .wc-body {
-      padding: 24px;
-    }
-
-    .wc-gen-text {
-      font-size: 16px;
-      line-height: 2.1;
-      border-radius: 16px;
-    }
-
-    .wc-chip {
-      border-radius: 12px;
-      padding: 8px 14px;
-      box-shadow: var(--shadow-xs);
     }
 
     /* ── Article body typography refined ── */
@@ -5725,7 +5399,6 @@
       }
 
       /* hide some lesser utilities to free space */
-      #btnShortcuts,
       #btnClearAll {
         display: none;
       }
@@ -6067,39 +5740,6 @@
       line-height: 1.45;
     }
 
-    .v64-topic-library {
-      border: 1px dashed var(--border-strong);
-      background: rgba(99,102,241,.045);
-      border-radius: var(--r-lg);
-      padding: 14px 16px;
-    }
-
-    .v64-topic-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 9px;
-    }
-
-    .v64-topic-chip {
-      border: 1px solid var(--border);
-      background: var(--bg-card);
-      color: var(--text-soft);
-      border-radius: 999px;
-      padding: 6px 11px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      cursor: pointer;
-      transition: all .15s ease;
-    }
-
-    .v64-topic-chip:hover {
-      transform: translateY(-1px);
-      border-color: var(--accent);
-      color: var(--accent);
-      box-shadow: var(--shadow-sm);
-    }
-
     .v64-insight-panel,
     .v64-drill-panel {
       margin: 0 0 24px;
@@ -6245,377 +5885,7 @@
     }
 
 
-    /* ================================================================
-   FINREAD v6.5 — Phase 2 Intelligence & Safety Upgrade
-   ================================================================ */
-    .p1-command-grid {
-      display: grid;
-      grid-template-columns: 260px minmax(0, 1fr);
-      gap: 14px;
-      margin-top: 14px;
-    }
-
-    .p1-score-card,
-    .p1-taskboard,
-    .p1-mini-panel {
-      background: rgba(255,255,255,.68);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      box-shadow: var(--shadow-sm);
-      backdrop-filter: blur(12px);
-    }
-
-    [data-theme="dark"] .p1-score-card,
-    [data-theme="dark"] .p1-taskboard,
-    [data-theme="dark"] .p1-mini-panel {
-      background: rgba(13,27,48,.62);
-    }
-
-    .p1-score-card {
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .p1-score-top {
-      display: flex;
-      gap: 13px;
-      align-items: center;
-    }
-
-    .p1-score-ring {
-      --p1-score: 0;
-      width: 86px;
-      height: 86px;
-      flex: 0 0 auto;
-      border-radius: 999px;
-      display: grid;
-      place-items: center;
-      background:
-        radial-gradient(circle at center, var(--bg-card) 0 58%, transparent 59%),
-        conic-gradient(var(--accent) calc(var(--p1-score) * 1%), var(--border) 0);
-      box-shadow: inset 0 0 0 1px var(--border), var(--shadow-xs);
-    }
-
-    .p1-score-ring b {
-      font-family: 'Fraunces', Georgia, serif;
-      font-size: 29px;
-      line-height: .95;
-      color: var(--text-main);
-    }
-
-    .p1-score-ring span {
-      display: block;
-      margin-top: -10px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--text-muted);
-      text-align: center;
-    }
-
-    .p1-score-copy .k {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--accent);
-      font-weight: 800;
-    }
-
-    .p1-score-copy .v {
-      font-family: 'Fraunces', Georgia, serif;
-      font-size: 19px;
-      font-weight: 700;
-      line-height: 1.2;
-      color: var(--text-main);
-      margin-top: 3px;
-    }
-
-    .p1-score-copy p,
-    .p1-coach,
-    .p1-mini-body {
-      margin: 6px 0 0;
-      color: var(--text-muted);
-      font-size: 12.5px;
-      line-height: 1.6;
-    }
-
-    .p1-coach {
-      margin: 0;
-      padding: 10px 12px;
-      border-radius: var(--r);
-      border-left: 3px solid var(--accent);
-      background: var(--accent-pale);
-      color: var(--text-soft);
-    }
-
-    .p1-taskboard {
-      padding: 16px;
-    }
-
-    .p1-section-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-end;
-      margin-bottom: 12px;
-    }
-
-    .p1-section-title {
-      font-family: 'Fraunces', Georgia, serif;
-      font-weight: 700;
-      font-size: 20px;
-      line-height: 1.18;
-      color: var(--text-main);
-    }
-
-    .p1-section-meta {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--text-muted);
-      white-space: nowrap;
-    }
-
-    .p1-task-list {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .p1-task {
-      text-align: left;
-      width: 100%;
-      border: 1px solid var(--border);
-      background: var(--bg-card);
-      border-radius: var(--r);
-      padding: 10px 11px;
-      cursor: pointer;
-      transition: all .16s cubic-bezier(.4,0,.2,1);
-      color: var(--text-soft);
-      display: grid;
-      grid-template-columns: 22px minmax(0, 1fr);
-      gap: 8px;
-      align-items: flex-start;
-      font-family: inherit;
-    }
-
-    .p1-task:hover {
-      transform: translateY(-1px);
-      border-color: var(--accent);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .p1-task.done {
-      background: var(--bull-light);
-      border-color: rgba(16,185,129,.42);
-    }
-
-    .p1-task-check {
-      width: 22px;
-      height: 22px;
-      border-radius: 999px;
-      border: 1px solid var(--border-strong);
-      display: inline-grid;
-      place-items: center;
-      color: transparent;
-      font-size: 12px;
-      font-weight: 900;
-      background: var(--bg-soft);
-    }
-
-    .p1-task.done .p1-task-check {
-      color: white;
-      background: var(--bull);
-      border-color: var(--bull);
-    }
-
-    .p1-task strong {
-      display: block;
-      color: var(--text-main);
-      font-size: 13px;
-      line-height: 1.35;
-      margin-bottom: 2px;
-    }
-
-    .p1-task span:last-child {
-      display: block;
-      color: var(--text-muted);
-      font-size: 11.5px;
-      line-height: 1.45;
-    }
-
-    .p1-panel-row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 14px;
-    }
-
-    .p1-mini-panel {
-      padding: 14px 16px;
-    }
-
-    .p1-mini-title {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--accent);
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .p1-chip-row {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-top: 8px;
-    }
-
-    .p1-chip {
-      border: 1px solid var(--border);
-      background: var(--bg-soft);
-      color: var(--text-soft);
-      border-radius: 999px;
-      padding: 3px 8px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-    }
-
-    .p1-toolbelt {
-      margin-top: 14px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 14px;
-      border: 1px dashed rgba(99,102,241,.36);
-      border-radius: var(--r-lg);
-      background: rgba(99,102,241,.055);
-    }
-
-    .p1-toolbelt .left,
-    .p1-toolbelt .right {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .p1-toolhint {
-      color: var(--text-muted);
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    body.p1-focus-mode .guide-strip,
-    body.p1-focus-mode .v64-topic-library,
-    body.p1-focus-mode .goals-banner {
-      display: none !important;
-    }
-
-    body.p1-focus-mode .v64-dashboard {
-      padding: 18px;
-    }
-
-    body.p1-focus-mode .p1-command-grid,
-    body.p1-focus-mode .p1-panel-row {
-      display: none;
-    }
-
-    body.p1-focus-mode textarea#newsInput {
-      min-height: 420px;
-      font-size: 16px;
-    }
-
-    @media (max-width: 900px) {
-      .p1-command-grid,
-      .p1-panel-row {
-        grid-template-columns: 1fr;
-      }
-
-      .p1-score-card {
-        flex-direction: column;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .p1-task-list {
-        grid-template-columns: 1fr;
-      }
-
-      .p1-section-head,
-      .p1-toolbelt {
-        align-items: stretch;
-        flex-direction: column;
-      }
-
-      .p1-toolbelt .left,
-      .p1-toolbelt .right,
-      .v64-dash-actions {
-        width: 100%;
-      }
-
-      .p1-toolbelt button,
-      .v64-dash-actions button {
-        flex: 1;
-        justify-content: center;
-      }
-
-      .v64-dashboard {
-        margin-left: -6px;
-        margin-right: -6px;
-      }
-    }
-
-
-    /* ================================================================
-   FINREAD v6.5 — Phase 2 Intelligence & Safety Upgrade
-   ================================================================ */
-    .p2-lab {
-      margin-top: 14px;
-      padding: 16px;
-      border: 1px solid rgba(99,102,241,.28);
-      border-radius: var(--r-xl);
-      background:
-        linear-gradient(135deg, rgba(99,102,241,.075), rgba(14,165,233,.045)),
-        var(--bg-card);
-      box-shadow: var(--shadow-sm);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .p2-lab::before {
-      content: '';
-      position: absolute;
-      inset: 0 0 auto 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--accent), #06b6d4, #10b981);
-      opacity: .9;
-    }
-
-    .p2-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px; }
-    .p2-title { font-family:'Fraunces', Georgia, serif; font-size:22px; font-weight:800; line-height:1.18; margin-top:4px; color:var(--text-main); }
-    .p2-sub { color:var(--text-muted); font-size:12.5px; line-height:1.65; margin-top:5px; }
-    .p2-mode-select { min-width:178px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-main); border-radius:999px; padding:7px 11px; font-family:'JetBrains Mono', monospace; font-size:10.5px; outline:none; box-shadow:var(--shadow-xs); }
-    .p2-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:10px; }
-    .p2-card { background:rgba(255,255,255,.72); border:1px solid var(--border); border-radius:var(--r-lg); padding:13px 14px; min-height:128px; box-shadow:var(--shadow-xs); }
-    [data-theme="dark"] .p2-card { background:rgba(13,27,48,.72); }
-    .p2-card .k { font-family:'JetBrains Mono', monospace; font-size:9.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:7px; }
-    .p2-card .v { font-family:'Fraunces', Georgia, serif; font-size:19px; font-weight:800; color:var(--text-main); line-height:1.18; margin-bottom:6px; }
-    .p2-card p, .p2-list { color:var(--text-muted); font-size:12px; line-height:1.6; margin:0; }
-    .p2-list { padding-left:16px; }
-    .p2-list li { margin:2px 0; }
-    .p2-prompt-box { margin-top:10px; padding:10px 12px; border-radius:var(--r); border:1px dashed rgba(99,102,241,.32); background:var(--accent-pale); color:var(--text-soft); font-size:12px; line-height:1.55; max-height:86px; overflow:hidden; }
-    .p2-actions { margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; }
-    .p2-actions .left, .p2-actions .right { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-    .p2-health-ok { color:var(--bull) !important; }
-    .p2-health-warn { color:var(--warn) !important; }
-    .p2-health-risk { color:var(--bear) !important; }
-    @media (max-width:980px) { .p2-grid { grid-template-columns:1fr; } .p2-head { flex-direction:column; } .p2-mode-select { width:100%; } }
-    @media (max-width:640px) { .p2-actions, .p2-actions .left, .p2-actions .right { flex-direction:column; align-items:stretch; } .p2-actions button { justify-content:center; } }
+    /* p1/p2 CSS removed */
 
 
   </style>
@@ -6645,11 +5915,9 @@
           <button data-view="stats">统计</button>
         </nav>
         <button class="icon-toggle hdr-util" id="btnImport" title="导入 JSON">↑ 导入</button>
-        <button class="icon-toggle hdr-util" id="btnShortcuts" title="键盘快捷键 (?)">⌨ ?</button>
         <button class="icon-toggle hdr-util" id="btnSettings" title="引擎配置">⚙ 配置</button>
         <button class="icon-toggle hdr-util" id="btnClearAll" title="清空全部缓存">⊘ 清空</button>
-        <button class="icon-toggle notion-btn" id="notionBtn" title="Notion 同步">N</button>
-        <button class="icon-toggle notion-btn" id="jsonbinBtn" title="JSONBin 同步">J</button>
+        <button class="icon-toggle" id="jsonbinBtn" title="JSONBin 同步">J</button>
         <button class="icon-toggle" id="themeToggle" title="主题切换">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="5" />
@@ -6713,96 +5981,7 @@
             </div>
             <div class="v64-path-steps" id="v64PathSteps"></div>
           </div>
-          <div class="v64-topic-library">
-            <div class="v64-section-kicker">Finance Topic Library</div>
-            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;">选择一个专题会自动载入金融新闻风格样例，方便测试 v6.4 的难度评分与读后训练。</div>
-            <div class="v64-topic-row">
-              <button class="v64-topic-chip" data-topic="fed">Fed / Rate Cuts</button>
-              <button class="v64-topic-chip" data-topic="compliance">SEC / Compliance</button>
-              <button class="v64-topic-chip" data-topic="aml">AML / KYC</button>
-              <button class="v64-topic-chip" data-topic="earnings">Earnings Reports</button>
-              <button class="v64-topic-chip" data-topic="crypto">Crypto Regulation</button>
-            </div>
-          </div>
 
-          <div class="p1-command-grid" id="p1CommandGrid">
-            <section class="p1-score-card">
-              <div class="p1-score-top">
-                <div class="p1-score-ring" id="p1ScoreRing" style="--p1-score:0;">
-                  <div><b id="p1LearningScore">0</b><span>/100</span></div>
-                </div>
-                <div class="p1-score-copy">
-                  <div class="k">Daily Score</div>
-                  <div class="v">学习闭环评分</div>
-                  <p id="p1ScoreHint">完成精读、复习和输出任务后会自动提升。</p>
-                </div>
-              </div>
-              <div class="p1-coach" id="p1Coach">今日教练建议生成中…</div>
-            </section>
-
-            <section class="p1-taskboard">
-              <div class="p1-section-head">
-                <div>
-                  <div class="v64-section-kicker">Phase 1 Mission Board</div>
-                  <div class="p1-section-title">今日输出任务</div>
-                </div>
-                <div class="p1-section-meta" id="p1TaskMeta">0/4 done</div>
-              </div>
-              <div class="p1-task-list" id="p1TaskList"></div>
-            </section>
-          </div>
-
-          <div class="p1-panel-row">
-            <section class="p1-mini-panel">
-              <div class="p1-mini-title">Learning Route</div>
-              <div class="p1-mini-body" id="p1RouteMeta">路径状态计算中…</div>
-              <div class="p1-chip-row" id="p1RouteChips"></div>
-            </section>
-            <section class="p1-mini-panel">
-              <div class="p1-mini-title">Latest Archive</div>
-              <div class="p1-mini-body" id="p1LastArticle">暂无最近文章。精读后会自动归档。</div>
-              <div class="p1-chip-row" id="p1LastArticleChips"></div>
-            </section>
-          </div>
-
-          <div class="p1-toolbelt">
-            <div class="left">
-              <button class="btn-base" id="btnP1DailyPlan">执行今日计划</button>
-              <button class="btn-base" id="btnP1CopyReport">复制学习报告</button>
-              <button class="btn-base" id="btnP1Backup">本地备份</button>
-            </div>
-            <div class="right">
-              <span class="p1-toolhint" id="p1ToolHint">一阶段重点：把输入型精读变成每日学习闭环。</span>
-              <button class="btn-base" id="btnP1Focus">专注模式</button>
-              <button class="btn-base" id="btnP1ResetTasks">重置任务</button>
-            </div>
-          </div>
-
-          <section class="p2-lab" id="p2Lab">
-            <div class="p2-head">
-              <div>
-                <div class="v64-section-kicker">Phase 2 AI Copilot Lab</div>
-                <div class="p2-title">智能预检 · 导师 Prompt · 数据健康</div>
-                <div class="p2-sub">二阶段把“能读”升级成“会规划、会追问、能导出学习包、知道数据是否安全”。</div>
-              </div>
-              <select class="p2-mode-select" id="p2ModeSelect" title="AI 解析模式">
-                <option value="deep">Deep 精读</option>
-                <option value="compliance">Compliance 合规</option>
-                <option value="exam">Exam 备考</option>
-                <option value="fast">Fast 快速</option>
-              </select>
-            </div>
-            <div class="p2-grid">
-              <article class="p2-card"><div class="k">Input Preflight</div><div class="v" id="p2InputQuality">等待文本</div><p id="p2InputHint">粘贴文章后会估算主题、长度、复杂度和推荐解析模式。</p></article>
-              <article class="p2-card"><div class="k">Coach Focus</div><div class="v" id="p2FocusTitle">今日重点</div><ul class="p2-list" id="p2FocusList"><li>先完成一篇文章预检</li><li>再启动引擎生成精读</li></ul></article>
-              <article class="p2-card"><div class="k">Data Health</div><div class="v" id="p2HealthTitle">检查中</div><ul class="p2-list" id="p2HealthList"><li>本地词库、文章和复习日志会在此显示状态</li></ul></article>
-            </div>
-            <div class="p2-prompt-box" id="p2PromptPreview">导师 Prompt 会根据当前文章、词库和解析模式自动生成。</div>
-            <div class="p2-actions">
-              <div class="left"><button class="btn-base" id="btnP2Inspect">重新预检</button><button class="btn-base" id="btnP2CopyPrompt">复制导师 Prompt</button><button class="btn-base" id="btnP2StudyPack">导出学习包</button></div>
-              <div class="right"><button class="btn-base" id="btnP2Health">数据健康检查</button><button class="btn-base" id="btnP2ImportBackup">导入备份</button></div>
-            </div>
-          </section>
         </section>
 
         <details class="guide-strip">
@@ -6817,8 +5996,7 @@
             <li><span class="n">4</span> <b>选中任意文本</b>，出现「＋ 添加到词库」浮动按钮。</li>
             <li><span class="n">5</span> 已存入的词在新文章中再次出现时，自动追加到历史例句库。</li>
             <li><span class="n">6</span> 卡组支持<b style="color:var(--accent);">中译英反向训练</b>：右上模式切换。</li>
-            <li><span class="n">7</span> 顶部 <kbd>N</kbd> 按钮配置 Notion 同步，跨设备永久保存。</li>
-            <li><span class="n">8</span> 闪卡快捷键：<kbd>Space</kbd> 翻面 · <kbd>1-4</kbd> 评分</li>
+            <li><span class="n">7</span> 闪卡快捷键：<kbd>Space</kbd> 翻面 · <kbd>1-4</kbd> 评分</li>
           </ol>
         </details>
 
@@ -6898,7 +6076,6 @@
             <h1 class="title" id="artTitle">Document Title</h1>
             <div class="article-meta-controls">
               <div class="controls-group">
-                <button class="btn-base" id="btnReadAll">🔊 全文朗读</button>
                 <span class="toggle-pill on" id="toggleZh" data-key="zh">译文</span>
                 <span class="toggle-pill" id="toggleGr" data-key="gr">语法</span>
                 <span class="toggle-pill" id="toggleFullTrans" data-key="full">全译</span>
@@ -6982,26 +6159,6 @@
         <div>解析文章后将卡片存入此处</div>
       </div>
 
-      <!-- ── AI SENTENCE BUILDER ── -->
-      <div id="wcPanel" class="wc-panel hidden">
-        <div class="wc-header">
-          <div>
-            <div class="wc-title">AI 造句</div>
-            <div class="wc-sub">AI 将这 10 个词编成金融英语例句 · 词语高亮可查释义</div>
-          </div>
-          <div class="wc-header-actions">
-            <button class="btn-base" id="wcShuffle">🎲 换一批</button>
-            <button class="btn-base" id="wcRegen">↺ 重新生成</button>
-          </div>
-        </div>
-        <div class="wc-body">
-          <div class="wc-words" id="wcWords"></div>
-          <div class="wc-gen-wrap">
-            <div class="wc-gen-text" id="wcGenText"></div>
-          </div>
-        </div>
-      </div>
-
       <div id="vocabContent" class="grid-layout hidden">
         <div>
           <div class="vocab-toolbar">
@@ -7013,7 +6170,6 @@
             <span class="filter-pill" data-filter="proper">专名</span>
             <span class="filter-pill" data-filter="vocab">词汇</span>
             <button class="btn-base" id="btnExport">⇣ 导出</button>
-            <button class="btn-base" id="btnAnki" title="导出为 Anki TSV 格式">Anki</button>
           </div>
           <div class="vocab-list" id="vocabGrid"></div>
         </div>
@@ -7151,55 +6307,6 @@
     </div>
   </div>
 
-  <!-- ── KEYBOARD SHORTCUTS PANEL ── -->
-  <div id="shortcutsPanel">
-    <div class="shortcuts-box">
-      <div class="shortcuts-header">
-        <h3>键盘快捷键</h3>
-        <button class="icon-toggle" id="closeShortcuts" title="关闭">✕</button>
-      </div>
-      <div class="shortcuts-section">全局</div>
-      <div class="shortcuts-grid">
-        <div class="shortcut-row"><span class="shortcut-desc">显示此面板</span>
-          <div class="shortcut-keys"><span class="kbd">?</span></div>
-        </div>
-        <div class="shortcut-row"><span class="shortcut-desc">关闭弹窗 / 取消</span>
-          <div class="shortcut-keys"><span class="kbd">Esc</span></div>
-        </div>
-        <div class="shortcut-row"><span class="shortcut-desc">切换深色模式</span>
-          <div class="shortcut-keys"><span class="kbd">Shift</span><span class="kbd">D</span></div>
-        </div>
-      </div>
-      <div class="shortcuts-section">输入区</div>
-      <div class="shortcuts-grid">
-        <div class="shortcut-row"><span class="shortcut-desc">启动引擎解析</span>
-          <div class="shortcut-keys"><span class="kbd">Ctrl</span><span class="kbd">↵</span></div>
-        </div>
-      </div>
-      <div class="shortcuts-section">闪卡复习</div>
-      <div class="shortcuts-grid">
-        <div class="shortcut-row"><span class="shortcut-desc">翻面</span>
-          <div class="shortcut-keys"><span class="kbd">Space</span></div>
-        </div>
-        <div class="shortcut-row"><span class="shortcut-desc">Again（重做）</span>
-          <div class="shortcut-keys"><span class="kbd">1</span></div>
-        </div>
-        <div class="shortcut-row"><span class="shortcut-desc">Hard（困难）</span>
-          <div class="shortcut-keys"><span class="kbd">2</span></div>
-        </div>
-        <div class="shortcut-row"><span class="shortcut-desc">Good（一般）</span>
-          <div class="shortcut-keys"><span class="kbd">3</span></div>
-        </div>
-        <div class="shortcut-row"><span class="shortcut-desc">Easy（简单）</span>
-          <div class="shortcut-keys"><span class="kbd">4</span></div>
-        </div>
-        <div class="shortcut-row"><span class="shortcut-desc">下一张 / 上一张</span>
-          <div class="shortcut-keys"><span class="kbd">→</span><span class="kbd">←</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- ── WORD DETAIL POPUP ── -->
   <div id="wordDetailOverlay"></div>
   <div id="wordDetailPopup">
@@ -7318,92 +6425,6 @@
     </div>
   </div>
 
-  <div id="notionModal" class="modal-bg hidden">
-    <div class="modal">
-      <h2>Notion 同步</h2>
-      <p class="modal-sub">将卡组、文章归档、复习进度同步到 Notion 页面。跨设备访问，永久保存。</p>
-      <div class="notion-status-row" id="notionStatusRow">
-        <span class="dot"></span>
-        <span id="notionStatusText">未连接</span>
-        <span class="meta" id="notionStatusMeta"></span>
-      </div>
-      <div class="modal-tabs">
-        <button class="active" data-modal-tab="config">配置</button>
-        <button data-modal-tab="sync">同步</button>
-        <button data-modal-tab="help">说明</button>
-      </div>
-      <div id="notionTabConfig">
-        <div class="warn">⚠️ Notion API 不支持浏览器直连 (CORS 限制)。需使用 CORS 代理或部署 Cloudflare Worker。详见「说明」标签页。</div>
-        <label>Notion Integration Token</label>
-        <input type="password" id="notionTokenInput" placeholder="ntn_..." autocomplete="off" />
-        <label>同步页面 ID</label>
-        <input type="text" id="notionPageIdInput" placeholder="留空则自动在 hub 下新建" />
-        <label>父页面 ID</label>
-        <input type="text" id="notionParentIdInput" placeholder="默认: Silang AI 数据中枢" />
-        <label>CORS 代理 URL</label>
-        <input type="text" id="notionProxyInput" placeholder="https://your-worker.dev/v1 或 https://corsproxy.io/?" />
-        <label>自动同步</label>
-        <select id="notionAutoSync">
-          <option value="off">关闭</option>
-          <option value="onChange">每次添加/复习后同步</option>
-          <option value="onView">切换视图时同步</option>
-        </select>
-        <div class="modal-actions">
-          <button class="btn-base" id="notionTestBtn">测试连接</button>
-          <button class="btn-primary" id="notionSaveBtn" style="padding:8px 24px;">保存配置</button>
-        </div>
-      </div>
-      <div id="notionTabSync" class="hidden">
-        <div class="info-box" id="notionSyncInfo">配置 Token 后启用同步</div>
-        <div style="display:flex;gap:10px;flex-direction:column;">
-          <button class="btn-primary" id="notionPushBtn" disabled>⬆ 推送本地 → Notion (全量覆盖)</button>
-          <button class="btn-base" id="notionPullBtn" disabled>⬇ 拉取 Notion → 本地 (智能合并)</button>
-          <button class="btn-base" id="notionExportBtn">📋 复制 JSON 到剪贴板 (手动粘贴模式)</button>
-        </div>
-        <div style="margin-top:20px;">
-          <label>同步日志</label>
-          <textarea id="notionSyncLog" rows="6" readonly
-            style="background:var(--bg-soft);font-family:monospace;font-size:11px;"></textarea>
-        </div>
-      </div>
-      <div id="notionTabHelp" class="hidden">
-        <div class="info-box">
-          <b>三种使用方式</b><br />
-          <b>① 推荐 · CORS 代理</b>：在配置中填入公开代理 (如 <code>https://corsproxy.io/?</code>)，可直接调用 Notion API。<br /><br />
-          <b>② 推荐 · 自部署 Cloudflare Worker</b>：5 分钟部署一个代理 Worker，最安全。模板见下方。<br /><br />
-          <b>③ 兜底 · 手动粘贴</b>：在「同步」页点击「复制 JSON」，在 Notion 创建一个 Code Block 粘贴。
-        </div>
-        <label>① 创建 Notion Integration</label>
-        <div class="info-box" style="line-height:1.6;">
-          1. 访问 <code>https://www.notion.so/profile/integrations</code><br />
-          2. New integration → 类型选 Internal → 复制 Token (ntn_...)<br />
-          3. 在你的 Notion hub 页面 → Share → 添加该 Integration → 授予 Edit 权限<br />
-          4. 把 Token 粘贴到上方「Integration Token」
-        </div>
-        <label>② Cloudflare Worker 代理模板 (15 行)</label>
-        <textarea readonly rows="12" style="font-size:10px;line-height:1.5;">export default {
-  async fetch(req) {
-    const url = new URL(req.url);
-    const target = 'https://api.notion.com' + url.pathname + url.search;
-    const headers = new Headers(req.headers);
-    headers.delete('host');
-    const res = await fetch(target, { method: req.method, headers, body: req.body });
-    const out = new Response(res.body, res);
-    out.headers.set('Access-Control-Allow-Origin', '*');
-    out.headers.set('Access-Control-Allow-Headers', '*');
-    out.headers.set('Access-Control-Allow-Methods', '*');
-    return out;
-  }
-};</textarea>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:-10px;margin-bottom:14px;">
-          部署到 Cloudflare Workers (免费) 后，填入「CORS 代理 URL」框，例如 https://your-worker.username.workers.dev/v1，最后的 /v1 必须有。
-        </div>
-      </div>
-      <div class="modal-actions" style="margin-top:16px;">
-        <button class="btn-base" id="notionCloseBtn">关闭</button>
-      </div>
-    </div>
-  </div>
 
 
   <!-- ── JSONBin 同步 Modal ── -->
@@ -7495,13 +6516,6 @@
         <option value="true">开启 · 渐进显示（推荐）</option>
         <option value="false">关闭 · 整段返回</option>
       </select>
-      <label>AI 解析模式</label>
-      <select id="qualityModeSelect">
-        <option value="deep">Deep 精读 · 默认完整解析</option>
-        <option value="compliance">Compliance 合规 · 强化监管/披露/风险视角</option>
-        <option value="exam">Exam 备考 · 强化 CET/考研/雅思与句式</option>
-        <option value="fast">Fast 快速 · 减少冗余但保留四层词库</option>
-      </select>
       <label>长文分块阈值（字符数）</label>
       <input type="number" id="chunkThresholdInput" value="8000" min="2000" max="20000" step="500" />
       <div style="font-size:11px;color:var(--text-muted);margin-top:-10px;margin-bottom:14px;font-family:monospace;">
@@ -7553,7 +6567,7 @@
   <!-- ── FOOTER ── -->
   <footer>
     <div class="footer-inner">
-      <span id="footerBrand">FINREAD · 四层词库 · 双向训练 · Notion 同步</span>
+      <span id="footerBrand">FINREAD · 四层词库 · 双向训练</span>
     </div>
   </footer>
 
@@ -7596,8 +6610,6 @@
     const VOCAB_PAGE_SIZE = 60;
     const POMO_DURATION = 25 * 60; // seconds
     const POMO_LIMIT = 50;         // max cards per session
-    const NOTION_PARENT_DEFAULT = '355df83ed13d80cd8cd1faf6c44d8e5c';
-
     const MODELS = {
       openrouter: [
         { id: 'openai/gpt-5.5', label: 'GPT-5.5 · 最强质量', cost: 'Premium · 以通道实际计费为准', recommended: true },
@@ -7632,14 +6644,12 @@
       theme: 'finread:theme',
       streaming: 'finread:streaming',
       chunkThreshold: 'finread:chunkThreshold',
-      notion: 'finread:notion',
       jsonbin: 'finread:jsonbin',
       studyMode: 'finread:studyMode',
       voice: 'finread:voice',
       reminderTime: 'finread:reminderTime',
       draft: 'finread:draft',
       dailyGoals: 'finread:dailyGoals',
-      qualityMode: 'finread:qualityMode',
     };
 
     const PROPER_TYPE_LABELS = {
@@ -7649,20 +6659,11 @@
       other: '其他'
     };
 
-    const P2_QUALITY_MODES = {
-      deep: { label: 'Deep 精读', prompt: '默认高质量精读：保持逐句语法、四层词库、例句、辨析和商业情境练习的完整度，宁缺毋滥但不要过度简化。' },
-      compliance: { label: 'Compliance 合规', prompt: '合规强化模式：在不虚构的前提下，优先识别监管机构、披露义务、内控、AML/KYC、制裁、审计、治理、执法风险相关表达；exercise 尽量设置为合规/风控场景。' },
-      exam: { label: 'Exam 备考', prompt: '备考强化模式：优先标注 CET-4/CET-6/考研/雅思高价值词汇、句式与近义辨析；grammar notes 要更适合学生复习，避免只讲金融背景。' },
-      fast: { label: 'Fast 快速', prompt: '快速模式：保持 JSON 结构不变，但只提取最有学习价值的项目；句子分析更简洁，减少长篇解释，优先保证速度和稳定性。' },
-    };
-
     let state = {
       view: 'input', analysis: null, currentArticleId: null,
       vocab: [], articles: [], wordHistory: {}, reviewLog: [],
       apiKey: '', provider: 'openrouter', model: 'openai/gpt-5.5',
       streaming: true, chunkThreshold: DEFAULT_CHUNK_THRESHOLD,
-      qualityMode: 'deep',
-      notion: { token: '', pageId: '', parentId: NOTION_PARENT_DEFAULT, proxyUrl: '', autoSync: 'off', lastSync: 0 },
       jsonbin: { apiKey: '', binId: '', lastSync: 0 },
       studyMode: 'en2zh',
       activeId: null, flipIdx: 0, flipped: false,
@@ -7671,7 +6672,7 @@
       vocabFilter: 'all', vocabSearch: '',
       sideTab: 'pattern', customAddTier: 'vocab',
       currentSelection: { text: '', context: '' },
-      parseSession: null, notionTab: 'config',
+      parseSession: null,
       selectedVoice: '',
       reminderTime: '09:00',
       dailyGoals: { reviewTarget: 20, articleTarget: 1 },
@@ -7989,7 +6990,6 @@
     function persistVocab() {
       updateAllCounts();
       invalidateHighlightCache();
-      if (state.notion.autoSync === 'onChange') notionPushDebounced();
       clearTimeout(_persistVocabTimer);
       _persistVocabTimer = setTimeout(() => {
         safeLocalStorageSet(STORE.vocab, JSON.stringify(state.vocab));
@@ -8015,7 +7015,6 @@
       safeLocalStorageSet(STORE.reviewLog, JSON.stringify(state.reviewLog));
       renderV64Dashboard();
     }
-    function persistNotion() { localStorage.setItem(STORE.notion, JSON.stringify(state.notion)); }
     function persistJsonbin() { localStorage.setItem(STORE.jsonbin, JSON.stringify(state.jsonbin)); }
 
     function countByTier(tier) { return state.vocab.filter(v => v.tier === tier).length; }
@@ -8081,11 +7080,8 @@
 
     function buildPrompt(text, isChunk = false, chunkInfo = null) {
       const chunkNote = isChunk ? `\n【分块说明】本片段是长文的第 ${chunkInfo.idx + 1}/${chunkInfo.total} 块。仅处理本片段内容，最终结果会合并。\n` : '';
-      const mode = P2_QUALITY_MODES[state.qualityMode] || P2_QUALITY_MODES.deep;
       return `你是资深双语金融精读老师。请自动识别文本语言，全文对译，逐句精读分析。严格输出 JSON 对象，不要任何解释，不要 markdown 包裹。
 ${chunkNote}
-【Phase 2 解析模式】${mode.label}：${mode.prompt}
-
 【核心要求 · 四层词库分类】
 
 1. 侦测语言并互译。
@@ -8577,8 +7573,6 @@ ${text}`;
       $('#v64PathSteps').innerHTML = steps.map((s, i) =>
         `<div class="v64-path-step ${i < stage.active ? 'done' : i === stage.active ? 'active' : ''}"><strong>${s[0]}</strong><span>${s[1]}</span></div>`
       ).join('');
-      if (typeof renderP1Dashboard === 'function') renderP1Dashboard();
-      if (typeof renderP2Lab === 'function') renderP2Lab();
     }
 
     function v64CountMatches(text, words) {
@@ -8659,8 +7653,6 @@ ${text}`;
         </div>
         <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;"><button class="btn-base" onclick="v64CopyDrills()">复制训练题</button><button class="btn-base" onclick="setView('vocab')">转到卡组复习</button></div>`;
       drill.classList.remove('hidden');
-      if (typeof renderP1Dashboard === 'function') renderP1Dashboard();
-      if (typeof renderP2Lab === 'function') renderP2Lab();
     }
 
     function v64CopyDrills() {
@@ -8671,279 +7663,6 @@ ${text}`;
     }
     window.v64CopyDrills = v64CopyDrills;
 
-    /* ============================================================
-     *  FINREAD v6.5 — Phase 2 Intelligence & Safety helpers
-     * ============================================================ */
-    function p2PlainInput() { return ($('#newsInput')?.value || state.parseSession?.raw || '').replace(/\s+/g, ' ').trim(); }
-    function p2CountTerms(raw, terms) { const lower = (raw || '').toLowerCase(); return terms.reduce((n, t) => n + (lower.includes(t) ? 1 : 0), 0); }
-    function p2InputProfile(raw = p2PlainInput()) {
-      const enWords = raw.match(/[A-Za-z][A-Za-z\-']*/g) || [];
-      const zhChars = raw.match(/[\u4e00-\u9fa5]/g) || [];
-      const words = enWords.length || Math.max(1, Math.round(zhChars.length / 1.7));
-      const sentences = Math.max(1, (raw.match(/[.!?。！？]/g) || []).length || (state.analysis?.sentences || []).length || 1);
-      const avgLen = Math.round(words / sentences);
-      const domains = {
-        centralBank: p2CountTerms(raw, ['federal reserve', 'fed', 'central bank', 'rate cut', 'inflation', 'treasury', 'yield']),
-        compliance: p2CountTerms(raw, ['sec', 'compliance', 'disclosure', 'regulation', 'enforcement', 'aml', 'kyc', 'sanctions', 'audit', 'governance', 'internal control']),
-        earnings: p2CountTerms(raw, ['earnings', 'revenue', 'margin', 'guidance', 'quarterly', 'profit', 'operating income']),
-        crypto: p2CountTerms(raw, ['crypto', 'stablecoin', 'digital asset', 'token', 'exchange', 'blockchain'])
-      };
-      const topDomain = Object.entries(domains).sort((a, b) => b[1] - a[1])[0];
-      const complexity = Math.max(20, Math.min(98, Math.round(35 + avgLen * 1.4 + Math.min(18, words / 80) + Object.values(domains).reduce((a,b)=>a+b,0) * 2)));
-      let recommended = 'deep';
-      if (domains.compliance >= 3) recommended = 'compliance'; else if (words < 220) recommended = 'fast'; else if (avgLen >= 26) recommended = 'deep';
-      return { words, sentences, avgLen, domains, topDomain: topDomain?.[1] ? topDomain[0] : 'general', complexity, recommended, readingTime: Math.max(1, Math.ceil(words / 180)) };
-    }
-    function p2ModeLabel(mode = state.qualityMode) { return (P2_QUALITY_MODES[mode] || P2_QUALITY_MODES.deep).label; }
-    function p2FocusItems(profile = p2InputProfile()) {
-      const items = [];
-      if (!p2PlainInput()) return ['粘贴财经/合规文本', '点击“重新预检”确认难度', '启动引擎后导出学习包'];
-      if (profile.topDomain === 'compliance') items.push('优先关注监管、披露、内控与处罚表达');
-      if (profile.topDomain === 'centralBank') items.push('优先关注利率、通胀、收益率和政策措辞');
-      if (profile.topDomain === 'earnings') items.push('优先关注收入、利润率、指引和财报表达');
-      if (profile.topDomain === 'crypto') items.push('优先关注证券/商品属性、储备、审计与交易所规则');
-      if (profile.avgLen >= 24) items.push('句子偏长，精读时重点拆主干和从句');
-      if (profile.words >= 900) items.push('文本较长，建议保持分块解析并开启流式输出');
-      if (items.length < 3) items.push('完成摘要、复述、仿写和合规追问四步输出');
-      return items.slice(0, 4);
-    }
-    function p2LocalStorageBytes() {
-      try { let total = 0; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (!k || !k.startsWith('finread:')) continue; total += k.length + (localStorage.getItem(k) || '').length; } return total * 2; } catch { return 0; }
-    }
-    function p2HealthProfile() {
-      const bytes = p2LocalStorageBytes(); const mb = bytes / 1024 / 1024; const due = getReviewPool().length; const risks = [];
-      if (mb > 4) risks.push('本地缓存接近浏览器上限，建议导出备份并清理旧档案');
-      if (!state.apiKey) risks.push('尚未配置 API Key，无法调用 AI 引擎');
-      if (state.apiKey) risks.push('API Key 仅存在本机 localStorage，公开设备使用后建议清除');
-      if (state.articles.length && !state.jsonbin.lastSync && !state.notion.lastSync) risks.push('已有档案但未检测到云同步记录，建议导出本地备份');
-      if (due > 40) risks.push(`待复习 ${due} 张，建议先完成一轮复习再读新文章`);
-      if (!risks.length) risks.push('数据状态良好：备份、复习和缓存压力均可控');
-      const status = mb > 4 || due > 80 ? 'risk' : (risks.length > 1 ? 'warn' : 'ok');
-      return { bytes, mb, risks, status };
-    }
-    function p2TutorPrompt() {
-      const profile = p2InputProfile(); const title = state.analysis?.title || '当前输入文章';
-      const terms = [ ...(state.analysis?.phrases || []).slice(0, 5).map(x => x.phrase), ...(state.analysis?.vocab || []).slice(0, 5).map(x => x.word) ].filter(Boolean);
-      return `你是我的金融英语导师。请基于 FinRead 当前文章《${title}》进行输出训练。\n\n学习模式：${p2ModeLabel()}\n文章规模：约 ${profile.words} 词，平均句长 ${profile.avgLen}，复杂度 ${profile.complexity}/100。\n核心词：${terms.join(' / ') || '请根据文章自行选取 5 个核心金融词'}\n\n请按以下标准点评我的回答：\n1. Accuracy 准确度：是否忠实原文事实与逻辑；\n2. Financial Expression 金融表达：是否使用地道金融/合规措辞；\n3. Grammar 语法：句子结构、时态、搭配；\n4. Naturalness 自然度：是否像英文财经报道或合规备忘录。\n\n任务：让我先写 80–100 词英文摘要，然后给我分数、修改版和 3 条可执行改进建议。`;
-    }
-    function p2StudyPackPayload() {
-      const raw = p2PlainInput(); const profile = p2InputProfile(raw); const focus = p2FocusItems(profile);
-      return { app: 'FinRead', version: VERSION_CONFIG.current, type: 'phase2-study-pack', exportedAt: new Date().toISOString(), privacyNote: 'No API keys, Notion tokens or JSONBin keys are included.', title: state.analysis?.title || 'Untitled', mode: state.qualityMode, profile, focus,
-        keyTerms: [ ...(state.analysis?.patterns || []).slice(0, 5).map(x => ({ tier: 'pattern', text: x.pattern, meaning: x.meaning })), ...(state.analysis?.phrases || []).slice(0, 8).map(x => ({ tier: 'phrase', text: x.phrase, meaning: x.translation })), ...(state.analysis?.properNouns || []).slice(0, 8).map(x => ({ tier: 'proper', text: x.name, meaning: x.translation })), ...(state.analysis?.vocab || []).slice(0, 10).map(x => ({ tier: 'vocab', text: x.word, meaning: x.translation })) ],
-        drills: { summary: 'Write an 80–100 word English summary with one institution/data point.', retell: 'Retell the article using three key financial terms.', imitation: 'Imitate one sentence in financial-news style.', complianceQuestion: 'Ask one question from a regulation, disclosure, risk or governance angle.' }, tutorPrompt: p2TutorPrompt() };
-    }
-    function renderP2Lab() {
-      if (!$('#p2Lab')) return;
-      const raw = p2PlainInput(); const profile = p2InputProfile(raw); const health = p2HealthProfile(); const modeSelect = $('#p2ModeSelect');
-      if (modeSelect && modeSelect.value !== state.qualityMode) modeSelect.value = state.qualityMode;
-      $('#p2InputQuality').textContent = raw ? `${profile.complexity}/100 · ${profile.readingTime} min` : '等待文本';
-      $('#p2InputHint').textContent = raw ? `约 ${profile.words} 词 · 平均句长 ${profile.avgLen} · 推荐 ${p2ModeLabel(profile.recommended)} 模式。` : '粘贴文章后会估算主题、长度、复杂度和推荐解析模式。';
-      $('#p2FocusTitle').textContent = state.analysis ? '读后训练重点' : '分析前策略';
-      $('#p2FocusList').innerHTML = p2FocusItems(profile).map(x => `<li>${escapeHtml(x)}</li>`).join('');
-      $('#p2HealthTitle').textContent = health.status === 'ok' ? '状态良好' : health.status === 'risk' ? '需要清理' : '建议备份';
-      $('#p2HealthTitle').className = 'v ' + (health.status === 'ok' ? 'p2-health-ok' : health.status === 'risk' ? 'p2-health-risk' : 'p2-health-warn');
-      $('#p2HealthList').innerHTML = [`缓存 ${(health.mb).toFixed(2)} MB · ${state.vocab.length} 卡 · ${state.articles.length} 文`, ...health.risks.slice(0, 3)].map(x => `<li>${escapeHtml(x)}</li>`).join('');
-      const preview = p2TutorPrompt(); $('#p2PromptPreview').textContent = preview.slice(0, 220) + (preview.length > 220 ? '…' : '');
-    }
-    window.renderP2Lab = renderP2Lab;
-    function p2CopyPrompt() { const text = p2TutorPrompt(); navigator.clipboard.writeText(text).then(() => toast('导师 Prompt 已复制', 'success')).catch(() => prompt('复制导师 Prompt：', text)); }
-    function p2ExportStudyPack() {
-      const payload = p2StudyPackPayload(); const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a');
-      a.href = url; a.download = `finread-${VERSION_CONFIG.current}-study-pack-${p1DateKey()}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 500); toast('Phase 2 学习包已导出', 'success');
-    }
-    function p2RunHealth() { renderP2Lab(); const h = p2HealthProfile(); toast(h.status === 'ok' ? '数据健康良好' : '已完成数据健康检查', h.status === 'risk' ? 'warning' : 'success'); }
-    function p2BindEvents() {
-      $('#p2ModeSelect')?.addEventListener('change', (e) => { state.qualityMode = e.target.value; localStorage.setItem(STORE.qualityMode, state.qualityMode); renderP2Lab(); toast(`已切换为 ${p2ModeLabel()} 模式`, 'success'); });
-      $('#btnP2Inspect')?.addEventListener('click', () => { renderP2Lab(); toast('输入预检已刷新', 'success'); });
-      $('#btnP2CopyPrompt')?.addEventListener('click', p2CopyPrompt); $('#btnP2StudyPack')?.addEventListener('click', p2ExportStudyPack); $('#btnP2Health')?.addEventListener('click', p2RunHealth); $('#btnP2ImportBackup')?.addEventListener('click', importVocab);
-    }
-
-    /* ============================================================
-     *  FINREAD v6.5 — Phase 1 Product Dashboard helpers
-     * ============================================================ */
-    const P1_TASKS = [
-      { key: 'summary', title: '英文摘要', desc: '80–100 词抓主旨、数据和机构' },
-      { key: 'retell', title: '关键词复述', desc: '用 3 个金融词复述文章逻辑' },
-      { key: 'imitate', title: '句式仿写', desc: '模仿 1 句金融新闻表达' },
-      { key: 'compliance', title: '合规追问', desc: '从监管/披露/风险角度提问' },
-    ];
-
-    function p1DateKey() {
-      const d = new Date();
-      return d.toISOString().slice(0, 10);
-    }
-
-    function p1TaskStoreKey() {
-      return 'finread:p1:tasks:' + p1DateKey();
-    }
-
-    function p1LoadTasks() {
-      try { return JSON.parse(localStorage.getItem(p1TaskStoreKey()) || '{}') || {}; }
-      catch { return {}; }
-    }
-
-    function p1SaveTasks(tasks) {
-      localStorage.setItem(p1TaskStoreKey(), JSON.stringify(tasks || {}));
-    }
-
-    function p1TaskDoneCount(tasks = p1LoadTasks()) {
-      return P1_TASKS.filter(t => !!tasks[t.key]).length;
-    }
-
-    function p1ToggleTask(key) {
-      const tasks = p1LoadTasks();
-      tasks[key] = !tasks[key];
-      p1SaveTasks(tasks);
-      renderP1Dashboard();
-      if (tasks[key]) toast('输出任务已完成', 'success');
-    }
-    window.p1ToggleTask = p1ToggleTask;
-
-    function p1Metrics() {
-      const ts = v64TodayStartTs();
-      const reviewsToday = state.reviewLog.filter(r => r.ts >= ts).length;
-      const articlesToday = state.articles.filter(a => a.addedAt >= ts).length;
-      const due = getReviewPool().length;
-      const reviewTarget = Math.max(1, state.dailyGoals.reviewTarget || 20);
-      const articleTarget = Math.max(1, state.dailyGoals.articleTarget || 1);
-      const tasks = p1LoadTasks();
-      const done = p1TaskDoneCount(tasks);
-      const reviewPct = Math.min(1, reviewsToday / reviewTarget);
-      const articlePct = Math.min(1, articlesToday / articleTarget);
-      const taskPct = done / Math.max(1, P1_TASKS.length);
-      const deckHealth = Math.min(1, state.vocab.length / 120);
-      const dueCleared = state.vocab.length ? (due === 0 ? 1 : Math.max(0, 1 - due / Math.max(10, state.vocab.length))) : 0;
-      const streakBoost = calculateStreak() > 0 ? 1 : 0;
-      const score = Math.round(articlePct * 22 + reviewPct * 24 + taskPct * 26 + dueCleared * 12 + deckHealth * 8 + streakBoost * 8);
-      return { reviewsToday, articlesToday, due, reviewTarget, articleTarget, tasks, done, score: Math.max(0, Math.min(100, score)) };
-    }
-
-    function p1RouteChips(stage) {
-      return [
-        ['Patterns', `${countByTier('pattern')}/80`],
-        ['Phrases', `${countByTier('phrase')}/150`],
-        ['Vocab', `${countByTier('vocab')}`],
-        ['Mature', `${state.vocab.filter(v => cardStatus(v) === 'mature').length}`],
-      ].map(([k, v]) => `<span class="p1-chip">${escapeHtml(k)} · ${escapeHtml(String(v))}</span>`).join('');
-    }
-
-    function p1CoachText(m) {
-      if (!state.vocab.length) return '先载入样例或粘贴文章，完成第一篇精读后再开始构建四层词库。';
-      if (m.due > 0 && m.reviewsToday < m.reviewTarget) return `先复习 ${Math.min(m.due, m.reviewTarget - m.reviewsToday)} 张卡，再进入新文章，记忆效率最高。`;
-      if (m.articlesToday < m.articleTarget) return '复习目标接近完成，现在适合精读 1 篇新文章并提取新卡。';
-      if (m.done < P1_TASKS.length) return '文章输入已经完成，下一步把摘要、复述、仿写和合规追问补齐。';
-      return '今日闭环已经完整：可以导出学习报告，或加练一篇合规/监管专题。';
-    }
-
-    function p1DailyReportText() {
-      const m = p1Metrics();
-      const stage = v64LearningStage();
-      const tasks = p1LoadTasks();
-      const taskLines = P1_TASKS.map(t => `${tasks[t.key] ? '✓' : '□'} ${t.title}`).join('\n');
-      const tierLine = `句式 ${countByTier('pattern')} · 短语 ${countByTier('phrase')} · 专名 ${countByTier('proper')} · 词汇 ${countByTier('vocab')}`;
-      const latest = state.articles[0];
-      return `FinRead ${VERSION_CONFIG.current} 今日学习报告\n日期：${p1DateKey()}\n学习评分：${m.score}/100\n精读：${m.articlesToday}/${m.articleTarget}\n复习：${m.reviewsToday}/${m.reviewTarget}，待复习 ${m.due}\n卡组：${state.vocab.length} 张（${tierLine}）\n学习路径：${stage.level} · ${stage.title}\n最近文章：${latest ? (latest.title || 'Untitled') : '暂无'}\n\n输出任务：\n${taskLines}\n\n下一步建议：${p1CoachText(m)}`;
-    }
-
-    function renderP1Dashboard() {
-      if (!$('#p1LearningScore')) return;
-      const m = p1Metrics();
-      const stage = v64LearningStage();
-      $('#p1LearningScore').textContent = m.score;
-      $('#p1ScoreRing').style.setProperty('--p1-score', m.score);
-      $('#p1ScoreHint').textContent = `精读 ${m.articlesToday}/${m.articleTarget} · 复习 ${m.reviewsToday}/${m.reviewTarget} · 输出 ${m.done}/${P1_TASKS.length}`;
-      $('#p1Coach').textContent = p1CoachText(m);
-      $('#p1TaskMeta').textContent = `${m.done}/${P1_TASKS.length} done`;
-      $('#p1TaskList').innerHTML = P1_TASKS.map(t => {
-        const done = !!m.tasks[t.key];
-        return `<button class="p1-task ${done ? 'done' : ''}" data-p1-task="${t.key}"><span class="p1-task-check">✓</span><span><strong>${escapeHtml(t.title)}</strong><span>${escapeHtml(t.desc)}</span></span></button>`;
-      }).join('');
-      $('#p1RouteMeta').textContent = `${stage.level} · ${stage.title}。${stage.next}`;
-      $('#p1RouteChips').innerHTML = p1RouteChips(stage);
-      const latest = state.articles[0];
-      if (latest) {
-        const date = new Date(latest.addedAt || Date.now()).toLocaleDateString('zh-CN');
-        $('#p1LastArticle').textContent = `${latest.title || 'Untitled'} · ${date}`;
-        $('#p1LastArticleChips').innerHTML = [
-          `${(latest.sentences || latest.sentenceCount || 0) || '已'}解析`,
-          latest.raw ? `${Math.max(1, Math.ceil(latest.raw.length / 900))} min` : 'Archived',
-          '点击档案回看'
-        ].map(x => `<span class="p1-chip">${escapeHtml(String(x))}</span>`).join('');
-      } else {
-        $('#p1LastArticle').textContent = '暂无最近文章。精读后会自动归档。';
-        $('#p1LastArticleChips').innerHTML = '<span class="p1-chip">等待第一篇</span>';
-      }
-      const hint = $('#p1ToolHint');
-      if (hint) hint.textContent = m.score >= 85 ? '今日闭环质量很高，可以复制学习报告留档。' : '一阶段重点：先完成复习、精读和输出任务三件事。';
-    }
-    window.renderP1Dashboard = renderP1Dashboard;
-
-    function p1CopyReport() {
-      const text = p1DailyReportText();
-      navigator.clipboard.writeText(text).then(() => toast('今日学习报告已复制', 'success')).catch(() => {
-        prompt('复制学习报告：', text);
-      });
-    }
-
-    function p1DownloadBackup() {
-      const payload = {
-        app: 'FinRead',
-        version: VERSION_CONFIG.current,
-        exportedAt: new Date().toISOString(),
-        privacyNote: 'This backup excludes API keys and sync tokens.',
-        vocab: state.vocab,
-        articles: state.articles,
-        reviewLog: state.reviewLog,
-        wordHistory: state.wordHistory,
-        dailyGoals: state.dailyGoals,
-        studyMode: state.studyMode,
-        p1Tasks: p1LoadTasks(),
-      };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `finread-${VERSION_CONFIG.current}-backup-${p1DateKey()}.json`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 500);
-      toast('本地备份已生成（不含 API Key）', 'success');
-    }
-
-    function p1DailyPlan() {
-      const m = p1Metrics();
-      if (m.due > 0 && state.vocab.length) { setView('vocab'); toast('先完成今日复习', 'success'); return; }
-      if (!$('#newsInput').value.trim()) {
-        $('#newsInput').value = V64_TOPIC_SAMPLES.compliance;
-        onInputChange();
-        toast('已载入合规专题样例', 'success');
-      }
-      $('#newsInput').focus();
-      window.scrollTo({ top: $('#newsInput').getBoundingClientRect().top + window.scrollY - 120, behavior: 'smooth' });
-    }
-
-    function p1BindEvents() {
-      $('#p1TaskList')?.addEventListener('click', (e) => {
-        const btn = e.target.closest('[data-p1-task]');
-        if (!btn) return;
-        p1ToggleTask(btn.dataset.p1Task);
-      });
-      $('#btnP1CopyReport')?.addEventListener('click', p1CopyReport);
-      $('#btnP1Backup')?.addEventListener('click', p1DownloadBackup);
-      $('#btnP1DailyPlan')?.addEventListener('click', p1DailyPlan);
-      $('#btnP1Focus')?.addEventListener('click', () => {
-        document.body.classList.toggle('p1-focus-mode');
-        $('#btnP1Focus').textContent = document.body.classList.contains('p1-focus-mode') ? '退出专注' : '专注模式';
-        toast(document.body.classList.contains('p1-focus-mode') ? '已进入专注模式' : '已退出专注模式', 'success');
-      });
-      $('#btnP1ResetTasks')?.addEventListener('click', () => {
-        p1SaveTasks({});
-        renderP1Dashboard();
-        toast('今日输出任务已重置', 'warning');
-      });
-      $('#p1LastArticle')?.addEventListener('click', () => { if (state.articles.length) setView('history'); });
-    }
 
     let _draftTimer = null;
     function onInputChange() {
@@ -8983,7 +7702,6 @@ ${text}`;
       else if (name === 'vocab') { show('#viewVocab'); renderVocabBook(); }
       else if (name === 'history') { show('#viewHistory'); renderHistoryView(); }
       else if (name === 'stats') { show('#viewStats'); renderStatsView(); }
-      if (state.notion.autoSync === 'onView') notionPushDebounced();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -9256,120 +7974,6 @@ ${text}`;
       }
     }
 
-    /* ============================================================
-     *  WRITING CHALLENGE
-     * ============================================================ */
-    let _wcWords = [];   // current 10 words for the challenge
-    let _wcCtrl = null;  // AbortController for streaming
-
-    function wcPickWords(n = 10) {
-      const pool = state.vocab.filter(v => v.word && v.translation);
-      if (pool.length < 3) return [];
-      // 按层级分桶，然后从各桶均匀抽取，最后随机打乱
-      const buckets = { vocab: [], phrase: [], pattern: [], proper: [] };
-      pool.forEach(v => (buckets[v.tier] || (buckets.other = buckets.other || [])).push(v));
-      const shuffleBucket = b => b.sort(() => Math.random() - .5);
-      Object.values(buckets).forEach(shuffleBucket);
-      const picked = [];
-      const tiers = ['vocab', 'phrase', 'pattern', 'proper'];
-      // 轮转抽取，优先词汇和短语
-      const weights = { vocab: 3, phrase: 3, pattern: 2, proper: 2 };
-      const weighted = [];
-      tiers.forEach(t => { for (let i = 0; i < (weights[t] || 1); i++) weighted.push(t); });
-      weighted.sort(() => Math.random() - .5);
-      for (const t of weighted) {
-        if (picked.length >= n) break;
-        const b = buckets[t];
-        if (b && b.length) {
-          const w = b.pop();
-          if (!picked.some(p => p.word === w.word)) picked.push(w);
-        }
-      }
-      // 不够时从总池补
-      while (picked.length < Math.min(n, pool.length)) {
-        const w = pool[Math.floor(Math.random() * pool.length)];
-        if (!picked.some(p => p.word === w.word)) picked.push(w);
-      }
-      return picked.slice(0, n).sort(() => Math.random() - .5);
-    }
-
-    function wcRender() {
-      if (state.vocab.filter(v => v.word).length < 3) { hide('#wcPanel'); return; }
-      show('#wcPanel');
-      if (!_wcWords.length) _wcWords = wcPickWords();
-      const wordsEl = $('#wcWords');
-      wordsEl.innerHTML = '';
-      _wcWords.forEach(w => {
-        const chip = document.createElement('span');
-        chip.className = `wc-chip t-${w.tier}`;
-        chip.dataset.word = w.word;
-        chip.innerHTML = `<span class="wc-chip-word">${escapeHtml(w.word)}</span><span class="wc-chip-zh">${escapeHtml((w.translation || '').slice(0, 18))}</span>`;
-        wordsEl.appendChild(chip);
-      });
-      const genEl = $('#wcGenText');
-      if (!genEl.innerHTML.trim() || genEl.classList.contains('loading')) wcGenerate();
-    }
-
-    async function wcGenerate() {
-      if (!state.apiKey) { toast('请先在 ⚙ 配置 中填写 API Key', 'error'); return; }
-      if (_wcCtrl) _wcCtrl.abort();
-      _wcCtrl = new AbortController();
-      const regenBtn = $('#wcRegen');
-      regenBtn.disabled = true;
-      regenBtn.textContent = '生成中...';
-      const genEl = $('#wcGenText');
-      genEl.classList.add('loading');
-      genEl.textContent = '✦  AI 正在造句...';
-      const wordList = _wcWords.map(w => `${w.word}（${w.translation}）`).join('、');
-      const prompt = `你是一位金融英语写作专家。请用以下 ${_wcWords.length} 个词，写 2-3 句自然、专业、有趣的金融英语例句（附中文翻译）。要求：
-1. 尽量将所有词自然融入句中
-2. 句子要像真实金融新闻或分析报告中的表达
-3. 语言简练，逻辑清晰
-4. 先写英文原句，换行后写中文翻译
-
-【词汇列表】
-${wordList}
-
-直接输出句子，不需要额外说明。`;
-      try {
-        let fullText = '';
-        await streamRequestProgressive(prompt, _wcCtrl, full => {
-          fullText = full;
-          genEl.textContent = full;
-        });
-        genEl.classList.remove('loading');
-        wcHighlightWords(genEl, fullText);
-      } catch (e) {
-        if (e.name !== 'AbortError') {
-          genEl.classList.remove('loading');
-          genEl.textContent = '生成失败：' + e.message;
-        }
-      } finally {
-        regenBtn.disabled = false;
-        regenBtn.textContent = '↺ 重新生成';
-        _wcCtrl = null;
-      }
-    }
-
-    function wcHighlightWords(el, text) {
-      const sorted = [..._wcWords].sort((a, b) => b.word.length - a.word.length);
-      const replacements = [];
-      let processed = text;
-      sorted.forEach(w => {
-        const re = new RegExp(w.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-        processed = processed.replace(re, match => {
-          const idx = replacements.length;
-          replacements.push(`<mark class="wc-highlight t-${w.tier}">${escapeHtml(match)}</mark>`);
-          return `\x00${idx}\x00`;
-        });
-      });
-      const parts = processed.split(/\x00(\d+)\x00/);
-      let html = '';
-      parts.forEach((part, i) => {
-        html += i % 2 === 0 ? escapeHtml(part) : (replacements[parseInt(part)] || '');
-      });
-      el.innerHTML = html;
-    }
 
     function buildVocabCardHTML(w, isSaved, showSrs = false, showHistory = false) {
       const tier = w.tier || 'vocab';
@@ -9666,7 +8270,6 @@ ${wordList}
     function renderVocabBook() {
       updateAllCounts();
       const total = state.vocab.length;
-      wcRender();
       if (total === 0) { show('#vocabEmpty'); hide('#vocabContent'); return; }
       hide('#vocabEmpty'); show('#vocabContent');
       const list = $('#vocabGrid');
@@ -10419,366 +9022,6 @@ ${wordList}
       return payload;
     }
 
-    /* ============================================================
-     *  NOTION SYNC MODULE
-     * ============================================================ */
-    function notionFetch(endpoint, opts = {}) {
-      const n = state.notion;
-      if (!n.token) throw new Error('Notion Token 未配置');
-      let url;
-      if (n.proxyUrl) {
-        if (n.proxyUrl.endsWith('/v1') || n.proxyUrl.endsWith('/v1/')) {
-          url = n.proxyUrl.replace(/\/$/, '') + endpoint;
-        } else if (n.proxyUrl.includes('?')) {
-          url = n.proxyUrl + encodeURIComponent('https://api.notion.com/v1' + endpoint);
-        } else {
-          url = n.proxyUrl.replace(/\/$/, '') + '/v1' + endpoint;
-        }
-      } else {
-        url = 'https://api.notion.com/v1' + endpoint;
-      }
-      const headers = {
-        'Authorization': `Bearer ${n.token}`,
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json',
-        ...(opts.headers || {}),
-      };
-      return fetch(url, { ...opts, headers });
-    }
-
-    const notionLog = msg => appendSyncLog('#notionSyncLog', msg);
-
-    async function notionTestConnection() {
-      if (!state.notion.token) { toast('请先填入 Token', 'error'); return; }
-      try {
-        const res = await notionFetch('/users/me');
-        if (res.ok) {
-          const data = await res.json();
-          notionLog(`✓ 连接成功，账号：${data.name || data.bot?.owner?.workspace_name || 'OK'}`);
-          toast('Notion 连接成功 ✓', 'success');
-          updateNotionStatus(true);
-          return true;
-        } else {
-          const errText = await res.text();
-          notionLog(`✗ HTTP ${res.status}: ${errText.slice(0, 200)}`);
-          toast(`Notion 连接失败: ${res.status}`, 'error');
-          updateNotionStatus(false);
-          return false;
-        }
-      } catch (e) {
-        notionLog(`✗ ${e.message}`);
-        if (e.message.includes('Failed to fetch') || e.message.includes('CORS')) {
-          toast('CORS 阻断 — 请配置代理 URL', 'error', 4000);
-        } else {
-          toast('错误: ' + e.message, 'error');
-        }
-        updateNotionStatus(false);
-        return false;
-      }
-    }
-
-    async function notionEnsurePage() {
-      if (state.notion.pageId) return state.notion.pageId;
-      const parentId = state.notion.parentId || NOTION_PARENT_DEFAULT;
-      notionLog(`在父页 ${parentId.slice(0, 8)}... 下创建同步页`);
-      const res = await notionFetch('/pages', {
-        method: 'POST',
-        body: JSON.stringify({
-          parent: { page_id: parentId },
-          properties: { title: [{ type: 'text', text: { content: 'FinRead Sync (自动生成)' } }] },
-          children: [
-            { object: 'block', type: 'heading_2', heading_2: { rich_text: [{ type: 'text', text: { content: 'FinRead 同步数据' } }] } },
-            { object: 'block', type: 'paragraph', paragraph: { rich_text: [{ type: 'text', text: { content: '此页由 FinRead 自动维护。请勿手动编辑下方代码块。' } }] } },
-            { object: 'block', type: 'code', code: { language: 'json', rich_text: [{ type: 'text', text: { content: JSON.stringify({ version: 5, init: true }, null, 2) } }] } },
-          ],
-        }),
-      });
-      if (!res.ok) throw new Error(`创建页面失败: ${res.status} ${await res.text()}`);
-      const data = await res.json();
-      state.notion.pageId = data.id;
-      persistNotion();
-      $('#notionPageIdInput').value = data.id;
-      notionLog(`✓ 已创建同步页: ${data.id.slice(0, 8)}...`);
-      return data.id;
-    }
-
-    async function notionPush() {
-      if (!state.notion.token) { toast('Token 未配置', 'error'); return; }
-      notionLog('开始推送本地数据...');
-      try {
-        const pageId = await notionEnsurePage();
-        const childRes = await notionFetch(`/blocks/${pageId}/children?page_size=100`);
-        if (!childRes.ok) throw new Error(`读取子块失败: ${childRes.status}`);
-        const children = (await childRes.json()).results;
-        const codeBlock = children.find(b => b.type === 'code');
-        const payload = buildSyncPayload({ articleRaw: true, limitReviewLog: 500, version: 5, withWordHistory: true, withStats: true });
-        const jsonStr = JSON.stringify(payload);
-        notionLog(`数据大小: ${(jsonStr.length / 1024).toFixed(1)} KB`);
-        const chunks = [];
-        for (let i = 0; i < jsonStr.length; i += 1900) chunks.push(jsonStr.slice(i, i + 1900));
-        const richText = chunks.map(c => ({ type: 'text', text: { content: c } }));
-        if (codeBlock) {
-          const upRes = await notionFetch(`/blocks/${codeBlock.id}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ code: { language: 'json', rich_text: richText } }),
-          });
-          if (!upRes.ok) throw new Error(`更新失败: ${upRes.status} ${await upRes.text()}`);
-        } else {
-          const addRes = await notionFetch(`/blocks/${pageId}/children`, {
-            method: 'PATCH',
-            body: JSON.stringify({ children: [{ object: 'block', type: 'code', code: { language: 'json', rich_text: richText } }] }),
-          });
-          if (!addRes.ok) throw new Error(`添加失败: ${addRes.status}`);
-        }
-        state.notion.lastSync = Date.now();
-        persistNotion();
-        notionLog(`✓ 推送成功 · ${state.vocab.length} 卡 · ${state.articles.length} 文章`);
-        toast('已推送到 Notion ✓', 'success');
-        updateNotionStatus(true);
-      } catch (e) {
-        notionLog(`✗ 推送失败: ${e.message}`);
-        toast('推送失败: ' + e.message.slice(0, 80), 'error', 4000);
-      }
-    }
-
-    async function notionPull() {
-      if (!state.notion.token || !state.notion.pageId) { toast('需先设置 Token 和 PageId', 'error'); return; }
-      notionLog('开始拉取 Notion 数据...');
-      try {
-        const childRes = await notionFetch(`/blocks/${state.notion.pageId}/children?page_size=100`);
-        if (!childRes.ok) throw new Error(`HTTP ${childRes.status}`);
-        const children = (await childRes.json()).results;
-        const codeBlock = children.find(b => b.type === 'code');
-        if (!codeBlock) throw new Error('页面未找到 JSON 代码块');
-        const jsonStr = codeBlock.code.rich_text.map(rt => rt.text?.content || rt.plain_text || '').join('');
-        const remote = JSON.parse(jsonStr);
-        if (remote.init && !remote.vocab) {
-          notionLog('远端为空页（仅含初始化标记）, 跳过合并');
-          toast('远端无数据', 'warning'); return;
-        }
-        notionLog(`远端: ${remote.vocab?.length || 0} 卡 · ${remote.articles?.length || 0} 文章 · 更新于 ${new Date(remote.updatedAt).toLocaleString()}`);
-        const { added, updated, articleAdded } = mergeRemoteData(remote);
-        state.notion.lastSync = Date.now();
-        persistNotion();
-        notionLog(`✓ 合并完成 · 新增 ${added} 卡 · 更新 ${updated} 卡 · 新增 ${articleAdded} 文章`);
-        toast(`已合并: +${added} 卡, +${articleAdded} 文章`, 'success');
-        updateNotionStatus(true);
-        rerenderActiveDataView();
-      } catch (e) {
-        notionLog(`✗ 拉取失败: ${e.message}`);
-        toast('拉取失败: ' + e.message.slice(0, 80), 'error', 4000);
-      }
-    }
-
-    let _notionPushTimer = null;
-    function notionPushDebounced() {
-      if (!state.notion.token || state.notion.autoSync === 'off') return;
-      clearTimeout(_notionPushTimer);
-      _notionPushTimer = setTimeout(() => { notionPush().catch(e => console.warn('auto-sync failed', e)); }, 4000);
-    }
-
-    function updateNotionStatus(connected) {
-      const row = $('#notionStatusRow');
-      const txt = $('#notionStatusText');
-      const meta = $('#notionStatusMeta');
-      if (connected) {
-        row.classList.add('connected');
-        txt.textContent = '已连接';
-        if (state.notion.lastSync) {
-          const ago = Date.now() - state.notion.lastSync;
-          const min = Math.round(ago / 60000);
-          meta.textContent = ago < 60000 ? '刚刚同步' : `${min} 分钟前同步`;
-        } else meta.textContent = '尚未同步';
-        $('#notionPushBtn').disabled = false;
-        $('#notionPullBtn').disabled = !state.notion.pageId;
-        $('#notionSyncInfo').textContent = `已连接到页面 ${(state.notion.pageId || '待创建').slice(0, 12)}...`;
-        $('#notionBtn').classList.add('synced');
-      } else {
-        row.classList.remove('connected');
-        txt.textContent = '未连接';
-        meta.textContent = '';
-        $('#notionPushBtn').disabled = true;
-        $('#notionPullBtn').disabled = true;
-        $('#notionBtn').classList.remove('synced');
-      }
-      if (connected && state.notion.lastSync) {
-        const min = Math.round((Date.now() - state.notion.lastSync) / 60000);
-        $('#syncStatusInline').textContent = `· Notion 同步于 ${min}min 前`;
-      } else if (connected) {
-        $('#syncStatusInline').textContent = '· Notion 已连接';
-      } else {
-        $('#syncStatusInline').textContent = '·';
-      }
-    }
-
-    // ══════════════════════════════════════════════════════
-    //  JSONBin.io sync
-    // ══════════════════════════════════════════════════════
-    const JB_BASE = 'https://api.jsonbin.io/v3';
-    const JB_MAX_BYTES = 90 * 1024; // 90 KB safety margin (free tier = 100 KB)
-
-    const jbLog = msg => appendSyncLog('#jbSyncLog', msg);
-
-    function jbHeaders(extra = {}) {
-      return { 'Content-Type': 'application/json', 'X-Master-Key': state.jsonbin.apiKey, ...extra };
-    }
-
-    async function jsonbinPush() {
-      if (!state.jsonbin.apiKey) { toast('请先配置 JSONBin API Key', 'error'); return; }
-      switchJsonbinTab('sync');
-      jbLog('开始推送...');
-      $('#jbPushBtn').disabled = true;
-      try {
-        let payload = buildSyncPayload({ includeArticles: true });
-        let body = JSON.stringify(payload);
-        if (new Blob([body]).size > JB_MAX_BYTES) {
-          jbLog('数据超过 90KB，省略文章列表后重试...');
-          payload = buildSyncPayload({ includeArticles: false });
-          body = JSON.stringify(payload);
-        }
-        let res, data;
-        if (state.jsonbin.binId) {
-          res = await fetch(`${JB_BASE}/b/${state.jsonbin.binId}`, {
-            method: 'PUT', headers: jbHeaders(), body,
-          });
-        } else {
-          res = await fetch(`${JB_BASE}/b`, {
-            method: 'POST',
-            headers: jbHeaders({ 'X-Bin-Name': 'FinRead', 'X-Bin-Private': 'true' }),
-            body,
-          });
-        }
-        if (!res.ok) throw new Error(`HTTP ${res.status} ${await res.text()}`);
-        data = await res.json();
-        if (!state.jsonbin.binId) {
-          state.jsonbin.binId = data.metadata?.id || data.record?.id || data.id;
-          $('#jbBinIdInput').value = state.jsonbin.binId;
-          jbLog(`✓ 已创建 Bin: ${state.jsonbin.binId}`);
-        }
-        state.jsonbin.lastSync = Date.now();
-        persistJsonbin();
-        jbLog(`✓ 推送完成 · ${state.vocab.length} 卡 · ${state.reviewLog.length} 条复习记录`);
-        toast('JSONBin 推送成功 ✓', 'success');
-        updateJsonbinStatus(true);
-      } catch (e) {
-        jbLog(`✗ 推送失败: ${e.message}`);
-        toast('推送失败: ' + e.message.slice(0, 80), 'error', 4000);
-      } finally {
-        $('#jbPushBtn').disabled = false;
-      }
-    }
-
-    async function jsonbinPull() {
-      if (!state.jsonbin.apiKey || !state.jsonbin.binId) { toast('请先配置 API Key 和 Bin ID', 'error'); return; }
-      switchJsonbinTab('sync');
-      jbLog('开始拉取...');
-      $('#jbPullBtn').disabled = true;
-      try {
-        const res = await fetch(`${JB_BASE}/b/${state.jsonbin.binId}/latest`, {
-          headers: { 'X-Master-Key': state.jsonbin.apiKey },
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        const remote = json.record;
-        if (!remote?.vocab) { jbLog('远端无词卡数据，跳过'); toast('远端无数据', 'warning'); return; }
-        jbLog(`远端: ${remote.vocab.length} 卡 · ${remote.reviewLog?.length || 0} 条记录`);
-        const { added, updated } = mergeRemoteData(remote);
-        state.jsonbin.lastSync = Date.now();
-        persistJsonbin();
-        jbLog(`✓ 合并完成 · 新增 ${added} 卡 · 更新 ${updated} 卡`);
-        toast(`JSONBin 已合并: +${added} 卡`, 'success');
-        updateJsonbinStatus(true);
-        rerenderActiveDataView();
-      } catch (e) {
-        jbLog(`✗ 拉取失败: ${e.message}`);
-        toast('拉取失败: ' + e.message.slice(0, 80), 'error', 4000);
-      } finally {
-        $('#jbPullBtn').disabled = false;
-      }
-    }
-
-    async function jsonbinTest() {
-      if (!state.jsonbin.apiKey) { toast('请先填入 API Key', 'warning'); return; }
-      jbLog('测试连接...');
-      try {
-        const res = await fetch(`${JB_BASE}/b?sortBy=lastModified&order=desc&limit=1`, {
-          headers: { 'X-Master-Key': state.jsonbin.apiKey },
-        });
-        if (res.ok) {
-          jbLog('✓ API Key 有效，连接正常');
-          toast('JSONBin 连接成功 ✓', 'success');
-          updateJsonbinStatus(true);
-        } else {
-          jbLog(`✗ API Key 无效 (${res.status})`);
-          toast('API Key 无效', 'error');
-        }
-      } catch (e) {
-        jbLog(`✗ 连接失败: ${e.message}`);
-        toast('连接失败: ' + e.message.slice(0, 60), 'error');
-      }
-    }
-
-    function updateJsonbinStatus(connected) {
-      const row = $('#jbStatusRow');
-      if (!row) return;
-      if (connected) {
-        row.classList.add('connected');
-        $('#jbStatusText').textContent = '已连接';
-        if (state.jsonbin.lastSync) {
-          const min = Math.round((Date.now() - state.jsonbin.lastSync) / 60000);
-          $('#jbStatusMeta').textContent = min < 1 ? '刚刚同步' : `${min} 分钟前同步`;
-        }
-        $('#jbPushBtn').disabled = false;
-        $('#jbPullBtn').disabled = !state.jsonbin.binId;
-        $('#jsonbinBtn').classList.add('synced');
-      } else {
-        row.classList.remove('connected');
-        $('#jbStatusText').textContent = '未连接';
-        $('#jbPushBtn').disabled = true;
-        $('#jbPullBtn').disabled = true;
-        $('#jsonbinBtn').classList.remove('synced');
-      }
-    }
-
-    function openJsonbinModal() {
-      $('#jbApiKeyInput').value = state.jsonbin.apiKey;
-      $('#jbBinIdInput').value = state.jsonbin.binId;
-      switchJsonbinTab('config');
-      updateJsonbinStatus(!!(state.jsonbin.apiKey && state.jsonbin.lastSync));
-      $('#jsonbinModal').classList.remove('hidden');
-    }
-
-    function closeJsonbinModal() { $('#jsonbinModal').classList.add('hidden'); }
-
-    function switchJsonbinTab(tab) {
-      $$('#jsonbinModal .modal-tabs button').forEach(b => b.classList.toggle('active', b.dataset.jbTab === tab));
-      ['config', 'sync', 'help'].forEach(t => {
-        const el = $(`#jbTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
-        if (el) el.classList.toggle('hidden', t !== tab);
-      });
-    }
-
-    function saveJsonbinConfig() {
-      state.jsonbin.apiKey = $('#jbApiKeyInput').value.trim();
-      state.jsonbin.binId = $('#jbBinIdInput').value.trim();
-      persistJsonbin();
-      updateJsonbinStatus(!!state.jsonbin.apiKey);
-      toast('JSONBin 配置已保存', 'success');
-      if (state.jsonbin.apiKey) jsonbinTest();
-    }
-
-    function notionCopyJson() {
-      const payload = {
-        version: 5, exportedAt: Date.now(),
-        vocab: state.vocab, articles: state.articles,
-        wordHistory: state.wordHistory, reviewLog: state.reviewLog.slice(-500),
-      };
-      const text = JSON.stringify(payload, null, 2);
-      navigator.clipboard.writeText(text).then(() => {
-        toast(`已复制 JSON (${(text.length / 1024).toFixed(1)} KB) 到剪贴板`, 'success');
-        notionLog(`✓ 复制 ${(text.length / 1024).toFixed(1)} KB 到剪贴板`);
-      }).catch(e => toast('复制失败: ' + e.message, 'error'));
-    }
 
     /* ============================================================
      *  TOOLTIPS
@@ -11013,32 +9256,6 @@ ${tierInstruction}`;
       toast(`已导出 ${state.vocab.length} 卡 + ${state.articles.length} 文章`, 'success');
     }
 
-    function exportAnki() {
-      if (!state.vocab.length) { toast('词库为空，无法导出', 'warning'); return; }
-      // Anki note type: Basic (and reversed)
-      // Columns: Front \t Back \t Tags
-      const TIER_ZH = { pattern: '句式', phrase: '短语', proper: '专名', vocab: '词汇' };
-      const rows = state.vocab.map(w => {
-        const front = w.word;
-        const parts = [w.translation || ''];
-        if (w.phonetic) parts.push(`[${w.phonetic}]`);
-        if (w.pos) parts.push(w.pos);
-        if (w.note) parts.push(w.note);
-        if (w.examples?.[0]) parts.push(`e.g. ${w.examples[0].en}`);
-        const back = parts.filter(Boolean).join('  ·  ');
-        const tags = [TIER_ZH[w.tier] || w.tier, ...(w.examTags || []), w.freq || ''].filter(Boolean).join(' ');
-        return [front, back, tags].join('\t');
-      });
-      const tsv = '#separator:tab\n#html:false\n#notetype:Basic\n#deck:FinRead\n' + rows.join('\n');
-      const blob = new Blob([tsv], { type: 'text/plain;charset=utf-8' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `finread-anki-${new Date().toISOString().slice(0, 10)}.txt`;
-      a.click();
-      URL.revokeObjectURL(a.href);
-      toast(`已导出 ${state.vocab.length} 张 Anki 卡片`, 'success');
-    }
-
     function importVocab() {
       const input = document.createElement('input');
       input.type = 'file';
@@ -11109,7 +9326,6 @@ ${tierInstruction}`;
       updatePricingHint();
       $('#apiKeyInput').value = state.apiKey;
       $('#streamingSelect').value = String(state.streaming);
-      if ($('#qualityModeSelect')) $('#qualityModeSelect').value = state.qualityMode || 'deep';
       $('#chunkThresholdInput').value = state.chunkThreshold;
       populateVoiceSelect();
       $('#reminderTimeInput').value = state.reminderTime || '09:00';
@@ -11171,7 +9387,6 @@ ${tierInstruction}`;
       state.model = $('#modelSelect').value;
       state.apiKey = $('#apiKeyInput').value.trim();
       state.streaming = $('#streamingSelect').value === 'true';
-      state.qualityMode = $('#qualityModeSelect')?.value || 'deep';
       state.chunkThreshold = parseInt($('#chunkThresholdInput').value) || DEFAULT_CHUNK_THRESHOLD;
       state.selectedVoice = $('#voiceSelect').value;
       state.reminderTime = $('#reminderTimeInput').value || '09:00';
@@ -11180,7 +9395,6 @@ ${tierInstruction}`;
       localStorage.setItem(STORE.model, state.model);
       localStorage.setItem(STORE.apiKey, state.apiKey);
       localStorage.setItem(STORE.streaming, String(state.streaming));
-      localStorage.setItem(STORE.qualityMode, state.qualityMode);
       localStorage.setItem(STORE.chunkThreshold, String(state.chunkThreshold));
       localStorage.setItem(STORE.voice, state.selectedVoice);
       renderModelBadge();
@@ -11198,36 +9412,6 @@ ${tierInstruction}`;
       el.classList.remove('disconnected');
     }
 
-    function openNotionModal() {
-      $('#notionTokenInput').value = state.notion.token;
-      $('#notionPageIdInput').value = state.notion.pageId;
-      $('#notionParentIdInput').value = state.notion.parentId;
-      $('#notionProxyInput').value = state.notion.proxyUrl;
-      $('#notionAutoSync').value = state.notion.autoSync;
-      switchNotionTab(state.notionTab || 'config');
-      updateNotionStatus(!!(state.notion.token && state.notion.lastSync));
-      show('#notionModal');
-    }
-    function closeNotionModal() { hide('#notionModal'); }
-
-    function switchNotionTab(tab) {
-      state.notionTab = tab;
-      $$('#notionModal .modal-tabs button').forEach(b => b.classList.toggle('active', b.dataset.modalTab === tab));
-      hide('#notionTabConfig'); hide('#notionTabSync'); hide('#notionTabHelp');
-      show('#notionTab' + tab.charAt(0).toUpperCase() + tab.slice(1));
-    }
-
-    function saveNotionConfig() {
-      state.notion.token = $('#notionTokenInput').value.trim();
-      state.notion.pageId = $('#notionPageIdInput').value.trim();
-      state.notion.parentId = $('#notionParentIdInput').value.trim() || NOTION_PARENT_DEFAULT;
-      state.notion.proxyUrl = $('#notionProxyInput').value.trim();
-      state.notion.autoSync = $('#notionAutoSync').value;
-      persistNotion();
-      toast('Notion 配置已保存', 'success');
-      if (state.notion.token) notionTestConnection();
-    }
-
     /* ============================================================
      *  EVENT BINDINGS
      * ============================================================ */
@@ -11235,7 +9419,6 @@ ${tierInstruction}`;
       $$('nav.tabs button').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
       $$('.bottom-tabbar .bt-btn').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
       $('#newsInput').addEventListener('input', onInputChange);
-      $('#newsInput').addEventListener('input', debounce(() => { if (typeof renderP2Lab === 'function') renderP2Lab(); }, 180));
       $('#btnPaste').addEventListener('click', async () => {
         try { $('#newsInput').value = await navigator.clipboard.readText(); onInputChange(); }
         catch (e) { toast('粘贴失败，请手动 Ctrl+V'); }
@@ -11243,16 +9426,6 @@ ${tierInstruction}`;
       $('#btnSample').addEventListener('click', () => { $('#newsInput').value = SAMPLE; onInputChange(); });
       $('#btnV64LoadDaily')?.addEventListener('click', () => { $('#newsInput').value = V64_TOPIC_SAMPLES.fed; onInputChange(); $('#newsInput').focus(); toast('已载入 Fed 专题样例', 'success'); });
       $('#btnV64StartReview')?.addEventListener('click', () => { if (state.vocab.length) setView('vocab'); else toast('先精读一篇文章并存入卡片', 'warning'); });
-      if (typeof p1BindEvents === 'function') p1BindEvents();
-      if (typeof p2BindEvents === 'function') p2BindEvents();
-      $$('.v64-topic-chip').forEach(btn => btn.addEventListener('click', () => {
-        const sample = V64_TOPIC_SAMPLES[btn.dataset.topic];
-        if (!sample) return;
-        $('#newsInput').value = sample;
-        onInputChange();
-        $('#newsInput').focus();
-        toast(`已载入专题：${btn.textContent}`, 'success');
-      }));
       $('#btnFetchLink').addEventListener('click', async () => {
         const raw = $('#newsInput').value.trim();
         // 优先从文本中提取第一个 URL（兼容前后有 UTM 参数、换行等情况）
@@ -11302,12 +9475,6 @@ ${tierInstruction}`;
       $('#btnCancel').addEventListener('click', cancelAnalyze);
       $('#btnGotoAnalysis').addEventListener('click', () => { $('#tabAnalysis').classList.remove('hidden'); $('#btTabAnalysis').classList.remove('hidden'); setView('analysis'); });
       $('#btnBack').addEventListener('click', () => setView('input'));
-      $('#btnReadAll').addEventListener('click', (e) => {
-        if (state.analysis) {
-          const text = state.analysis.sentences.map(s => getEnText(s.original, s.translation).replace(/\*\*/g, '')).join(' ');
-          speak(text, 0.95, e.currentTarget);
-        }
-      });
       $('#btnCopyTrans').addEventListener('click', () => {
         if (state.analysis?.fullTranslation) {
           navigator.clipboard.writeText(state.analysis.fullTranslation);
@@ -11435,10 +9602,7 @@ ${tierInstruction}`;
         });
       });
       $('#btnExport').addEventListener('click', exportVocab);
-      $('#btnAnki').addEventListener('click', exportAnki);
       $('#btnImport').addEventListener('click', importVocab);
-      $('#wcShuffle').addEventListener('click', () => { _wcWords = wcPickWords(); $('#wcGenText').innerHTML = ''; wcRender(); });
-      $('#wcRegen').addEventListener('click', wcGenerate);
       $('#themeToggle').addEventListener('click', toggleTheme);
       $('#btnSettings').addEventListener('click', openSettings);
       $('#btnSettingsCancel').addEventListener('click', closeSettings);
@@ -11448,7 +9612,7 @@ ${tierInstruction}`;
       $('#voiceSelect').addEventListener('change', updateVoiceHint);
       $('#btnClearAll').addEventListener('click', async () => {
         const ok = await confirmDialog(
-          `此操作将清除：\n• ${state.vocab.length} 张词卡及复习进度\n• ${state.articles.length} 篇归档文章\n• Notion 配置与 API Key\n• 所有本地学习数据\n\n⚠️ 不可恢复！建议先导出备份。`,
+          `此操作将清除：\n• ${state.vocab.length} 张词卡及复习进度\n• ${state.articles.length} 篇归档文章\n• 所有本地学习数据\n\n⚠️ 不可恢复！建议先导出备份。`,
           { title: '清除全部本地数据', danger: true, confirmText: '全部清除' }
         );
         if (!ok) return;
@@ -11456,14 +9620,6 @@ ${tierInstruction}`;
         sessionStorage.clear();
         location.reload();
       });
-      $('#notionBtn').addEventListener('click', openNotionModal);
-      $('#notionCloseBtn').addEventListener('click', closeNotionModal);
-      $$('#notionModal .modal-tabs button').forEach(b => { b.addEventListener('click', () => switchNotionTab(b.dataset.modalTab)); });
-      $('#notionTestBtn').addEventListener('click', notionTestConnection);
-      $('#notionSaveBtn').addEventListener('click', saveNotionConfig);
-      $('#notionPushBtn').addEventListener('click', notionPush);
-      $('#notionPullBtn').addEventListener('click', notionPull);
-      $('#notionExportBtn').addEventListener('click', notionCopyJson);
       $('#jsonbinBtn').addEventListener('click', openJsonbinModal);
       $('#jbCloseBtn').addEventListener('click', closeJsonbinModal);
       $('#jsonbinModal').addEventListener('click', e => { if (e.target.id === 'jsonbinModal') closeJsonbinModal(); });
@@ -11478,11 +9634,6 @@ ${tierInstruction}`;
       }, 220));
       $('#dialogOverlay').addEventListener('click', (e) => {
         if (e.target.id === 'dialogOverlay') closeDialog(false);
-      });
-      $('#btnShortcuts').addEventListener('click', () => $('#shortcutsPanel').classList.add('visible'));
-      $('#closeShortcuts').addEventListener('click', () => $('#shortcutsPanel').classList.remove('visible'));
-      $('#shortcutsPanel').addEventListener('click', (e) => {
-        if (e.target.id === 'shortcutsPanel') $('#shortcutsPanel').classList.remove('visible');
       });
       $('#wdpClose').addEventListener('click', closeWordDetailPopup);
       $('#wordDetailOverlay').addEventListener('click', closeWordDetailPopup);
@@ -11534,10 +9685,8 @@ ${tierInstruction}`;
         // ESC closes any open modal/panel
         if (e.key === 'Escape') {
           if ($('#dialogOverlay').classList.contains('visible')) { closeDialog(false); return; }
-          if ($('#shortcutsPanel').classList.contains('visible')) { $('#shortcutsPanel').classList.remove('visible'); return; }
           if ($('#wordDetailPopup').classList.contains('visible')) { closeWordDetailPopup(); return; }
           if (!$('#settingsModal').classList.contains('hidden')) { closeSettings(); return; }
-          if (!$('#notionModal').classList.contains('hidden')) { closeNotionModal(); return; }
           if (!$('#jsonbinModal').classList.contains('hidden')) { closeJsonbinModal(); return; }
           if (!$('#customAddModal').classList.contains('hidden')) { hide('#customAddModal'); return; }
         }
@@ -11545,12 +9694,6 @@ ${tierInstruction}`;
           if (state.view === 'input' && (e.metaKey || e.ctrlKey) && e.key === 'Enter') {
             if (!$('#btnAnalyze').disabled) doAnalyze();
           }
-          return;
-        }
-        // ? opens shortcuts panel (without modifier keys)
-        if (e.key === '?' && !e.metaKey && !e.ctrlKey && !e.altKey) {
-          e.preventDefault();
-          $('#shortcutsPanel').classList.toggle('visible');
           return;
         }
         if (e.key === 'D' && e.shiftKey) { toggleTheme(); return; }
@@ -11619,10 +9762,6 @@ ${tierInstruction}`;
       try { state.wordHistory = JSON.parse(localStorage.getItem(STORE.wordHistory) || '{}'); } catch { }
       try { state.reviewLog = JSON.parse(localStorage.getItem(STORE.reviewLog) || '[]'); } catch { }
       try {
-        const n = JSON.parse(localStorage.getItem(STORE.notion) || '{}');
-        state.notion = { ...state.notion, ...n };
-      } catch { }
-      try {
         const jb = JSON.parse(localStorage.getItem(STORE.jsonbin) || '{}');
         state.jsonbin = { ...state.jsonbin, ...jb };
       } catch { }
@@ -11630,7 +9769,6 @@ ${tierInstruction}`;
       state.provider = localStorage.getItem(STORE.provider) || 'openrouter';
       state.model = localStorage.getItem(STORE.model) || 'openai/gpt-5.5';
       state.streaming = localStorage.getItem(STORE.streaming) !== 'false';
-      state.qualityMode = localStorage.getItem(STORE.qualityMode) || 'deep';
       state.chunkThreshold = parseInt(localStorage.getItem(STORE.chunkThreshold)) || DEFAULT_CHUNK_THRESHOLD;
       state.selectedVoice = localStorage.getItem(STORE.voice) || '';
       state.studyMode = localStorage.getItem(STORE.studyMode) || 'en2zh';
@@ -11649,7 +9787,7 @@ ${tierInstruction}`;
         verEl.textContent = VERSION_CONFIG.current;
         verEl.dataset.tip = VERSION_CONFIG.changelog.join('\n');
       }
-      $('#footerBrand').textContent = `FINREAD ${VERSION_CONFIG.current} · 四层词库 · AI Copilot · 数据健康`;
+      $('#footerBrand').textContent = `FINREAD ${VERSION_CONFIG.current} · 四层词库 · 双向训练`;
       $('#dateLabel').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase();
       $$('.flip-mode-toggle button').forEach(b => b.classList.toggle('active', b.dataset.mode === state.studyMode));
       updateAllCounts();
@@ -11658,8 +9796,6 @@ ${tierInstruction}`;
       updateStreakBadge();
       updateGoalsBanner();
       renderV64Dashboard();
-      if (typeof renderP2Lab === 'function') renderP2Lab();
-      updateNotionStatus(!!(state.notion.token && state.notion.lastSync));
       updateJsonbinStatus(!!(state.jsonbin.apiKey && state.jsonbin.lastSync));
       bindEvents();
       bindKeyboard();
