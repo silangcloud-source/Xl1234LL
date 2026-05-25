@@ -1,3 +1,5 @@
+/* FinRead — mistakes.js: mistake tracking, targeted training */
+
     function recordMistake(card, reasons = [], meta = {}) {
       ensureMemoryFields(card);
       const cleanReasons = [...new Set((reasons || []).filter(Boolean))];
@@ -964,29 +966,24 @@
 
 
     /* ============================================================
-     *  ✦ ENHANCED MISTAKE TRACKING — Targeted Training (v7.1)
+     *  ✦ NEW — Enhanced mistake workflow helpers (v7.1)
      * ============================================================ */
 
-    const MISTAKE_ERROR_TYPES = [
-      { id: 'spelling',  label: '拼写错误',   icon: '✏️', desc: '字母顺序、双写、相似字母混淆' },
-      { id: 'meaning',   label: '含义模糊',   icon: '❓', desc: '中文释义记忆不准，或多义混淆' },
-      { id: 'colloc',    label: '搭配错误',   icon: '🔗', desc: '固定搭配、介词、动词短语用法' },
-      { id: 'context',   label: '语境判断',   icon: '📰', desc: '财经语境下的精确用法和语气' },
-      { id: 'polysemy',  label: '一词多义',   icon: '🔀', desc: '熟词在金融语境下的专业含义' },
-    ];
-
+    // showErrorTypeSelector: bottom sheet for picking error type
     function showErrorTypeSelector(card, onSelect) {
       const sheet = $('#mistakeReasonSheet');
       const grid = $('#mistakeReasonGrid');
       const sub = $('#mistakeReasonSub');
       if (!sheet || !grid) return;
       if (sub) sub.textContent = `「${card.word}」— 选择错误类型以生成针对性训练`;
-      grid.innerHTML = MISTAKE_ERROR_TYPES.map(t => `
+      // Build grid using MISTAKE_ERROR_TYPES (defined above in source block)
+      const types = typeof MISTAKE_ERROR_TYPES !== 'undefined' ? MISTAKE_ERROR_TYPES : [];
+      grid.innerHTML = types.map(t => `
         <button class="mistake-reason-btn" data-type="${t.id}"
           style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:12px 14px;background:var(--bg-soft);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;font-family:inherit;text-align:left;transition:all .18s;width:100%;">
           <div style="font-size:18px;">${t.icon}</div>
           <div style="font-size:13px;font-weight:700;color:var(--text-main);">${t.label}</div>
-          <div style="font-size:11px;color:var(--text-muted);line-height:1.4;">${t.desc}</div>
+          <div style="font-size:11px;color:var(--text-muted);line-height:1.4;">${t.desc || ''}</div>
         </button>`).join('');
       grid.querySelectorAll('[data-type]').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -998,7 +995,9 @@
       $('#memorySheetBackdrop')?.classList.add('visible');
       sheet.classList.add('visible');
     }
+    window.showErrorTypeSelector = showErrorTypeSelector;
 
+    // recordMistakeWithType: records mistake with error-type selector flow
     function recordMistakeWithType(card, quality, meta = {}) {
       if (quality <= 3 && !meta.errorType) {
         showErrorTypeSelector(card, (typeId) => {
@@ -1018,36 +1017,15 @@
         errorType: meta.errorType || '',
       });
     }
+    window.recordMistakeWithType = recordMistakeWithType;
 
-    function generateTargetedQuiz(card, errorType) {
-      const typeMap = {
-        spelling: {
-          instruction: `请拼写这个单词（不要看答案）：`,
-          prompt: `给出「${card.word}」的3个拼写陷阱（容易混淆的地方）和记忆技巧，用中文简洁说明，每条一行。`,
-        },
-        meaning: {
-          instruction: `请回忆这个词在财经语境中的精确含义：`,
-          prompt: `解释「${card.word}」在财经英语中的精确含义，列出3个常见误解或混淆点，用中文说明。`,
-        },
-        colloc: {
-          instruction: `请列举这个词最重要的3个固定搭配：`,
-          prompt: `列出「${card.word}」最重要的5个财经英语固定搭配，每个搭配附带一句例句，用中英对照。`,
-        },
-        context: {
-          instruction: `在财经新闻语境中，这个词传达什么语气或立场？`,
-          prompt: `分析「${card.word}」在彭博/路透社报道中的典型语境和语气含义，举2-3个实例，用中文解释。`,
-        },
-        polysemy: {
-          instruction: `这个词在金融语境 vs 普通语境下的含义有何不同？`,
-          prompt: `对比「${card.word}」在日常英语和金融英语中的不同含义，用表格或对比列表形式，中英对照。`,
-        },
-      };
-      return typeMap[errorType] || typeMap.meaning;
-    }
-
+    // showTargetedTraining: renders an AI-powered targeted training panel
     function showTargetedTraining(card, errorType) {
-      const quiz = generateTargetedQuiz(card, errorType);
-      const typeInfo = MISTAKE_ERROR_TYPES.find(t => t.id === errorType) || MISTAKE_ERROR_TYPES[1];
+      const quiz = (typeof generateTargetedQuiz === 'function') ? generateTargetedQuiz(card, errorType) : null;
+      const types = typeof MISTAKE_ERROR_TYPES !== 'undefined' ? MISTAKE_ERROR_TYPES : [];
+      const typeInfo = types.find(t => t.id === errorType) || { label: '针对性训练', icon: '📚', desc: '' };
+      const promptText = quiz?.prompt || `分析「${card.word}」在财经英语中的用法，给出记忆技巧。`;
+      const instructionText = quiz?.instruction || `请回忆这个词的含义：`;
       const container = document.createElement('div');
       container.className = 'memory-card';
       container.style.cssText = 'margin-top:16px;padding:20px;border:2px solid var(--accent);border-radius:16px;background:var(--bg-card);';
@@ -1056,33 +1034,31 @@
           <span style="font-size:24px;">${typeInfo.icon}</span>
           <div>
             <div style="font-size:13px;font-weight:700;color:var(--accent);">${typeInfo.label} · 针对性训练</div>
-            <div style="font-size:12px;color:var(--text-muted);">${typeInfo.desc}</div>
+            <div style="font-size:12px;color:var(--text-muted);">${typeInfo.desc || ''}</div>
           </div>
         </div>
         <div style="font-size:15px;font-weight:700;color:var(--text-main);margin-bottom:8px;">「${escapeHtml(card.word)}」</div>
-        <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;font-style:italic;">${quiz.instruction}</div>
-        <div id="targetedTrainingOutput" style="min-height:60px;font-size:13px;line-height:1.7;color:var(--text-main);">
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;font-style:italic;">${instructionText}</div>
+        <div id="targetedTrainingOutput_${card.word}" style="min-height:60px;font-size:13px;line-height:1.7;color:var(--text-main);">
           <span style="opacity:.5">点击「开始训练」生成针对性讲解…</span>
         </div>
         <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn-primary" id="btnStartTargetedTraining" style="font-size:13px;padding:8px 16px;">✦ 开始训练</button>
-          <button class="btn-base" id="btnCloseTargetedTraining" style="font-size:13px;padding:8px 14px;">关闭</button>
+          <button class="btn-primary tt-start-btn" style="font-size:13px;padding:8px 16px;">✦ 开始训练</button>
+          <button class="btn-base tt-close-btn" style="font-size:13px;padding:8px 14px;">关闭</button>
         </div>`;
       const mistakeList = $('#mistakeList');
       if (mistakeList) mistakeList.prepend(container);
-      container.querySelector('#btnCloseTargetedTraining').addEventListener('click', () => container.remove());
-      container.querySelector('#btnStartTargetedTraining').addEventListener('click', async () => {
-        const output = container.querySelector('#targetedTrainingOutput');
-        const btn = container.querySelector('#btnStartTargetedTraining');
+      const output = container.querySelector(`#targetedTrainingOutput_${card.word}`);
+      container.querySelector('.tt-close-btn').addEventListener('click', () => container.remove());
+      container.querySelector('.tt-start-btn').addEventListener('click', async () => {
+        const btn = container.querySelector('.tt-start-btn');
         if (!state.apiKey) { output.textContent = '请先在设置中配置 API Key'; return; }
         btn.disabled = true;
         btn.textContent = '生成中…';
         output.innerHTML = '<span style="opacity:.5">AI 生成针对性讲解中…</span>';
         try {
           const ctrl = new AbortController();
-          await streamRequestProgressive(quiz.prompt, ctrl, full => {
-            output.textContent = full;
-          });
+          await streamRequestProgressive(promptText, ctrl, full => { output.textContent = full; });
         } catch (e) {
           output.textContent = 'AI 生成失败：' + e.message;
         } finally {
@@ -1091,207 +1067,4 @@
         }
       });
     }
-
-    function getMistakesByType(typeId) {
-      return state.vocab.filter(v => v.errorTypes && v.errorTypes[typeId] > 0)
-        .sort((a, b) => (b.errorTypes[typeId] || 0) - (a.errorTypes[typeId] || 0));
-    }
-
-    function renderMistakeTypeSummary(container) {
-      if (!container) return;
-      const summary = MISTAKE_ERROR_TYPES.map(t => {
-        const count = getMistakesByType(t.id).length;
-        return { ...t, count };
-      }).filter(t => t.count > 0);
-      if (!summary.length) return;
-      const html = `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
-        ${summary.map(t => `
-          <button class="fr-more-chip" data-error-type="${t.id}"
-            style="display:flex;align-items:center;gap:6px;border-color:var(--accent);">
-            <span>${t.icon}</span>
-            <span>${t.label}</span>
-            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--accent);color:white;padding:1px 6px;border-radius:99px;">${t.count}</span>
-          </button>`).join('')}
-      </div>`;
-      const div = document.createElement('div');
-      div.innerHTML = html;
-      div.querySelectorAll('[data-error-type]').forEach(btn => {
-        btn.addEventListener('click', () => startMistakeTrainingByType(btn.dataset.errorType));
-      });
-      container.prepend(div);
-    }
-
-    function startMistakeTrainingByType(typeId) {
-      const cards = getMistakesByType(typeId);
-      const typeInfo = MISTAKE_ERROR_TYPES.find(t => t.id === typeId);
-      if (!cards.length) { toast(`没有${typeInfo?.label || ''}错题`, 'info'); return; }
-      state.trainingMode = 'mistakes';
-      state.clozeDeckOverride = cards;
-      launchTrainingMode('mistakes');
-      toast(`已加载 ${cards.length} 张${typeInfo?.label || ''}错题`, 'success');
-    }
-
-    /* ============================================================
-     *  MISTAKE BOOK — Error-type diagnosis & targeted 2nd-pass
-     * ============================================================ */
-
-    const MISTAKE_ERROR_TYPES = [
-      {
-        id: 'spelling',
-        label: '拼写错误',
-        desc: '写错字母或字母顺序，但知道意思',
-        icon: '✏️',
-        quizType: 'spelling',
-        tip: '多做拼写默写，写3遍再测'
-      },
-      {
-        id: 'meaning',
-        label: '意思混淆',
-        desc: '认识这个词但记错了含义',
-        icon: '🔀',
-        quizType: 'meaning',
-        tip: '做含义选择题，对比近义词卡'
-      },
-      {
-        id: 'collocation',
-        label: '搭配不会',
-        desc: '单词认识，但不知道怎么搭配使用',
-        icon: '🔗',
-        quizType: 'collocation',
-        tip: '重点练例句中的搭配填空'
-      },
-      {
-        id: 'context',
-        label: '句中认不出',
-        desc: '单独看认识，放在句子里就不认了',
-        icon: '🔍',
-        quizType: 'cloze',
-        tip: '做原文挖空练习，练习语境识别'
-      },
-      {
-        id: 'obscure',
-        label: '熟词僻义',
-        desc: '熟悉常见义，但不知道财经特殊含义',
-        icon: '📚',
-        quizType: 'meaning',
-        tip: '重点记忆财经专项释义'
-      },
-    ];
-
-    function getMistakesByType(typeId) {
-      return mistakeCards().filter(c => {
-        const tags = c.errorTags || [];
-        if (typeId === 'spelling') return tags.includes('拼写错误');
-        if (typeId === 'meaning') return tags.includes('意思混淆') || tags.includes('含义不熟');
-        if (typeId === 'collocation') return tags.includes('搭配不会');
-        if (typeId === 'context') return tags.includes('句中认不出');
-        if (typeId === 'obscure') return tags.includes('熟词僻义');
-        return false;
-      });
-    }
-
-    function renderMistakeTypeSummary() {
-      const box = $('#mistakeTypeSummary');
-      if (!box) return;
-      const all = mistakeCards();
-      if (!all.length) { box.innerHTML = ''; return; }
-      box.innerHTML = `<div class="mistake-type-grid">` +
-        MISTAKE_ERROR_TYPES.map(t => {
-          const count = getMistakesByType(t.id).filter(c => mistakeStatus(c) !== '已解决').length;
-          return `<button class="mistake-type-chip ${count ? '' : 'zero'}" data-type="${t.id}" title="${t.tip}">
-            <span class="mtc-icon">${t.icon}</span>
-            <span class="mtc-label">${t.label}</span>
-            <span class="mtc-count">${count}</span>
-          </button>`;
-        }).join('') +
-        `</div>`;
-      box.querySelectorAll('.mistake-type-chip').forEach(btn => {
-        btn.addEventListener('click', () => startMistakeTrainingByType(btn.dataset.type));
-      });
-    }
-    window.renderMistakeTypeSummary = renderMistakeTypeSummary;
-
-    function startMistakeTrainingByType(typeId) {
-      const typeInfo = MISTAKE_ERROR_TYPES.find(t => t.id === typeId);
-      if (!typeInfo) return;
-      const cards = getMistakesByType(typeId).filter(c => mistakeStatus(c) !== '已解决');
-      if (!cards.length) { toast(`${typeInfo.label}：暂无待练词`, 'info'); return; }
-
-      if (typeId === 'spelling') {
-        state.trainingMode = 'mistakes';
-        state.studyMode = 'spell';
-        $$('.flip-mode-toggle button').forEach(b => b.classList.toggle('active', b.dataset.mode === 'spell'));
-        enterReviewFocus();
-        _pomo.active = true;
-        _pomo.queue = [...cards].sort((a, b) => (b.wrongCount || 0) - (a.wrongCount || 0)).slice(0, POMO_LIMIT);
-        _pomo.idx = 0; _pomo.round = 1; _pomo.againQueue = [];
-        _pomo.remaining = POMO_DURATION; _pomo.startedAt = null;
-        state.flipIdx = 0;
-        show('#pomoBar'); hide('#pomoStart');
-        $('#pomoTimer').textContent = pomoFmt(_pomo.remaining);
-        $('#pomoTimer').classList.remove('urgent');
-        pomoUpdateProgress();
-        renderFlipCard();
-        toast(`拼写专项 · ${_pomo.queue.length} 词`, 'info');
-        return;
-      }
-      if (typeId === 'context' && v68_clozeCards(cards).length) {
-        state.clozeDeckOverride = cards;
-        launchTrainingMode('cloze');
-        return;
-      }
-      if ((typeId === 'meaning' || typeId === 'collocation' || typeId === 'obscure') && cards.some(c => (c.errorTags || []).length)) {
-        v69_startTraining('diagnosis', cards);
-        return;
-      }
-      startMistakeTraining(cards);
-    }
-    window.startMistakeTrainingByType = startMistakeTrainingByType;
-
-    function generateTargetedQuiz(card) {
-      const tags = card.errorTags || [];
-      if (tags.includes('拼写错误')) {
-        return {
-          kind: 'spelling', card,
-          prompt: `拼写默写：${card.translation || card.note || card.pos || ''}`,
-          answer: card.word, input: true, reason: '拼写错误'
-        };
-      }
-      if (tags.includes('搭配不会')) {
-        const colloc = collocationItems(card)[0]?.phrase || '';
-        if (colloc) {
-          const blanked = colloc.replace(
-            new RegExp(card.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), '_____'
-          );
-          return {
-            kind: 'collocation', card,
-            prompt: `搭配填空：${blanked}`,
-            answer: card.word, input: true, reason: '搭配不会'
-          };
-        }
-      }
-      if (tags.includes('句中认不出')) {
-        const source = card.sourceSentence || extractExample(card) || getWordHistory(card)[0]?.sentence || '';
-        if (source) {
-          return {
-            kind: 'cloze', card,
-            prompt: stripWordFromExample(card, source),
-            answer: card.word, input: true, reason: '句中认不出'
-          };
-        }
-      }
-      if (tags.includes('意思混淆') || tags.includes('熟词僻义') || tags.includes('含义不熟')) {
-        return {
-          kind: 'meaning', card,
-          prompt: `含义选择：${card.word}`,
-          options: v69_pickMeaningOptions(card),
-          answer: card.translation || card.note || '',
-          reason: tags[0] || '意思混淆'
-        };
-      }
-      return v69_questionForCard(card);
-    }
-    window.generateTargetedQuiz = generateTargetedQuiz;
-
-    window.getMistakesByType = getMistakesByType;
-    window.MISTAKE_ERROR_TYPES = MISTAKE_ERROR_TYPES;
+    window.showTargetedTraining = showTargetedTraining;

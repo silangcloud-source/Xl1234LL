@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
-  <title>FinRead · Financial English Daily Loop</title>
+  <title>FinRead v7.1 · Guided Setup &amp; AI Resilience Pipeline</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#6366f1" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-title" content="FinRead" />
   <link rel="apple-touch-icon" href="icon-192.png" />
 
-  <!-- ✦ DARK MODE FLICKER FIX — Must run before any render -->
+  <!-- DARK MODE FLICKER FIX — Must run before any render -->
   <script>
     (function () {
       const saved = localStorage.getItem('finread:theme');
@@ -24,7 +24,7 @@
     })();
   </script>
 
-  <!-- ① Tailwind CSS via CDN -->
+  <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     if (typeof tailwind !== 'undefined') tailwind.config = {
@@ -43,28 +43,25 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Inter:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Inter:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <!-- ============================================================
-     HEADER
-     ============================================================ -->
+
+  <!-- HEADER -->
   <header class="masthead">
     <div class="masthead-inner">
       <div class="brand">
         <div class="logo">FinRead<span class="dot">.</span></div>
-        <span class="ver" id="verBadge">v7.1</span>
+        <span class="ver" id="verBadge">v6.5</span>
         <span class="streak-badge streak-0" id="streakBadge" title="连续打卡天数">🔥 0天</span>
         <div class="tag">4-Tier Engine</div>
       </div>
       <div class="nav-controls">
         <nav class="tabs">
-          <button data-view="input" class="active">首页</button>
+          <button data-view="input" class="active">新读</button>
           <button data-view="analysis" class="hidden" id="tabAnalysis">精读</button>
           <button data-view="vocab">卡组 <span class="count" id="vocabCount">0</span></button>
           <button data-view="history">档案 <span class="count" id="articleCount">0</span></button>
@@ -94,23 +91,17 @@
       <div class="meta-stats">
         <span class="meta-stat">待复习 <strong id="dueToday">0</strong></span>
         <span class="meta-stat">句式 <strong id="headerPatternCount">0</strong>/80</span>
-        <span class="meta-stat" id="metaStatModel">驱动 <span class="model-badge disconnected"
-            id="modelBadge">未配置</span></span>
+        <span class="meta-stat" id="metaStatModel">驱动 <span class="model-badge disconnected" id="modelBadge">未配置</span></span>
         <span class="sync-status" id="syncStatusInline">·</span>
       </div>
     </div>
   </header>
 
-  <!-- ============================================================
-     MAIN
-     ============================================================ -->
   <main>
 
-    <!-- ── HOME / INPUT VIEW ── -->
+    <!-- ── INPUT VIEW — Redesigned ── -->
     <section id="viewInput">
       <div class="fr-home">
-
-        <!-- ── Hero ── -->
         <div class="fr-hero">
           <div class="fr-hero-text">
             <div class="fr-eyebrow">Financial English · Daily Loop</div>
@@ -118,37 +109,28 @@
             <p class="fr-sub">粘贴一篇金融英文文章，开始解析、标注陌生词、加入词库</p>
           </div>
         </div>
-
-        <!-- ── Input box ── -->
         <div class="input-box" id="inputBox">
           <div class="input-head">
-            <span class="input-label">粘贴文章，开始精读</span>
-            <div class="input-btn-row">
-              <button class="btn-base" id="btnPaste">📋 粘贴</button>
-              <button class="btn-base" id="btnFetchLink">🔗 链接</button>
-              <button class="btn-base" id="btnSample">✦ 示例</button>
-              <button class="btn-base hidden" id="btnClear">✕ 清空</button>
+            <span class="input-label">📄 粘贴文章 / URL</span>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <span id="lang-detect" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);">--</span>
+              <span id="wordCount" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-faint);">0</span>
+              <span id="chunkWarn" class="hidden" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--warn);"></span>
             </div>
           </div>
-          <textarea id="newsInput" placeholder="将英文财经文章贴入此处（路透 / 彭博 / WSJ），点击「开始精读」…"></textarea>
+          <textarea id="newsInput" placeholder="在此粘贴金融英文原文（支持长文分块解析）…" rows="8" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
           <div class="input-foot">
-            <div class="word-count">
-              <strong id="wordCount">0</strong> chars ·
-              <span id="lang-detect">--</span> ·
-              预估 <strong id="estTime">--</strong>
-              <span id="chunkWarn" class="chunk-warn hidden"></span>
+            <div id="urlHint" class="hidden" style="font-size:11px;color:var(--text-muted);">检测到 URL — 建议使用浏览器阅读模式复制正文</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto;">
+              <span id="estTime" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-faint);">--</span>
+              <button class="btn-base hidden" id="btnClear">✕ 清除</button>
+              <button class="btn-base" id="btnSample">✦ 示例</button>
+              <button class="btn-base" id="btnFetchLink">🔗 链接</button>
+              <button class="btn-base" id="btnPaste">📋 粘贴</button>
+              <button class="btn-primary" id="btnAnalyze" disabled>解析文章 →</button>
             </div>
-            <button class="btn-primary" id="btnAnalyze" disabled>开始精读 →</button>
-          </div>
-          <div id="urlHint" class="hidden"
-            style="margin-top:10px;padding:10px 14px;background:var(--warn-light);border:1px solid var(--warn);border-radius:var(--r-md);font-size:13px;color:var(--text-soft);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-            <span>🔗 检测到网址 — 建议用右侧按钮自动抓取文章正文</span>
-            <button class="btn-base" id="urlHintFetch"
-              style="white-space:nowrap;background:var(--warn);color:white;border-color:var(--warn);">用 🔗 链接 抓取 →</button>
           </div>
         </div>
-
-        <!-- ── Progress & errors ── -->
         <div id="progressBox" class="progress-box hidden">
           <div class="progress-head">
             <span class="progress-label" id="progressLabel">解析中...</span>
@@ -169,22 +151,22 @@
         </div>
         <div id="errBox" class="err-box hidden"></div>
         <div id="aiRecoveryPanel" class="ai-recovery-panel hidden"></div>
-
-        <!-- ── 3 Core action cards ── -->
         <div class="fr-actions">
           <button class="fr-action-card fr-action-review" id="frBtnReview" onclick="setView('review')">
-            <span class="fac-icon">↺</span>
-            <span class="fac-title">继续复习</span>
-            <span class="fac-sub" id="frDueCount">加载中…</span>
+            <div class="fr-action-icon">↺</div>
+            <div class="fr-action-body">
+              <div class="fr-action-title">继续复习</div>
+              <div class="fr-action-sub" id="frDueCount">加载中…</div>
+            </div>
           </button>
           <button class="fr-action-card fr-action-vocab" onclick="setView('vocab')">
-            <span class="fac-icon">◆</span>
-            <span class="fac-title">词汇库</span>
-            <span class="fac-sub" id="frVocabCount">0 个词卡</span>
+            <div class="fr-action-icon">◆</div>
+            <div class="fr-action-body">
+              <div class="fr-action-title">查看词库</div>
+              <div class="fr-action-sub" id="frVocabCount">0 个词卡</div>
+            </div>
           </button>
         </div>
-
-        <!-- ── More chips ── -->
         <div class="fr-more-row">
           <button class="fr-more-chip" onclick="setView('training')">训练中心</button>
           <button class="fr-more-chip" onclick="setView('mistakes')">错题本</button>
@@ -192,24 +174,9 @@
           <button class="fr-more-chip" onclick="setView('stats')">统计</button>
           <button class="fr-more-chip" id="btnSettingsHome">⚙ 设置</button>
         </div>
-
-        <!-- ── Recent articles ── -->
         <div id="homeRecentList" class="fr-recent hidden"></div>
-
-        <!-- Hidden compat elements for JS compatibility -->
+        <!-- 保留给 JS 引用的兼容元素（不显示）-->
         <div style="display:none">
-          <span id="v64DailyHint"></span>
-          <span id="v64PathTitle"></span>
-          <span id="v64PathLevel"></span>
-          <div id="v64PathSteps"></div>
-          <button id="btnV64LoadDaily"></button>
-          <button id="btnV64StartReview"></button>
-          <div id="v64Dashboard">
-            <div class="hs-card"><div class="hs-val" id="v64ReadsToday">0/1</div><div class="hs-key">今日精读</div></div>
-            <div class="hs-card"><div class="hs-val" id="v64DeckSize">0</div><div class="hs-key">卡组词汇</div></div>
-            <div class="hs-card hs-due" id="hsDueCard"><div class="hs-val" id="v64DueCards">0</div><div class="hs-key">待复习</div></div>
-            <div class="hs-card"><div class="hs-val" id="hsStreak">0</div><div class="hs-key">连续天</div></div>
-          </div>
           <div id="goalsBanner">
             <div class="goals-item">
               <div class="goals-label">今日复习 <span id="goalsReviewVal">0/20</span></div>
@@ -220,23 +187,66 @@
               <div class="goals-progress"><div class="goals-bar" id="goalsArticleBar" style="width:0%"></div></div>
             </div>
           </div>
+          <div id="v64Dashboard">
+            <div class="hs-card"><div class="hs-val" id="v64ReadsToday">0/1</div><div class="hs-key">今日精读</div></div>
+            <div class="hs-card"><div class="hs-val" id="v64DeckSize">0</div><div class="hs-key">卡组词汇</div></div>
+            <div class="hs-card hs-due" id="hsDueCard"><div class="hs-val" id="v64DueCards">0</div><div class="hs-key">待复习</div></div>
+            <div class="hs-card"><div class="hs-val" id="hsStreak">0</div><div class="hs-key">连续天</div></div>
+            <span hidden id="v64DailyHint"></span>
+            <span hidden id="v64PathTitle"></span>
+            <span hidden id="v64PathLevel"></span>
+            <div hidden id="v64PathSteps"></div>
+            <button hidden id="btnV64LoadDaily"></button>
+            <button class="home-review-cta hidden" id="btnV64StartReview">↺ 开始复习</button>
+          </div>
+          <div id="urlHintFetch"></div>
         </div>
-
       </div>
     </section>
-
     <!-- ── ANALYSIS VIEW ── -->
     <section id="viewAnalysis" class="hidden">
       <div class="grid-layout">
-        <article id="articlePanel">
-          <div id="sentenceList"></div>
-        </article>
-        <aside class="sticky">
-          <div class="card-panel" id="cardPanel">
-            <div class="card-placeholder" id="cardPlaceholder">
-              <div>点击句子中的<b>词汇 / 短语</b>查看详细分析</div>
+        <article>
+          <button class="back-link" id="btnBack">← 返回工作区</button>
+          <div class="article-header">
+            <div class="kicker">Structural Analysis</div>
+            <h1 class="title" id="artTitle">Document Title</h1>
+            <div class="article-meta-controls">
+              <div class="controls-group">
+                <span class="toggle-pill on" id="toggleZh" data-key="zh">译文</span>
+                <span class="toggle-pill" id="toggleGr" data-key="gr">语法</span>
+                <span class="toggle-pill" id="toggleFullTrans" data-key="full">全译</span>
+                <button class="btn-base" id="btnSaveAllPatterns">⚡ 全存句式</button>
+                <button class="btn-base" id="btnSaveAllPhrases">⚡ 全存短语</button>
+                <button class="btn-base" id="btnScanUnmarked">扫描未标记生词</button>
+              </div>
+              <span class="word-count" id="artMeta"></span>
             </div>
           </div>
+          <div id="fullTranslationWrapper" class="hidden">
+            <div class="full-translation-box">
+              <div class="kicker-small">
+                <span>Reference Translation</span>
+                <button class="btn-base" id="btnCopyTrans" style="padding:2px 8px;font-size:10px;">📋 复制</button>
+              </div>
+              <div id="fullTranslationText"></div>
+            </div>
+          </div>
+          <div class="article-body" id="sentencesBox"></div>
+        </article>
+
+        <aside class="sticky">
+          <div class="side-tabs">
+            <button class="active" data-tier="pattern"><span>句式</span><span class="tier-count"
+                id="sideCountPattern">0</span></button>
+            <button data-tier="phrase"><span>短语</span><span class="tier-count" id="sideCountPhrase">0</span></button>
+            <button data-tier="proper"><span>专名</span><span class="tier-count" id="sideCountProper">0</span></button>
+            <button data-tier="vocab"><span>词汇</span><span class="tier-count" id="sideCountVocab">0</span></button>
+          </div>
+          <div id="sidePatterns" class="vocab-list"></div>
+          <div id="sidePhrases" class="vocab-list hidden"></div>
+          <div id="sideProperNouns" class="vocab-list hidden"></div>
+          <div id="sideVocab" class="vocab-list hidden"></div>
         </aside>
       </div>
     </section>
@@ -245,210 +255,545 @@
     <section id="viewTraining" class="hidden">
       <div class="tc-layout">
         <div class="tc-header">
-          <h2 class="tc-title">训练中心</h2>
-          <div class="tc-meta">
-            <div class="tc-stat"><div class="tc-stat-val" id="tcDue">0</div><div class="tc-stat-key">待复习</div></div>
-            <div class="tc-stat"><div class="tc-stat-val" id="tcDoneToday">0</div><div class="tc-stat-key">今日复习</div></div>
-            <div class="tc-stat"><div class="tc-stat-val" id="tcAccuracy">--%</div><div class="tc-stat-key">正确率</div></div>
-            <div class="tc-stat"><div class="tc-stat-val" id="tcStreak">0</div><div class="tc-stat-key">连续天</div></div>
+          <div class="tc-eyebrow">Training Center · SM-2</div>
+          <h1 class="tc-title">训练中心</h1>
+        </div>
+
+        <!-- Stats strip -->
+        <div class="tc-stats" id="tcStats">
+          <div class="tc-stat-card">
+            <div class="tc-stat-val tc-highlight" id="tcDue">0</div>
+            <div class="tc-stat-key">待复习</div>
+          </div>
+          <div class="tc-stat-card">
+            <div class="tc-stat-val" id="tcDoneToday">0</div>
+            <div class="tc-stat-key">今日完成</div>
+          </div>
+          <div class="tc-stat-card">
+            <div class="tc-stat-val" id="tcAccuracy">--%</div>
+            <div class="tc-stat-key">正确率</div>
+          </div>
+          <div class="tc-stat-card">
+            <div class="tc-stat-val" id="tcStreak">0</div>
+            <div class="tc-stat-key">连续天数</div>
           </div>
         </div>
+
+        <!-- Training mode cards -->
         <div class="tc-modes" id="tcModes">
-          <button class="tc-mode-btn" id="tcModeDaily" onclick="launchTrainingMode('daily10')">
+          <button class="tc-mode-card" id="tcModeDaily" onclick="launchTrainingMode('daily10')">
             <div class="tc-mode-icon">⚡</div>
-            <div class="tc-mode-label">今日任务</div>
-            <div class="tc-mode-sub">SRS 优先 · 高效</div>
-            <span class="tc-badge" id="tcDailyBadge">0</span>
+            <div class="tc-mode-info">
+              <div class="tc-mode-title">今日 10 词</div>
+              <div class="tc-mode-desc">优先复习到期词汇</div>
+            </div>
+            <div class="tc-mode-badge zero" id="tcDailyBadge">0</div>
           </button>
-          <button class="tc-mode-btn" id="tcModeLeech" onclick="launchTrainingMode('leech')">
+          <button class="tc-mode-card" id="tcModeLeech" onclick="launchTrainingMode('leech')">
             <div class="tc-mode-icon">🔥</div>
-            <div class="tc-mode-label">易混词专项</div>
-            <div class="tc-mode-sub">难词强化</div>
-            <span class="tc-badge" id="tcLeechBadge">0</span>
+            <div class="tc-mode-info">
+              <div class="tc-mode-title">易混词专项</div>
+              <div class="tc-mode-desc">专攻高频错误词汇</div>
+            </div>
+            <div class="tc-mode-badge zero" id="tcLeechBadge">0</div>
           </button>
-          <button class="tc-mode-btn" id="tcModePattern" onclick="launchTrainingMode('pattern')">
-            <div class="tc-mode-icon">📐</div>
-            <div class="tc-mode-label">句式默写</div>
-            <div class="tc-mode-sub">财经句型</div>
-            <span class="tc-badge" id="tcPatternBadge">0</span>
+          <button class="tc-mode-card" id="tcModePattern" onclick="launchTrainingMode('pattern')">
+            <div class="tc-mode-icon">✍</div>
+            <div class="tc-mode-info">
+              <div class="tc-mode-title">财经句式默写</div>
+              <div class="tc-mode-desc">句式 Tier · 默写模式</div>
+            </div>
+            <div class="tc-mode-badge zero" id="tcPatternBadge">0</div>
           </button>
-          <button class="tc-mode-btn" id="tcModeRetry" onclick="launchTrainingMode('retry')">
+          <button class="tc-mode-card" id="tcModeRetry" onclick="launchTrainingMode('retry')">
             <div class="tc-mode-icon">↩</div>
-            <div class="tc-mode-label">错题回顾</div>
-            <div class="tc-mode-sub">近 7 天答错</div>
-            <span class="tc-badge" id="tcRetryBadge">0</span>
+            <div class="tc-mode-info">
+              <div class="tc-mode-title">错题回顾</div>
+              <div class="tc-mode-desc">近 7 天 Again 词汇</div>
+            </div>
+            <div class="tc-mode-badge zero" id="tcRetryBadge">0</div>
           </button>
-          <button class="tc-mode-btn" id="tcModeConfuse" onclick="launchTrainingMode('confuse')">
-            <div class="tc-mode-icon">⚖</div>
-            <div class="tc-mode-label">近义辨析</div>
-            <div class="tc-mode-sub">搭配 · 辨义</div>
-            <span class="tc-badge" id="tcConfuseBadge">0</span>
+          <button class="tc-mode-card" id="tcModeConfuse" onclick="launchTrainingMode('confuse')">
+            <div class="tc-mode-icon">≠</div>
+            <div class="tc-mode-info">
+              <div class="tc-mode-title">易混词对比</div>
+              <div class="tc-mode-desc">区分近义词、易混表达和财经语境下的精准用法</div>
+            </div>
+            <div class="tc-mode-badge zero" id="tcConfuseBadge">0</div>
           </button>
-          <button class="tc-mode-btn" id="tcModeMistakes" onclick="launchTrainingMode('mistakes')">
-            <div class="tc-mode-icon">📋</div>
-            <div class="tc-mode-label">错题专项</div>
-            <div class="tc-mode-sub">错因针对训练</div>
-            <span class="tc-badge" id="tcMistakeBadge">0</span>
+          <button class="tc-mode-card" id="tcModeMistakes" onclick="openMistakeBook()">
+            <div class="tc-mode-icon">!</div>
+            <div class="tc-mode-info">
+              <div class="tc-mode-title">错题本</div>
+              <div class="tc-mode-desc">按错因复盘，集中修复反复错误</div>
+            </div>
+            <div class="tc-mode-badge zero" id="tcMistakeBadge">0</div>
           </button>
-          <button class="tc-mode-btn" id="tcModeDiagnosis" onclick="launchTrainingMode('diagnosis')">
-            <div class="tc-mode-icon">🔬</div>
-            <div class="tc-mode-label">错因诊断</div>
-            <div class="tc-mode-sub">AI 自适应</div>
-            <span class="tc-badge" id="tcDiagnosisBadge">0</span>
+          <button class="tc-mode-card" id="tcModeDiagnosis" onclick="launchTrainingMode('diagnosis')">
+            <div class="tc-mode-icon">⌁</div>
+            <div class="tc-mode-info">
+              <div class="tc-mode-title">错因诊断</div>
+              <div class="tc-mode-desc">按错因自动生成含义、搭配、拼写、语境和语法训练</div>
+            </div>
+            <div class="tc-mode-badge zero" id="tcDiagnosisBadge">0</div>
           </button>
-          <button class="tc-mode-btn" id="tcModeRecall" onclick="launchTrainingMode('recall')">
-            <div class="tc-mode-icon">🧠</div>
-            <div class="tc-mode-label">原文回忆</div>
-            <div class="tc-mode-sub">情境还原</div>
-            <span class="tc-badge" id="tcRecallBadge">0</span>
-          </button>
-          <button class="tc-mode-btn" id="tcModeFull" onclick="launchTrainingMode('full')">
-            <div class="tc-mode-icon">🎯</div>
-            <div class="tc-mode-label">全库复习</div>
-            <div class="tc-mode-sub" id="tcFullDue">共 0 词</div>
-          </button>
-          <button class="tc-mode-btn" id="tcModeCloze" onclick="launchTrainingMode('cloze')">
-            <div class="tc-mode-icon">✏</div>
-            <div class="tc-mode-label">语境挖空</div>
-            <div class="tc-mode-sub">填空训练</div>
+          <button class="tc-mode-card" id="tcModeRecall" onclick="launchTrainingMode('recall')">
+            <div class="tc-mode-icon">□</div>
+            <div class="tc-mode-info">
+              <div class="tc-mode-title">原文回忆训练</div>
+              <div class="tc-mode-desc">关键词挖空 · 中文回译英文 · 句式骨架补全</div>
+            </div>
+            <div class="tc-mode-badge zero" id="tcRecallBadge">0</div>
           </button>
         </div>
-        <div class="tc-empty tc-soon hidden" id="tcEmpty">
-          <div class="memory-empty">卡组为空，先精读一篇文章，词卡自动入库后即可开始训练。</div>
+
+        <!-- Full review CTA -->
+        <div class="tc-quick" id="tcQuick">
+          <button class="tc-full-review" onclick="launchTrainingMode('full')">
+            <span>全库复习 · 番茄钟模式</span>
+            <span class="tc-full-due" id="tcFullDue">共 0 词</span>
+          </button>
         </div>
-        <div class="tc-quick hidden" id="tcQuick">
-          <button class="btn-primary" style="width:100%;margin-top:8px;" onclick="launchTrainingMode('daily10')">⚡ 开始今日任务</button>
+
+        <!-- Empty state (no vocab at all) -->
+        <div class="tc-empty hidden" id="tcEmpty">
+          <div class="tc-empty-icon">◆</div>
+          <div class="tc-empty-title">卡组为空</div>
+          <div class="tc-empty-desc">精读一篇文章，词汇将自动加入卡组</div>
+          <button class="btn-primary" onclick="setView('input')">开始精读</button>
         </div>
       </div>
     </section>
 
     <!-- ── RECALL ENGINE VIEW ── -->
     <section id="viewRecallEngine" class="hidden">
-      <div class="tc-layout">
-        <div class="tc-header">
-          <h2 class="tc-title" id="recallEngineTitle">诊断训练</h2>
-          <div class="tc-meta" id="recallEngineStats"></div>
+      <div class="confuse-layout">
+        <div class="memory-page-head">
+          <div>
+            <div class="tc-eyebrow">Recall Engine · v6.9</div>
+            <h1 class="memory-page-title" id="recallEngineTitle">回忆训练</h1>
+          </div>
+          <button class="btn-base" onclick="v69_exitRecallEngine()">返回训练中心</button>
         </div>
+        <div id="recallEngineStats" class="mistake-stat-grid"></div>
         <div id="recallEngineBox"></div>
-        <div style="margin-top:12px;text-align:center;">
-          <button class="btn-base" onclick="v69_exitRecallEngine()">← 返回训练中心</button>
-        </div>
       </div>
     </section>
 
-    <!-- ── CONFUSE QUIZ VIEW ── -->
+    <!-- ── CONFUSABLE WORD QUIZ VIEW ── -->
     <section id="viewConfuseQuiz" class="hidden">
-      <div class="tc-layout">
-        <div class="tc-header">
-          <h2 class="tc-title">近义辨析训练</h2>
+      <div class="confuse-layout">
+        <div class="memory-page-head">
+          <div>
+            <div class="tc-eyebrow">Memory Upgrade · Confusable Quiz</div>
+            <h1 class="memory-page-title">易混词对比</h1>
+          </div>
+          <button class="btn-base" onclick="setView('training')">返回训练中心</button>
         </div>
         <div id="confuseQuizBox"></div>
-        <div style="margin-top:12px;text-align:center;">
-          <button class="btn-base" onclick="setView('training')">← 返回训练中心</button>
-        </div>
       </div>
     </section>
 
-    <!-- ── MISTAKES VIEW ── -->
+    <!-- ── MISTAKE BOOK VIEW ── -->
     <section id="viewMistakes" class="hidden">
-      <div class="tc-layout">
-        <div class="tc-header">
-          <h2 class="tc-title">错题本</h2>
+      <div class="mistake-layout">
+        <div class="memory-page-head">
+          <div>
+            <div class="tc-eyebrow">Memory Upgrade · Mistake Book</div>
+            <h1 class="memory-page-title">错题本</h1>
+          </div>
+          <button class="btn-base" onclick="setView('training')">返回训练中心</button>
         </div>
-        <div class="mistake-stats" id="mistakeStats"></div>
-        <div id="mistakeTypeSummary"></div>
-        <div class="mistake-filters">
-          <select id="mistakeReasonFilter" onchange="state.mistakeFilter.reason=this.value;renderMistakeBook()"></select>
-          <select id="mistakeSort" onchange="state.mistakeFilter.sort=this.value;renderMistakeBook()">
-            <option value="wrongCount">按错误次数</option>
-            <option value="recent">按最近时间</option>
-          </select>
-          <label><input type="checkbox" id="mistakeRecentOnly" onchange="state.mistakeFilter.recentOnly=this.checked;renderMistakeBook()"> 近7天</label>
-          <label><input type="checkbox" id="mistakeHighOnly" onchange="state.mistakeFilter.highOnly=this.checked;renderMistakeBook()"> 高频</label>
+        <div class="mistake-stat-grid" id="mistakeStats"></div>
+        <div class="memory-card">
+          <div class="mistake-toolbar">
+            <select id="mistakeReasonFilter" aria-label="按错因筛选"></select>
+            <select id="mistakeSort" aria-label="错题排序">
+              <option value="wrongCount">错误次数排序</option>
+              <option value="recent">最近错误时间排序</option>
+            </select>
+            <label class="mistake-toggle"><input type="checkbox" id="mistakeRecentOnly" /> 近 7 天</label>
+            <label class="mistake-toggle"><input type="checkbox" id="mistakeHighOnly" /> 高频错题</label>
+            <button class="btn-primary" id="btnStartMistakeTraining">一键开始错题专项训练</button>
+          </div>
         </div>
-        <div class="mistake-actions-top">
-          <button class="btn-primary" onclick="startMistakeTraining()">▶ 开始错题训练</button>
-          <button class="btn-base" onclick="v69_startTraining('diagnosis')">🔬 错因诊断</button>
-        </div>
-        <div id="mistakeList"></div>
+        <div class="mistake-list" id="mistakeList"></div>
       </div>
     </section>
 
-    <!-- ── VOCAB VIEW ── -->
+    <!-- ── VOCAB BOOK VIEW ── -->
     <section id="viewVocab" class="hidden">
-      <div class="vocab-layout">
-        <div class="vocab-sidebar">
-          <div class="vocab-search-row">
-            <input type="text" id="vocabSearch" class="vocab-search" placeholder="搜索词汇…" />
-            <button class="btn-base" id="btnCustomAdd">+ 手动添加</button>
-          </div>
-          <div class="vocab-filter-tabs">
-            <button class="vf-tab active" data-filter="all">全部</button>
-            <button class="vf-tab" data-filter="vocab">词汇</button>
-            <button class="vf-tab" data-filter="phrase">短语</button>
-            <button class="vf-tab" data-filter="pattern">句式</button>
-            <button class="vf-tab" data-filter="proper">专名</button>
-          </div>
-          <div class="vocab-list" id="vocabList"></div>
-          <div class="vocab-pagination" id="vocabPagination"></div>
+      <div class="vocab-head">
+        <div>
+          <div class="kicker">Memory Matrix · SM-2 SRS</div>
+          <h1>记忆卡组 <span style="color:var(--border-strong);">/</span> <span class="num" id="vocabTotal">0</span></h1>
         </div>
-        <div class="flip-card-area">
-          <div class="flip-mode-row">
-            <div class="flip-mode-toggle">
-              <button data-mode="en2zh" class="active">英→中</button>
-              <button data-mode="zh2en">中→英</button>
-              <button data-mode="spell">默写</button>
-            </div>
-            <div class="flip-extra-controls">
-              <label class="toggle-label"><input type="checkbox" id="recallGateToggle"> 回想门</label>
+        <div class="vocab-head-actions">
+          <button class="btn-primary" id="btnReviewFocus" style="padding:9px 22px;font-size:14px;">进入专注复习</button>
+        </div>
+      </div>
+      <div class="tier-stats" id="tierStatsWrapper">
+        <div class="tier-stat t-pattern">
+          <div class="label">Tier 1 · Patterns</div>
+          <div class="value"><span id="statPattern">0</span><span class="total">/ 80</span></div>
+          <div class="pattern-progress">
+            <div class="pattern-progress-fill" id="patternProgressFill" style="width:0%"></div>
+          </div>
+          <div class="pattern-progress-label" id="patternProgressLabel">完成度 0%</div>
+        </div>
+        <div class="tier-stat t-phrase">
+          <div class="label">Tier 2 · Phrases</div>
+          <div class="value"><span id="statPhrase">0</span><span class="total">/ 150</span></div>
+          <div class="pattern-progress">
+            <div class="pattern-progress-fill" id="phraseProgressFill" style="width:0%;background:var(--phrase-color);">
             </div>
           </div>
-          <div class="flip-card" id="flipCard">
+          <div class="pattern-progress-label" id="phraseProgressLabel">完成度 0%</div>
+        </div>
+        <div class="tier-stat t-proper">
+          <div class="label">Tier 3 · Proper</div>
+          <div class="value" id="statProper">0</div>
+        </div>
+        <div class="tier-stat t-vocab">
+          <div class="label">Tier 4 · Vocab</div>
+          <div class="value" id="statVocab">0</div>
+        </div>
+        <div class="tier-stat t-due">
+          <div class="label">Due for Review</div>
+          <div class="value" id="statDue">0</div>
+        </div>
+      </div>
+      <div id="vocabEmpty" class="empty hidden">
+        <div class="em">存储库为空</div>
+        <div>解析文章后将卡片存入此处</div>
+      </div>
+
+      <div id="vocabContent" class="grid-layout hidden">
+        <div>
+          <div class="vocab-toolbar">
+            <div class="search-box"><input id="searchInput" type="text" placeholder="搜索词汇 / 释义 / 句式..." /></div>
+            <span class="filter-pill on" data-filter="all">全部</span>
+            <span class="filter-pill" data-filter="due">待复习</span>
+            <span class="filter-pill" data-filter="pattern">句式</span>
+            <span class="filter-pill" data-filter="phrase">短语</span>
+            <span class="filter-pill" data-filter="proper">专名</span>
+            <span class="filter-pill" data-filter="vocab">词汇</span>
+            <button class="btn-base" id="btnExport">⇣ 导出</button>
+          </div>
+          <div class="vocab-list" id="vocabGrid"></div>
+        </div>
+        <aside class="sticky">
+          <div class="review-focus-bar">
+            <div>
+              <div class="kicker review-focus-kicker">Focus Review · SM-2</div>
+              <div class="side-title">专注复习</div>
+            </div>
+            <button class="btn-base" id="btnExitReview">退出</button>
+          </div>
+          <div class="kicker" style="margin-bottom:6px;">Spaced Repetition · SM-2</div>
+          <div class="side-title" style="margin-bottom:16px;">闪卡复习</div>
+          <!-- ⏱ Pomodoro timer strip (hidden until session starts) -->
+          <div id="pomoBar" class="pomo-bar hidden">
+            <div class="pomo-timer" id="pomoTimer">25:00</div>
+            <div class="pomo-meta">
+              <span class="pomo-round" id="pomoRound">第 1 轮</span>
+              <span class="pomo-prog" id="pomoProg">0 / 0 已复习</span>
+            </div>
+            <button class="pomo-stop" id="pomoStop">结束</button>
+          </div>
+          <!-- Start button (hidden when session is active) -->
+          <button id="pomoStart" class="pomo-start-btn" title="最多 50 词 · 25 分钟番茄钟 · 快速多轮">⚡ 开始番茄复习 <span
+              id="pomoDueHint"></span></button>
+          <div class="flip-mode-toggle">
+            <button class="active" data-mode="en2zh">🇺🇸 → 🇨🇳 看英猜中</button>
+            <button data-mode="zh2en">🇨🇳 → 🇺🇸 中译英</button>
+            <button data-mode="spell">✏️ 默写</button>
+          </div>
+          <div class="flip-card">
+            <div class="gesture-overlay" id="gestureOverlay"></div>
             <div class="flip-inner" id="flipInner">
-              <div class="flip-front" id="flipFront"></div>
-              <div class="flip-back" id="flipBack"></div>
-            </div>
-          </div>
-          <div class="flip-actions" id="flipActions"></div>
-          <div id="gestureOnboarding" class="gesture-onboarding hidden">
-            <div class="gesture-onboarding-inner">
-              <div class="gesture-onboarding-title">手势操作提示</div>
-              <div class="gesture-onboarding-list">
-                <div>← 左滑 · 不认识</div>
-                <div>→ 右滑 · 认识</div>
-                <div>↑ 上滑 · 不确定</div>
-                <div>双击 · 发音</div>
-                <div>长按 · 标记重点</div>
+              <div class="flip-front">
+                <div class="flip-tier-mark" id="flipTierMark">--</div>
+                <div id="flipLeechBadge" class="leech-badge hidden"></div>
+                <div class="flip-mode-mark" id="flipModeMarkFront">EN→ZH</div>
+                <div class="flip-label">Front</div>
+                <div class="flip-word" id="flipWord"></div>
+                <div class="flip-phonetic" id="flipPhonetic"></div>
+                <div class="flip-pos" id="flipPos"></div>
+                <div class="flip-hint" id="flipClickHint">点击翻面查看答案</div>
+                <button id="flipRevealBtn" class="flip-reveal-btn" type="button">翻面</button>
+                <div id="flipHintDisplay" class="flip-hint-display"></div>
+                <button id="flipHintBtn" class="flip-hint-btn">💡 提示</button>
               </div>
-              <button class="btn-primary" onclick="completeGestureOnboarding()">知道了</button>
+              <div class="flip-back">
+                <div class="flip-tier-mark" id="flipTierMarkBack">--</div>
+                <div class="flip-mode-mark" id="flipModeMarkBack">ANSWER</div>
+                <div class="flip-label">Back</div>
+                <div class="flip-zh" id="flipZh"></div>
+                <div class="flip-note" id="flipNote"></div>
+                <div id="flipExampleContainer" class="hidden flip-example-box"></div>
+                <div id="flipBackExtra" class="flip-extra"></div>
+              </div>
             </div>
           </div>
-          <div class="gesture-overlay" id="gestureOverlay"></div>
-        </div>
+          <div class="spell-wrap" id="spellWrap">
+            <input class="spell-input" id="spellInput" placeholder="输入英文单词，按 Enter 提交..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            <div class="spell-feedback" id="spellFeedback"></div>
+          </div>
+          <div class="srs-rating" id="srsRating">
+            <button class="srs-btn again" data-quality="0"><strong>1</strong><span>不认识</span><span
+                class="srs-interval" id="int0">&lt;10m</span></button>
+            <button class="srs-btn hard" data-quality="3"><strong>2</strong><span>不确定</span><span class="srs-interval"
+                id="int3">--</span></button>
+            <button class="srs-btn good" data-quality="4"><strong>3</strong><span>认识</span><span class="srs-interval"
+                id="int4">--</span></button>
+          </div>
+          <div class="flip-progress">
+            <span id="flipCount">0 / 0</span>
+            <span><kbd
+                style="background:var(--bg-soft);padding:1px 4px;border-radius:3px;border:1px solid var(--border);">Space</kbd>
+              翻面</span>
+          </div>
+          <div class="gesture-hint">左滑 不认识 · 上滑 不确定 · 右滑 认识 · 双击发音</div>
+          <button id="storyBtn" class="btn-base" style="width:100%;margin-top:10px;font-size:13px;padding:9px 12px;">📖 今日故事</button>
+        </aside>
       </div>
     </section>
 
     <!-- ── HISTORY VIEW ── -->
+    <!-- ── MINE VIEW (档案 + 统计 + 设置 composite) ── -->
+    <section id="viewMine" class="hidden">
+      <nav class="mine-inner-tabs" id="mineInnerTabs">
+        <button class="mine-itab active" data-mine="history">档案</button>
+        <button class="mine-itab" data-mine="stats">统计</button>
+        <button class="mine-itab" data-mine="settings">设置</button>
+      </nav>
+    </section>
+
     <section id="viewHistory" class="hidden">
-      <div class="history-layout">
-        <div class="history-search-row">
-          <input type="text" id="historySearch" class="vocab-search" placeholder="搜索文章标题…" />
+      <div class="vocab-head">
+        <div>
+          <div class="kicker">Article Archive</div>
+          <h1>文章档案 <span style="color:var(--border-strong);">/</span> <span class="num" id="articleTotal">0</span></h1>
         </div>
-        <div id="historyList"></div>
+        <div class="word-count">所有已解析文章自动归档，词汇出现位置自动追踪</div>
       </div>
+      <div class="history-search-wrap">
+        <input type="search" id="historySearch" placeholder="搜索标题、摘要或正文内容..." />
+      </div>
+      <div id="historyEmpty" class="empty hidden">
+        <div class="em">尚无归档文章</div>
+        <div>解析第一篇文章后将自动加入</div>
+      </div>
+      <div class="history-grid" id="historyGrid"></div>
     </section>
 
     <!-- ── STATS VIEW ── -->
     <section id="viewStats" class="hidden">
-      <div class="stats-layout">
-        <div class="stats-grid" id="statsGrid"></div>
-        <div class="stats-charts" id="statsCharts"></div>
+      <div class="vocab-head">
+        <div>
+          <div class="kicker">Analytics Dashboard</div>
+          <h1>学习统计</h1>
+        </div>
+      </div>
+      <div class="stats-grid" id="statsTopBlocks"></div>
+      <div class="heatmap-block">
+        <h3>近 90 天复习热力图</h3>
+        <div class="heatmap-grid" id="reviewHeatmap"></div>
+        <div class="heatmap-legend">
+          <span>少</span>
+          <div class="heatmap-legend-cell"></div>
+          <div class="heatmap-legend-cell l1"></div>
+          <div class="heatmap-legend-cell l2"></div>
+          <div class="heatmap-legend-cell l3"></div>
+          <div class="heatmap-legend-cell l4"></div>
+          <span>多</span>
+        </div>
+      </div>
+      <div class="chart-block">
+        <h3>近 14 天复习量</h3>
+        <div class="bar-chart" id="reviewChart"></div>
+      </div>
+      <div class="chart-block">
+        <h3>近 14 天卡片增长</h3>
+        <div class="bar-chart" id="growthChart"></div>
       </div>
     </section>
 
-    <!-- ── SETTINGS VIEW ── -->
+    <!-- ── SETTINGS CENTER VIEW ── -->
     <section id="viewSettings" class="hidden">
-      <div class="settings-layout" id="settingsLayout"></div>
+      <div class="sc-layout">
+        <!-- Header -->
+        <div>
+          <div class="sc-eyebrow">Settings</div>
+          <h1 class="sc-title">设置中心</h1>
+        </div>
+
+        <div class="setup-status-card" id="setupStatusCard">
+          <div class="setup-status-head">
+            <div>
+              <div class="setup-status-title">配置状态</div>
+              <div class="setup-status-sub" id="setupStatusSummary">正在检查配置...</div>
+            </div>
+            <button class="btn-primary" id="scBtnUseRecommended" style="padding:9px 14px;font-size:12.5px;">使用推荐配置</button>
+          </div>
+          <div class="setup-status-grid" id="setupChecklist"></div>
+        </div>
+
+        <!-- AI 引擎配置 -->
+        <div class="sc-section">
+          <div class="sc-section-header">AI 引擎配置</div>
+          <div class="sc-body">
+            <div class="sc-field">
+              <div class="sc-label">驱动节点 (Provider)<span class="req-badge required">必填</span><span class="req-badge recommended">推荐 OpenRouter</span></div>
+              <select id="scProvider">
+                <option value="openrouter">OpenRouter · 聚合通道</option>
+                <option value="deepseek">DeepSeek · 原生直连</option>
+                <option value="anthropic">Anthropic · 原生直连</option>
+              </select>
+              <div class="sc-hint">选择你要使用的 AI 服务通道。当前主推 OpenRouter + DeepSeek Chat，兼顾稳定性、速度和模型切换灵活性。</div>
+            </div>
+            <div class="sc-field">
+              <div class="sc-label">解析模型<span class="req-badge required">必填</span></div>
+              <select id="scModel"></select>
+              <div class="sc-hint" id="scPricingHint"></div>
+              <div class="model-detail-card" id="scModelDetail">选择模型后显示适用场景。</div>
+            </div>
+            <div class="sc-field">
+              <div class="sc-label">流式输出<span class="req-badge">可选</span></div>
+              <select id="scStreaming">
+                <option value="true">开启 · 渐进显示（推荐）</option>
+                <option value="false">关闭 · 整段返回</option>
+              </select>
+            </div>
+            <div class="sc-field">
+              <div class="sc-label">长文分块阈值（字符数）<span class="req-badge">可选</span></div>
+              <input type="number" id="scChunk" min="2000" max="20000" step="500" />
+              <div class="sc-hint">超过此长度自动按段落切分</div>
+            </div>
+            <button class="btn-primary" id="scBtnSaveAI" style="align-self:flex-end;padding:9px 20px;font-size:13px;">保存 AI 配置</button>
+          </div>
+        </div>
+
+        <!-- API Key -->
+        <div class="sc-section">
+          <div class="sc-section-header">API Key</div>
+          <div class="sc-body">
+            <div class="sc-field">
+              <div class="sc-label">API Key（当前 Provider）<span class="req-badge required">必填</span></div>
+              <input type="password" id="scApiKey" placeholder="sk-..." autocomplete="off" />
+              <div class="sc-hint">这是调用 AI 的钥匙。FinRead 不会上传到自己的服务器，只保存在当前设备或你选择的同步位置。</div>
+            </div>
+            <div class="sc-field">
+              <div class="sc-label">保存方式<span class="req-badge required">必填</span></div>
+              <div class="sc-keymode" id="scKeyModeGroup">
+                <button class="sc-km-btn" data-mode="temp">
+                  <div class="sc-km-label">临时模式</div>
+                  <div class="sc-km-desc">关闭页面后清除</div>
+                </button>
+                <button class="sc-km-btn" data-mode="local">
+                  <div class="sc-km-label">本机模式</div>
+                  <div class="sc-km-desc">保存于当前浏览器</div>
+                </button>
+                <button class="sc-km-btn" data-mode="secure">
+                  <div class="sc-km-label">安全模式 <span class="sc-exp-badge">本地加密</span></div>
+                  <div class="sc-km-desc">Web Crypto + 本地密码</div>
+                </button>
+              </div>
+              <div class="sc-hint">临时模式最安全但每次都要重新填；本机模式最方便；安全模式需要本地密码解锁。</div>
+            </div>
+            <div class="sc-field" id="scSecurePassWrap">
+              <div class="sc-label">本地加密密码<span class="req-badge conditional">安全模式下条件必填</span></div>
+              <input type="password" id="scSecurePass" placeholder="仅用于本机解密，不上传服务器" autocomplete="new-password" />
+              <div class="sc-hint">安全模式使用浏览器 Web Crypto API 加密保存 API Key；密码不会上传，也无法找回。</div>
+            </div>
+            <div class="sc-mode-note" id="scApiKeyModeNote"></div>
+            <button class="btn-primary" id="scBtnSaveKey" style="align-self:flex-end;padding:9px 20px;font-size:13px;">保存 API Key</button>
+          </div>
+        </div>
+
+        <!-- 外观与偏好 -->
+        <div class="sc-section">
+          <div class="sc-section-header">外观与偏好</div>
+          <div class="sc-body">
+            <div class="sc-row">
+              <div class="sc-row-info">
+                <div class="sc-row-title">颜色主题</div>
+                <div class="sc-row-desc">浅色 / 深色模式</div>
+              </div>
+              <button class="btn-base" onclick="toggleTheme()" style="flex-shrink:0;">切换主题</button>
+            </div>
+            <div class="sc-field">
+              <div class="sc-label">朗读声音 (TTS Voice)</div>
+              <select id="scVoice"></select>
+              <div class="sc-hint" id="scVoiceHint"></div>
+            </div>
+            <div class="sc-field">
+              <div class="sc-label">每日复习提醒时间</div>
+              <input type="time" id="scReminder" style="font-family:monospace;" />
+            </div>
+            <div class="sc-field">
+              <div class="sc-label">系统复习提醒</div>
+              <select id="scNotifications">
+                <option value="false">关闭 · 只在 App 内提醒</option>
+                <option value="true">开启 · 到点后系统通知</option>
+              </select>
+            </div>
+            <div class="sc-field">
+              <div class="sc-label">翻面前强制思考</div>
+              <select id="scRecallGate">
+                <option value="true">开启 · EN→ZH 延迟 1 秒翻面</option>
+                <option value="false">关闭 · 点击后立即翻面</option>
+              </select>
+            </div>
+            <button class="btn-primary" id="scBtnSavePrefs" style="align-self:flex-end;padding:9px 20px;font-size:13px;">保存偏好</button>
+          </div>
+        </div>
+
+        <!-- 数据管理 -->
+        <div class="sc-section">
+          <div class="sc-section-header">数据管理</div>
+          <div class="sc-body">
+            <div class="sc-hint" id="scDataSummary" style="font-size:12.5px;"></div>
+            <div class="sc-warning">
+              <b>跨设备迁移建议使用 JSON 文件。</b><br>
+              1. 在旧设备点击“导出全部数据 (JSON)”，保存备份文件。<br>
+              2. 通过 AirDrop、微信文件传输、邮件、U 盘或系统文件共享发送到新设备。<br>
+              3. 在新设备打开 FinRead，点击“导入数据”，选择该 JSON 文件并确认合并。<br>
+              导入默认采用智能合并：新卡加入，重复卡按较新的复习记录更新，不会自动覆盖全部本机数据。
+            </div>
+            <div class="sc-danger-zone">
+              <button class="sc-danger-btn" id="scBtnExport">
+                <span>导出全部数据 (JSON)</span><span class="sc-danger-arrow">↓</span>
+              </button>
+              <button class="sc-danger-btn" id="scBtnImport">
+                <span>导入数据</span><span class="sc-danger-arrow">↑</span>
+              </button>
+              <button class="sc-danger-btn" id="scBtnExportAiErrors">
+                <span>导出 AI 错误日志</span><span class="sc-danger-arrow">↓</span>
+              </button>
+              <button class="sc-danger-btn danger" id="scBtnClearAiErrors">
+                <span>清空 AI 错误日志</span><span class="sc-danger-arrow">🧹</span>
+              </button>
+              <button class="sc-danger-btn danger" id="scBtnClearKey">
+                <span>清除 API Key</span><span class="sc-danger-arrow">🗑</span>
+              </button>
+              <button class="sc-danger-btn danger" id="scBtnClearAll">
+                <span>清除全部学习数据</span><span class="sc-danger-arrow">⚠</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 运行环境 -->
+        <div class="sc-section">
+          <div class="sc-section-header">运行环境</div>
+          <div class="sc-body">
+            <div class="sc-env-grid" id="scEnvGrid"></div>
+            <div class="sc-env-advice" id="scEnvAdvice"></div>
+          </div>
+        </div>
+      </div>
     </section>
 
   </main>
@@ -464,54 +809,272 @@
     </div>
   </div>
 
-  <!-- ── TOAST ── -->
-  <div id="toast" role="status" aria-live="polite"></div>
+  <!-- ── WORD DETAIL POPUP ── -->
+  <div id="wordDetailOverlay"></div>
+  <div id="wordDetailPopup">
+    <button class="wdp-close" id="wdpClose">✕</button>
+    <div class="wdp-tier" id="wdpTier"></div>
+    <div class="wdp-word" id="wdpWord"></div>
+    <div class="wdp-phonetic" id="wdpPhonetic"></div>
+    <div class="wdp-zh" id="wdpZh"></div>
+    <div class="wdp-note" id="wdpNote"></div>
+    <div class="wdp-ex" id="wdpEx"></div>
+    <div class="wdp-actions" id="wdpActions"></div>
+  </div>
 
-  <!-- ── MISTAKE REASON SHEET ── -->
+  <!-- ── FLOATING ELEMENTS ── -->
+  <div id="wordTooltip" class="hidden"></div>
+  <div id="toast"></div>
+  <button id="selectionAdd" class="selection-add-btn">添加到词库</button>
+  <div id="selectionToolbar" class="selection-toolbar" role="toolbar" aria-label="划词工具条">
+    <button class="selection-tool-btn" data-sel-act="lookup">查词</button>
+    <button class="selection-tool-btn primary" data-sel-act="add">加入词库</button>
+    <button class="selection-tool-btn" data-sel-act="ai">AI补全</button>
+    <button class="selection-tool-btn" data-sel-act="confuse">标为易混词</button>
+  </div>
+  <div id="selectionSheetBackdrop" class="selection-sheet-backdrop"></div>
+  <div id="selectionSheet" class="selection-sheet" role="dialog" aria-modal="true" aria-label="划词即查">
+    <div class="selection-sheet-word" id="selectionSheetWord">--</div>
+    <div class="selection-sheet-context" id="selectionSheetContext">--</div>
+    <div class="selection-sheet-actions">
+      <button class="btn-base" data-sel-act="lookup">查词</button>
+      <button class="btn-primary" data-sel-act="add">加入词库</button>
+      <button class="btn-base" data-sel-act="ai">AI补全</button>
+      <button class="btn-base" data-sel-act="confuse">标为易混词</button>
+    </div>
+  </div>
+
+  <div id="scanUnmarkedModal" class="modal-bg hidden">
+    <div class="modal" style="max-width:720px;">
+      <h2>扫描未标记生词</h2>
+      <p class="modal-sub">基于当前文章本地扫描可能重要的财经词、熟词僻义、抽象动词和高频搭配核心词。</p>
+      <div id="scanUnmarkedSummary" class="sc-mode-note"></div>
+      <div id="scanCandidateList" class="scan-candidate-list"></div>
+      <div class="modal-actions">
+        <button class="btn-base" id="scanCloseBtn">关闭</button>
+        <button class="btn-primary" id="scanAddSelectedBtn">批量加入词库</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STORY MODAL ── -->
+  <div id="storyModal" class="modal-bg hidden">
+    <div class="modal" style="max-width:640px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;">
+        <div>
+          <div class="kicker">Memory Story</div>
+          <h2 style="margin:0;">📖 今日故事</h2>
+          <p class="modal-sub" id="storySubtitle" style="margin:4px 0 0;"></p>
+        </div>
+        <button class="modal-close" onclick="closeStoryModal()">✕</button>
+      </div>
+      <div id="storyOutput" class="story-output"></div>
+      <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end;">
+        <button class="btn-base" id="storyRegenBtn">🔄 重新生成</button>
+        <button class="btn-primary" onclick="closeStoryModal()">完成</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODALS ── -->
+  <div id="customAddModal" class="modal-bg hidden">
+    <div class="modal custom-add">
+      <h2>添加到词库</h2>
+      <p class="modal-sub">选择分类层级，可用 AI 一键补全字段，或手动填写。</p>
+      <label>选中文本</label>
+      <div class="selected-text-box" id="caSelectedText">--</div>
+      <label>上下文</label>
+      <div class="context-box" id="caContextText">--</div>
+      <div id="caExistsWarn" class="exists-warn hidden"></div>
+      <label>分类 (Tier)</label>
+      <div class="tier-radio-group">
+        <div class="tier-radio t-pattern" data-tier="pattern">
+          <div class="tier-name">句式</div>
+          <div class="tier-desc">PATTERN</div>
+        </div>
+        <div class="tier-radio t-phrase" data-tier="phrase">
+          <div class="tier-name">短语</div>
+          <div class="tier-desc">PHRASE</div>
+        </div>
+        <div class="tier-radio t-proper" data-tier="proper">
+          <div class="tier-name">专名</div>
+          <div class="tier-desc">PROPER</div>
+        </div>
+        <div class="tier-radio t-vocab active" data-tier="vocab">
+          <div class="tier-name">词汇</div>
+          <div class="tier-desc">VOCAB</div>
+        </div>
+      </div>
+      <button class="ai-fill-btn" id="caAiFill">
+        <span class="spinner"></span>
+        <span id="caAiFillText">✦ AI 自动查询填充</span>
+      </button>
+      <div class="tier-specific" data-for="pattern">
+        <label>抽象化模板</label>
+        <textarea id="caPatternAbstract" rows="2" placeholder="[index] climbed X basis points to Y%"></textarea>
+      </div>
+      <label>翻译 <span style="color:var(--bear);">*</span></label>
+      <input id="caTranslation" placeholder="中文翻译 / 含义" />
+      <div class="tier-specific active" data-for="vocab">
+        <div class="field-grid">
+          <div><label>音标</label><input id="caPhonetic" placeholder="/...../" /></div>
+          <div><label>词性</label><input id="caPos" placeholder="n. / v. / adj." /></div>
+        </div>
+      </div>
+      <div class="tier-specific" data-for="phrase">
+        <label>短语类型</label>
+        <select id="caPhraseType">
+          <option value="介词短语">介词短语 (in response to)</option>
+          <option value="动词短语">动词短语 (pave the way for)</option>
+          <option value="形容词短语">形容词短语 (subject to)</option>
+          <option value="名词短语">名词短语 (rate of return)</option>
+          <option value="习语/惯用表达">习语/惯用表达</option>
+          <option value="副词短语">副词短语 (by and large)</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="tier-specific" data-for="proper">
+        <label>类型</label>
+        <select id="caProperType">
+          <option value="organization">机构 (organization)</option>
+          <option value="company">公司 (company)</option>
+          <option value="person">人物 (person)</option>
+          <option value="place">地点 (place)</option>
+          <option value="country">国家 (country)</option>
+          <option value="index">指数 (index)</option>
+          <option value="currency">货币 (currency)</option>
+          <option value="instrument">金融工具 (instrument)</option>
+          <option value="event">事件 (event)</option>
+          <option value="other">其他</option>
+        </select>
+      </div>
+      <label>备注 / 用法说明</label>
+      <textarea id="caNote" rows="2" placeholder="用法、语境、记忆要点..."></textarea>
+      <div class="modal-actions">
+        <button class="btn-base" id="caCancel">取消</button>
+        <button class="btn-primary" id="caSubmit" style="padding:8px 24px;">+ 存入卡组</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div id="settingsModal" class="modal-bg hidden">
+    <div class="modal">
+      <h2>引擎配置</h2>
+      <p class="modal-sub">学习数据优先存于本地 IndexedDB，localStorage 作为兼容兜底。跨设备迁移请使用“导出全部数据 (JSON)”和“导入数据”。</p>
+      <div id="storageStatusHint" class="warn" style="background:var(--accent-pale);color:var(--accent);border-color:var(--accent-light);"></div>
+      <div class="warn">⚠️ API Key 是否明文保存取决于你选择的保存方式；推荐在设置中心使用本机模式或安全模式。</div>
+      <label>驱动节点 (Provider)</label>
+      <select id="providerSelect">
+        <option value="openrouter">OpenRouter · 推荐聚合通道</option>
+        <option value="anthropic">Anthropic · 原生直连</option>
+        <option value="deepseek">DeepSeek · 原生直连</option>
+      </select>
+      <label>解析模型 (Model)</label>
+      <select id="modelSelect"></select>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:-8px;margin-bottom:16px;font-family:monospace;"
+        id="pricingHint"></div>
+      <label>API Key</label>
+      <input type="password" id="apiKeyInput" placeholder="sk-..." autocomplete="off" />
+      <label>安全模式本地密码</label>
+      <input type="password" id="securePassInput" placeholder="仅安全模式需要" autocomplete="new-password" />
+      <label>流式输出</label>
+      <select id="streamingSelect">
+        <option value="true">开启 · 渐进显示（推荐）</option>
+        <option value="false">关闭 · 整段返回</option>
+      </select>
+      <label>长文分块阈值（字符数）</label>
+      <input type="number" id="chunkThresholdInput" value="8000" min="2000" max="20000" step="500" />
+      <div style="font-size:11px;color:var(--text-muted);margin-top:-10px;margin-bottom:14px;font-family:monospace;">
+        超过此长度自动按段落切分</div>
+      <label>朗读声音 (TTS Voice)</label>
+      <select id="voiceSelect">
+        <option value="">自动（优先级智能匹配）</option>
+      </select>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:-10px;margin-bottom:14px;font-family:monospace;"
+        id="voiceHint"></div>
+      <label>每日复习提醒时间</label>
+      <input type="time" id="reminderTimeInput" value="09:00" style="font-family:monospace;" />
+      <div style="font-size:11px;color:var(--text-muted);margin-top:-10px;margin-bottom:14px;font-family:monospace;">
+        仅在开启系统通知后提醒，不会在启动时主动打扰</div>
+      <label>系统复习提醒</label>
+      <select id="notificationSelect">
+        <option value="false">关闭 · 只在 App 内显示</option>
+        <option value="true">开启 · 到点后系统通知</option>
+      </select>
+      <label>翻面前强制思考</label>
+      <select id="recallGateSelect">
+        <option value="true">开启 · EN→ZH 延迟 1 秒翻面</option>
+        <option value="false">关闭 · 点击后立即翻面</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn-base" id="btnSettingsCancel">取消</button>
+        <button class="btn-primary" id="btnSettingsSave" style="padding:8px 24px;">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ARTICLE VOCAB FAB (mobile · analysis view only) ── -->
+  <button id="articleFab" aria-label="查看本篇词卡">
+    本篇词卡 <span class="fab-count" id="articleFabCount">0</span>
+  </button>
+
+  <!-- ── CARD SHEET (本篇词卡底部抽屉) ── -->
+  <div class="card-sheet-backdrop" id="cardSheetBackdrop"></div>
+  <div class="card-sheet" id="cardSheet" role="dialog" aria-modal="true" aria-label="本篇词卡">
+    <div class="card-sheet-handle"></div>
+    <div class="card-sheet-header">
+      <span class="card-sheet-title">本篇词卡</span>
+      <button class="card-sheet-close" id="cardSheetClose" aria-label="关闭">✕</button>
+    </div>
+    <div class="card-sheet-tabs">
+      <button class="cs-tab active" data-sheet-tier="pattern">句式<span class="cs-count" id="csCountPattern">0</span></button>
+      <button class="cs-tab" data-sheet-tier="phrase">短语<span class="cs-count" id="csCountPhrase">0</span></button>
+      <button class="cs-tab" data-sheet-tier="proper">专名<span class="cs-count" id="csCountProper">0</span></button>
+      <button class="cs-tab" data-sheet-tier="vocab">词汇<span class="cs-count" id="csCountVocab">0</span></button>
+    </div>
+    <div class="card-sheet-body">
+      <div class="sheet-panel active" id="sheetPatterns"></div>
+      <div class="sheet-panel" id="sheetPhrases"></div>
+      <div class="sheet-panel" id="sheetProperNouns"></div>
+      <div class="sheet-panel" id="sheetVocab"></div>
+    </div>
+  </div>
+
+  <!-- ── MEMORY UPGRADE PANELS ── -->
   <div class="memory-sheet-backdrop" id="memorySheetBackdrop"></div>
-  <div class="mistake-reason-sheet" id="mistakeReasonSheet">
-    <div class="mrs-handle"></div>
-    <div class="mrs-title">标记错因 <span class="mrs-sub" id="mistakeReasonSub"></span></div>
+  <div class="mistake-reason-sheet" id="mistakeReasonSheet" role="dialog" aria-modal="true" aria-label="选择错因">
+    <div class="mistake-sheet-title">这张卡主要错在哪里？</div>
+    <div class="mistake-sheet-sub" id="mistakeReasonSub">可多选，也可以跳过。</div>
     <div class="mistake-reason-grid" id="mistakeReasonGrid"></div>
-    <div class="mrs-actions">
-      <button class="btn-primary" onclick="submitMistakeReasons()">确认</button>
-      <button class="btn-base" onclick="submitMistakeReasons(true)">跳过</button>
+    <div class="mistake-sheet-actions">
+      <button class="btn-base" id="mistakeReasonSkip">跳过</button>
+      <button class="btn-primary" id="mistakeReasonConfirm">记录错因</button>
     </div>
   </div>
 
-  <!-- ── SELECTION POPUP ── -->
-  <div id="selectionPopup" class="selection-popup hidden">
-    <button id="selAddBtn">＋ 添加到词库</button>
+  <div class="gesture-onboarding hidden" id="gestureOnboarding">
+    <div class="gesture-onboarding-title">手机复习手势</div>
+    <div class="gesture-onboarding-body">左滑不认识，上滑不确定，右滑认识，下滑显示答案；双击播放发音，长按加入重点复习。</div>
+    <button class="btn-primary" id="gestureOnboardingOk" style="width:100%;">知道了</button>
   </div>
 
-  <!-- ── POMO BAR ── -->
-  <div id="pomoBar" class="pomo-bar hidden">
-    <div class="pomo-info">
-      <span class="pomo-timer" id="pomoTimer">25:00</span>
-      <span class="pomo-progress" id="pomoProgress">0/0</span>
+  <!-- ── SESSION REPORT OVERLAY ── -->
+  <div class="session-report-backdrop hidden" id="sessionReportBackdrop"></div>
+  <div class="session-report hidden" id="sessionReport">
+    <div class="sr-header">
+      <div class="sr-emoji" id="srEmoji">🎉</div>
+      <div class="sr-title" id="srTitle">复习完成</div>
+      <div class="sr-subtitle" id="srSubtitle"></div>
     </div>
-    <div class="pomo-controls">
-      <button class="pomo-btn" id="pomoToggle">暂停</button>
-      <button class="pomo-btn" onclick="exitReviewFocus()">退出</button>
-    </div>
-  </div>
-  <div id="pomoStart" class="pomo-start hidden">
-    <button class="btn-primary" id="btnStartPomo">▶ 开始专注</button>
-  </div>
-
-  <!-- ── SESSION REPORT ── -->
-  <div id="sessionReportBackdrop" class="hidden"></div>
-  <div id="sessionReport" class="session-report hidden">
-    <div class="sr-emoji" id="srEmoji">🎉</div>
-    <div class="sr-title" id="srTitle">掌握得不错！</div>
-    <div class="sr-subtitle" id="srSubtitle"></div>
     <div class="sr-stats">
-      <div class="sr-stat"><div class="sr-val" id="srTotal">0</div><div class="sr-key">总数</div></div>
-      <div class="sr-stat good"><div class="sr-val" id="srGood">0</div><div class="sr-key">掌握</div></div>
-      <div class="sr-stat fuzzy"><div class="sr-val" id="srFuzzy">0</div><div class="sr-key">模糊</div></div>
-      <div class="sr-stat bad"><div class="sr-val" id="srBad">0</div><div class="sr-key">错误</div></div>
+      <div class="sr-stat"><div class="sr-val" id="srTotal">0</div><div class="sr-key">本次复习</div></div>
+      <div class="sr-stat"><div class="sr-val sr-good" id="srGood">0</div><div class="sr-key">已掌握</div></div>
+      <div class="sr-stat"><div class="sr-val sr-fuzzy" id="srFuzzy">0</div><div class="sr-key">模糊</div></div>
+      <div class="sr-stat"><div class="sr-val sr-bad" id="srBad">0</div><div class="sr-key">需加强</div></div>
     </div>
-    <div class="sr-bar-bg"><div class="sr-bar-fill" id="srBarFill" style="width:0%"></div></div>
+    <div class="sr-bar-wrap"><div class="sr-bar-fill" id="srBarFill" style="width:0%"></div></div>
     <div class="sr-suggest" id="srSuggest"></div>
     <div class="sr-actions">
       <button class="btn-primary" id="srBtnContinue">继续复习</button>
@@ -575,14 +1138,16 @@
   </footer>
 
   <!-- ============================================================
-     JAVASCRIPT (modular)
+     JAVASCRIPT  (v6.4 学习闭环升级 · 保留原核心逻辑)
      ============================================================ -->
+
+  <!-- ── JAVASCRIPT — load order: ui → storage → mistakes → app ── -->
   <script src="ui.js"></script>
   <script src="storage.js"></script>
   <script src="mistakes.js"></script>
   <script src="app.js"></script>
 
-  <!-- Service Worker Registration -->
+  <!-- ── SERVICE WORKER ── -->
   <script>
     const canRegisterServiceWorker = 'serviceWorker' in navigator && (location.protocol === 'http:' || location.protocol === 'https:');
     if (canRegisterServiceWorker) {
@@ -598,7 +1163,6 @@
             });
           });
         }).catch(() => { });
-
         let reloading = false;
         navigator.serviceWorker.addEventListener('controllerchange', () => {
           if (!reloading) { reloading = true; location.reload(); }
@@ -607,18 +1171,17 @@
     }
   </script>
 
-  <!-- Supplement Modal -->
-  <div id="supplementModal" class="supplement-modal hidden">
-    <div class="supplement-box">
-      <h3 id="supplementTitle">补充词汇信息</h3>
-      <div id="supplementFields"></div>
-      <div class="supplement-actions">
-        <button class="btn-primary" onclick="saveSupplementModal()" style="font-size:13px;padding:8px 18px;">保存</button>
-        <button class="btn-base" onclick="closeSupplementModal()" style="font-size:13px;padding:8px 16px;">取消</button>
-      </div>
+<!-- Supplement Modal -->
+<div id="supplementModal" class="supplement-modal hidden">
+  <div class="supplement-box">
+    <h3 id="supplementTitle">补充词汇信息</h3>
+    <div id="supplementFields"></div>
+    <div class="supplement-actions">
+      <button class="btn-primary" onclick="saveSupplementModal()" style="font-size:13px;padding:8px 18px;">保存</button>
+      <button class="btn-base" onclick="closeSupplementModal()" style="font-size:13px;padding:8px 16px;">取消</button>
     </div>
   </div>
-
+</div>
 </body>
 
 </html>
