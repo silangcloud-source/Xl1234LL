@@ -1330,7 +1330,7 @@
     }
 
     /* ================================================================
-   DEEP LEARNING MODULES — rule-summary · deep-analysis · comparative · exercise
+   DEEP LEARNING MODULES — rule-summary · deep-analysis · comparative
    ================================================================ */
     .rule-summary {
       margin-top: 10px;
@@ -8877,7 +8877,7 @@
         '2026-05-22  v5.6  词汇写作挑战：随机抽10词 · 实时高亮已用词 · AI流式点评打分',
         '2026-05-22  v5.5  连接等待计时器 · URL自动识别 · 链接按钮从URL中提取地址',
         '2026-05-22  v5.4  统一弹窗 · 撤销删除 · ESC关闭 · 快捷键面板(?) · 目标庆祝 · 90天热力图 · 分页 · 防抖搜索',
-        '2026-05-22  v5.3  连续打卡 · 每日目标 · 草稿保存 · 单词联动 · 历史搜索 · 一键复制 · AI记忆法',
+        '2026-05-22  v5.3  连续打卡 · 每日目标 · 草稿保存 · 单词联动 · 历史搜索 · 一键复制',
         '2026-05-22  v5.2  词族网络 · AI写作评批 · Anki导出 · 复习通知',
         '2026-05-22  v5.1  首屏极简主义重构，优化视觉重心',
         '2026-05-22  v5.0  深度学习模块 · 考点标签 · TTS 语音选择器',
@@ -8964,6 +8964,13 @@
     };
 
     const IDB_DATA_KEYS = new Set([STORE.vocab, STORE.articles, STORE.wordHistory, STORE.reviewLog]);
+
+    const _parseCache = new Map(); // key: content hash → parsed result
+    function _hashText(text) {
+      let h = 0;
+      for (let i = 0; i < Math.min(text.length, 2000); i++) { h = (h * 31 + text.charCodeAt(i)) | 0; }
+      return h + '_' + text.length;
+    }
 
     const PROPER_TYPE_LABELS = {
       organization: '机构', person: '人物', place: '地点',
@@ -9761,15 +9768,12 @@ synonyms.diff 要求：1-2 句，说明该词与主词的核心语义差异、�
 
 【宁缺毋滥原则】各层提取数量不设上下限，完全由文本实际词汇密度决定。文中若无合格素材，对应数组可为空，严禁为凑数而降低标准或跨层混入。
 
-▎商业情境翻译练习 (exercise) — 根节点对象，基于本文主题出一道英译中或中译英练习
-{ "question": "练习题目原文", "hint": "语境提示（可选）", "answer": "参考译文" }
-
 【输出 JSON】
 sentences 每项必须使用以下结构：
 { "id": 1, "original": "原句", "translation": "译文", "grammar": { "skeleton": "主干骨架", "notes": ["【时态/语态】...", "【三大从句】..."], "rule_summary": "核心语法亮点" } }
 
 根对象结构：
-{ "title": "...", "fullTranslation": "...", "sentences": [...], "patterns": [...], "phrases": [...], "properNouns": [...], "vocab": [...], "exercise": { "question": "...", "hint": "...", "answer": "..." } }
+{ "title": "...", "fullTranslation": "...", "sentences": [...], "patterns": [...], "phrases": [...], "properNouns": [...], "vocab": [...] }
 
 【待分析原文】
 ${text}`;
@@ -9804,7 +9808,6 @@ ${text}`;
         title: parts[0]?.title || 'Untitled',
         fullTranslation: parts.map(p => p.fullTranslation || '').filter(Boolean).join('\n\n'),
         sentences: [], patterns: [], phrases: [], properNouns: [], vocab: [],
-        exercise: {},
       };
       let sentenceOffset = 0;
       for (const p of parts) {
@@ -9815,7 +9818,6 @@ ${text}`;
         (p.phrases || []).forEach(x => { if (!merged.phrases.find(y => y.phrase === x.phrase)) merged.phrases.push(x); });
         (p.properNouns || []).forEach(x => { if (!merged.properNouns.find(y => y.name === x.name)) merged.properNouns.push(x); });
         (p.vocab || []).forEach(x => { if (!merged.vocab.find(y => y.word === x.word)) merged.vocab.push(x); });
-        if (!merged.exercise?.question && p.exercise?.question) merged.exercise = p.exercise;
       }
       return merged;
     }
@@ -10130,7 +10132,7 @@ ${text}`;
     }
 
     async function repairJsonStructure(rawText, expectedSchema = 'analysis') {
-      const repairPrompt = `请把下面内容修复成合法 JSON 对象，只输出 JSON，不要解释。必须包含字段：title, fullTranslation, sentences, patterns, phrases, properNouns, vocab, exercise。\n\n原始内容：\n${String(rawText || '').slice(0, 12000)}`;
+      const repairPrompt = `请把下面内容修复成合法 JSON 对象，只输出 JSON，不要解释。必须包含字段：title, fullTranslation, sentences, patterns, phrases, properNouns, vocab。\n\n原始内容：\n${String(rawText || '').slice(0, 12000)}`;
       const repaired = await requestAIWithResilience(repairPrompt, { taskName: 'JSON 修复', mode: 'repair', retries: 0, timeoutMs: 30000, showGuide: false });
       return extractJson(repaired);
     }
@@ -10160,7 +10162,6 @@ ${text}`;
         phrases: Array.isArray(obj.phrases) ? obj.phrases : [],
         properNouns: Array.isArray(obj.properNouns) ? obj.properNouns : [],
         vocab: Array.isArray(obj.vocab || obj.coreVocab) ? (obj.vocab || obj.coreVocab) : [],
-        exercise: obj.exercise && typeof obj.exercise === 'object' ? obj.exercise : {},
         source: obj.source || context.source || '',
       };
     }
@@ -10200,7 +10201,6 @@ ${text}`;
           phrases: extractArrayItems(cleaned, 'phrases'),
           properNouns: extractArrayItems(cleaned, 'properNouns'),
           vocab: extractArrayItems(cleaned, 'vocab'),
-          exercise: (() => { try { const s = extractStringField(cleaned, 'exercise'); return s ? JSON.parse(s) : {}; } catch { return {}; } })(),
         };
       } catch (e) { }
       throw new Error('JSON 解析失败，模型可能返回了非结构化内容');
@@ -10244,7 +10244,6 @@ ${text}`;
         phrases: [],
         properNouns: [...properMap.values()].slice(0, 30),
         vocab: [...vocabMap.values()].slice(0, 50),
-        exercise: {},
       };
     }
 
@@ -10252,7 +10251,7 @@ ${text}`;
       const chunkNote = isChunk ? `本片段是第 ${chunkInfo.idx + 1}/${chunkInfo.total} 块，只处理本片段。` : '';
       return `你是财经英语精读助手。请用精简模式解析文本。严格输出 JSON，不要 markdown。${chunkNote}
 JSON 字段只需要：
-{ "title": "", "summary": "", "fullTranslation": "", "sentences": [{"id":1,"original":"","translation":"","grammar":{"skeleton":"","notes":[],"rule_summary":""}}], "vocab": [], "phrases": [], "properNouns": [], "patterns": [], "exercise": {} }
+{ "title": "", "summary": "", "fullTranslation": "", "sentences": [{"id":1,"original":"","translation":"","grammar":{"skeleton":"","notes":[],"rule_summary":""}}], "vocab": [], "phrases": [], "properNouns": [], "patterns": [] }
 要求：不确定的数组留空，不要编造。原文：
 ${text}`;
     }
@@ -10366,6 +10365,17 @@ ${text}`;
       state.provider = cfg.provider; state.model = cfg.model; state.apiKey = cfg.apiKey;
       const text = $('#newsInput').value.trim();
       if (!text) return;
+      // Check parse cache
+      const cacheKey = _hashText(text);
+      if (_parseCache.has(cacheKey)) {
+        const cached = _parseCache.get(cacheKey);
+        state.analysis = cached;
+        state.currentArticleId = uid();
+        $('#tabAnalysis').classList.remove('hidden'); $('#btTabAnalysis').classList.remove('hidden');
+        setView('analysis');
+        toast('已使用缓存解析结果', 'info');
+        return;
+      }
       state.parseSession = {
         raw: text, chunks: chunkText(text, state.chunkThreshold),
         completed: [], title: '',
@@ -10553,6 +10563,7 @@ ${text}`;
       if (meta.recoveredBy) state.analysis.recoveredBy = meta.recoveredBy;
       try { archiveArticle(session.raw, state.analysis); } catch (e) { console.warn('archiveArticle:', e); }
       try { updateWordHistoryFromAnalysis(state.currentArticleId, state.analysis); } catch (e) { console.warn('wordHistory:', e); }
+      try { if (session.raw && state.analysis?.sentences?.length) _parseCache.set(_hashText(session.raw), state.analysis); } catch (e) { }
       $('#progressFill').style.width = '100%';
       $('#progressPct').textContent = '100%';
       $('#progressLabel').textContent = '完成';
@@ -12212,97 +12223,7 @@ ${text}`;
         frag.appendChild(row);
       });
       box.appendChild(frag);
-      const ex = a.exercise;
-      if (ex?.question) {
-        const exPanel = document.createElement('div');
-        exPanel.className = 'exercise-panel';
-        exPanel.innerHTML = `<div class="panel-title">▸ 商业情境翻译练习</div>
-      <div class="exercise-q">${escapeHtml(ex.question)}</div>
-      ${ex.hint ? `<div class="exercise-hint">提示：${escapeHtml(ex.hint)}</div>` : ''}
-      <button class="exercise-reveal-btn">▾ 查看参考答案</button>
-      <div class="exercise-answer">${escapeHtml(ex.answer || '')}</div>`;
-        exPanel.querySelector('.exercise-reveal-btn').addEventListener('click', function () {
-          const ans = this.nextElementSibling;
-          ans.classList.toggle('visible');
-          this.textContent = ans.classList.contains('visible') ? '▲ 收起答案' : '▾ 查看参考答案';
-        });
-        // AI 写作练习区
-        const writingBox = document.createElement('div');
-        writingBox.className = 'writing-box';
-        writingBox.innerHTML = `<div class="writing-box-label">✍ 写作练习 · 获取 AI 评批</div>
-      <textarea class="writing-ta" placeholder="在此写下你的翻译或作答，然后点击获取 AI 反馈…"></textarea>
-      <button class="btn-base writing-submit">获取 AI 反馈</button>
-      <div class="writing-feedback"></div>`;
-        const submitBtn = writingBox.querySelector('.writing-submit');
-        const feedbackEl = writingBox.querySelector('.writing-feedback');
-        submitBtn.addEventListener('click', async () => {
-          const userText = writingBox.querySelector('.writing-ta').value.trim();
-          if (!userText) { toast('请先写下你的作答', 'warning'); return; }
-          submitBtn.disabled = true;
-          submitBtn.textContent = '分析中…';
-          feedbackEl.textContent = '';
-          feedbackEl.classList.add('visible');
-          await streamWritingFeedback(ex.question, ex.answer, userText, feedbackEl);
-          submitBtn.disabled = false;
-          submitBtn.textContent = '重新评批';
-        });
-        exPanel.appendChild(writingBox);
-        box.appendChild(exPanel);
-      }
     }
-
-    async function streamWritingFeedback(question, referenceAnswer, userAnswer, outputEl) {
-      if (!state.apiKey) { outputEl.textContent = '请先在 ⚙ 配置 中填写 API Key。'; return; }
-      const prompt = `你是一位专业的英语写作教练，专注商业金融语境。请对学生作答给出简洁、有建设性的评批。
-
-【练习题目】${question}
-【参考答案】${referenceAnswer}
-【学生作答】${userAnswer}
-
-请按以下格式回复（中文，总字数控制在150字以内）：
-⭐ 评分：X/10
-✅ 亮点：一句话
-❌ 问题：具体指出+纠正方案
-💡 改写建议：给出更地道的表达（如有必要）`;
-      const ctrl = new AbortController();
-      try {
-        let text = '';
-        await streamRequestProgressive(prompt, ctrl, full => {
-          text = full;
-          outputEl.textContent = full;
-        });
-      } catch (e) {
-        outputEl.textContent = '评批失败：' + e.message;
-      }
-    }
-
-    async function streamMnemonic(w, card) {
-      if (!state.apiKey) { toast('请先配置 API Key', 'error'); return; }
-      let box = card.querySelector('.mnemonic-box');
-      if (!box) {
-        box = document.createElement('div');
-        box.className = 'mnemonic-box';
-        box.innerHTML = '<span class="mnemonic-label">💡 AI 记忆法</span><div class="mnemonic-content">生成中...</div>';
-        card.querySelector('.main')?.appendChild(box);
-      }
-      const contentEl = box.querySelector('.mnemonic-content');
-      contentEl.textContent = '生成中...';
-      const prompt = `为英语单词「${w.word}」设计一个中文记忆法（助记技巧）。
-单词信息：词性 ${w.pos || ''}，中文释义：${w.translation || ''}。
-要求：
-- 使用谐音、词根拆解、场景联想或故事等方法
-- 中文描述，生动有趣，100字以内
-- 直接给出记忆法，不要任何前缀或解释`;
-      const ctrl = new AbortController();
-      try {
-        let finalText = '';
-        await streamRequestProgressive(prompt, ctrl, full => { contentEl.textContent = full; finalText = full; });
-        if (finalText) { w.mnemonic = finalText; persistVocab(); }
-      } catch (e) {
-        contentEl.textContent = '生成失败：' + e.message;
-      }
-    }
-
 
     function buildVocabCardHTML(w, isSaved, showSrs = false, showHistory = false) {
       const tier = w.tier || 'vocab';
@@ -12406,6 +12327,38 @@ ${text}`;
         `<span class="exam-tag ${TAG_CLASS[tag] || 'other'}">${freqIcon} ${escapeHtml(tag)}${freqLabel}</span>`
       ).join('');
       const actionLabel = isSaved ? '已存入' : '+ 收藏';
+      // Root & Affix Memory
+      const ra = w.rootAffixMemory || {};
+      let rootAffixHtml = '';
+      if (ra.explanation || ra.memoryTip || ra.root || ra.prefix || ra.suffix) {
+        const chips = [];
+        if (ra.prefix) chips.push(`<span class="root-affix-chip">前缀 <em>${escapeHtml(ra.prefix)}</em></span>`);
+        if (ra.root) chips.push(`<span class="root-affix-chip">词根 <em>${escapeHtml(ra.root)}</em></span>`);
+        if (ra.suffix) chips.push(`<span class="root-affix-chip">后缀 <em>${escapeHtml(ra.suffix)}</em></span>`);
+        rootAffixHtml = `<div class="root-affix-box">
+          <div class="root-affix-label">词根词缀记忆 <button class="btn-fill-root" data-act="edit-root-affix">编辑</button></div>
+          ${chips.length ? `<div class="root-affix-row">${chips.join('')}</div>` : ''}
+          ${ra.explanation ? `<div class="root-affix-tip">${escapeHtml(ra.explanation)}</div>` : ''}
+          ${ra.memoryTip ? `<div class="root-affix-tip" style="margin-top:4px;font-style:italic;">${escapeHtml(ra.memoryTip)}</div>` : ''}
+        </div>`;
+      } else {
+        rootAffixHtml = `<div class="root-affix-box">
+          <div class="root-affix-empty">
+            <span>暂无词根词缀解析</span>
+            <button class="btn-fill-root" data-act="edit-root-affix">点击补充</button>
+          </div>
+        </div>`;
+      }
+      // Completeness
+      const missingFields = [];
+      if (!w.translation) missingFields.push('中文释义');
+      if (!w.phonetic && (w.tier === 'vocab')) missingFields.push('音标');
+      if (!w.examples?.length) missingFields.push('例句');
+      if (!(w.rootAffixMemory?.explanation) && w.tier === 'vocab') missingFields.push('词根词缀');
+      const completenessHtml = missingFields.length === 0
+        ? `<span class="completeness-tag ok">内容完整</span>`
+        : missingFields.map(f => `<span class="completeness-tag miss">缺 ${f}</span>`).join('') +
+          `<button class="btn-fill-root" data-act="supplement" style="margin-left:4px;">补充</button>`;
       return `<div class="row">
     <div class="main">
       <div class="head">
@@ -12416,13 +12369,13 @@ ${text}`;
       ${w.deep_analysis ? `<div class="deep-analysis"><span class="deep-analysis-label">DEEP</span>${escapeHtml(w.deep_analysis)}</div>` : ''}
       ${Array.isArray(w.wordFamily) && w.wordFamily.length ? `<div class="word-family">${w.wordFamily.map(f => `<span class="wf-chip">${escapeHtml(f.word)} <em>${escapeHtml(f.pos || '')}</em></span>`).join('')}</div>` : ''}
       ${w.note ? `<div class="note">${escapeHtml(w.note)}</div>` : ''}
-      ${synHtml} ${collocHtml} ${similarHtml} ${historyHtml} ${examplesHtml}
+      ${synHtml} ${collocHtml} ${similarHtml} ${historyHtml} ${examplesHtml} ${rootAffixHtml}
+      ${showSrs ? `<div class="completeness-bar">${completenessHtml}</div>` : ''}
     </div>
     <div class="actions">
       <button class="btn-base" data-act="save">${actionLabel}</button>
       <button class="btn-base" data-act="tts">🔊</button>
       <button class="btn-base" data-act="copy" title="复制单词信息">📋</button>
-      ${isSaved ? `<button class="btn-base btn-mnemonic" data-act="mnemonic" title="AI记忆法">💡</button>` : ''}
       ${isSaved && showSrs ? `<button class="btn-base" data-act="delete" style="color:var(--bear);">✕</button>` : ''}
     </div>
   </div>`;
@@ -12472,8 +12425,10 @@ ${text}`;
               setTimeout(() => { btn.textContent = '📋'; }, 1500);
               toast('已复制到剪贴板', 'success');
             }).catch(() => toast('复制失败', 'error'));
-          } else if (act === 'mnemonic') {
-            streamMnemonic(w, card);
+          } else if (act === 'edit-root-affix') {
+            openSupplementModal(w, 'rootAffix');
+          } else if (act === 'supplement') {
+            openSupplementModal(w, 'all');
           } else if (act === 'delete') {
             const ok = await confirmDialog(`删除卡片「${w.word}」？\n\n该卡的所有复习进度也会一同删除。可在 5 秒内撤销。`, { title: '删除卡片', danger: true, confirmText: '删除' });
             if (ok) {
@@ -12514,6 +12469,80 @@ ${text}`;
       card.querySelectorAll('.ex-tts').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); speak(b.dataset.tts, 0.9, b); }));
       card.querySelectorAll('.colloc-chip').forEach(c => c.addEventListener('click', (e) => { e.stopPropagation(); speak(c.dataset.tts, 0.9); }));
       card.querySelectorAll('.vocab-colloc-phrase[data-tts]').forEach(c => c.addEventListener('click', (e) => { e.stopPropagation(); speak(c.dataset.tts, 0.9); c.style.cursor = 'pointer'; }));
+    }
+
+    let _supplementCard = null;
+    let _supplementMode = 'all';
+
+    function openSupplementModal(w, mode = 'all') {
+      _supplementCard = w;
+      _supplementMode = mode;
+      const modal = $('#supplementModal');
+      const title = $('#supplementTitle');
+      const fields = $('#supplementFields');
+      if (!modal) return;
+      title.textContent = `补充「${w.word}」的信息`;
+      const ra = w.rootAffixMemory || {};
+      let html = '';
+      if (mode === 'all' || mode === 'basic') {
+        if (!w.phonetic) html += `<div class="supplement-field"><label>音标 / Phonetic</label><input id="sup-phonetic" value="${escapeHtml(w.phonetic || '')}" placeholder="e.g. /ˈpɒlɪsi/" /></div>`;
+        if (!w.translation) html += `<div class="supplement-field"><label>中文释义</label><input id="sup-translation" value="${escapeHtml(w.translation || '')}" placeholder="e.g. 政策；方针" /></div>`;
+        if (!w.note) html += `<div class="supplement-field"><label>备注 / Note</label><textarea id="sup-note" placeholder="用法说明、语境等">${escapeHtml(w.note || '')}</textarea></div>`;
+        if (!w.examples?.length) html += `<div class="supplement-field"><label>例句 (英文)</label><textarea id="sup-example-en" placeholder="e.g. The policy was implemented last quarter."></textarea></div><div class="supplement-field"><label>例句 (中文)</label><textarea id="sup-example-zh" placeholder="e.g. 该政策于上季度实施。"></textarea></div>`;
+      }
+      if (mode === 'all' || mode === 'rootAffix') {
+        html += `<div class="supplement-field"><label>前缀 (prefix) + 含义</label><input id="sup-prefix" value="${escapeHtml(ra.prefix || '')}" placeholder="e.g. pre- = before，提前" /></div>`;
+        html += `<div class="supplement-field"><label>词根 (root) + 含义</label><input id="sup-root" value="${escapeHtml(ra.root || '')}" placeholder="e.g. dict = say，说" /></div>`;
+        html += `<div class="supplement-field"><label>后缀 (suffix) + 含义</label><input id="sup-suffix" value="${escapeHtml(ra.suffix || '')}" placeholder="e.g. -tion = 名词化" /></div>`;
+        html += `<div class="supplement-field"><label>词根词缀解析</label><textarea id="sup-ra-explanation" placeholder="e.g. predict = 提前说出 → 预测">${escapeHtml(ra.explanation || '')}</textarea></div>`;
+        html += `<div class="supplement-field"><label>记忆提示</label><textarea id="sup-ra-tip" placeholder="联想记忆法...">${escapeHtml(ra.memoryTip || '')}</textarea></div>`;
+      }
+      if (!html) {
+        html = `<div class="supplement-field"><label>备注 / Note</label><textarea id="sup-note" placeholder="补充任何信息">${escapeHtml(w.note || '')}</textarea></div>`;
+      }
+      fields.innerHTML = html;
+      modal.classList.remove('hidden');
+    }
+
+    function saveSupplementModal() {
+      const w = _supplementCard;
+      if (!w) return;
+      const g = id => { const el = document.getElementById(id); return el ? el.value.trim() : null; };
+      const phonetic = g('sup-phonetic');
+      const translation = g('sup-translation');
+      const note = g('sup-note');
+      const exEn = g('sup-example-en');
+      const exZh = g('sup-example-zh');
+      const prefix = g('sup-prefix');
+      const root = g('sup-root');
+      const suffix = g('sup-suffix');
+      const raExp = g('sup-ra-explanation');
+      const raTip = g('sup-ra-tip');
+      if (phonetic !== null && phonetic) w.phonetic = phonetic;
+      if (translation !== null && translation) w.translation = translation;
+      if (note !== null && note) w.note = note;
+      if (exEn !== null && exEn) {
+        if (!Array.isArray(w.examples)) w.examples = [];
+        w.examples.push({ en: exEn, zh: exZh || '' });
+      }
+      if (prefix !== null || root !== null || suffix !== null || raExp !== null || raTip !== null) {
+        if (!w.rootAffixMemory) w.rootAffixMemory = {};
+        if (prefix) w.rootAffixMemory.prefix = prefix;
+        if (root) w.rootAffixMemory.root = root;
+        if (suffix) w.rootAffixMemory.suffix = suffix;
+        if (raExp) w.rootAffixMemory.explanation = raExp;
+        if (raTip) w.rootAffixMemory.memoryTip = raTip;
+      }
+      persistVocab();
+      closeSupplementModal();
+      toast('已保存', 'success');
+      if (state.view === 'vocab') renderVocabBook();
+      else if (state.view === 'analysis') renderSidebars();
+    }
+
+    function closeSupplementModal() {
+      $('#supplementModal')?.classList.add('hidden');
+      _supplementCard = null;
     }
 
     function showHistoryPopup(w) {
@@ -13081,13 +13110,16 @@ ${text}`;
       if (exHtml) { $('#flipExampleContainer').innerHTML = exHtml; $('#flipExampleContainer').classList.remove('hidden'); }
       else $('#flipExampleContainer').classList.add('hidden');
 
-      // Back extra: deep analysis + word family + mnemonic
+      // Back extra: deep analysis + word family + root-affix
       const fbe = $('#flipBackExtra');
       if (fbe) {
         let extra = '';
         if (w.deep_analysis) extra += `<div class="flip-deep">${escapeHtml(w.deep_analysis)}</div>`;
         if (w.wordFamily?.length) extra += `<div class="flip-wf">${w.wordFamily.map(f => `<span class="wf-chip">${escapeHtml(f.word)} <em>${escapeHtml(f.pos||'')}</em></span>`).join('')}</div>`;
-        if (w.mnemonic) extra += `<div class="flip-mnem">💡 ${escapeHtml(w.mnemonic)}</div>`;
+        const ra2 = w.rootAffixMemory;
+        if (ra2?.explanation || ra2?.memoryTip) {
+          extra += `<div class="flip-root-affix">🔤 ${escapeHtml(ra2.explanation || ra2.memoryTip || '')}</div>`;
+        }
         fbe.innerHTML = extra;
       }
 
@@ -15025,6 +15057,18 @@ ${tierInstruction}`;
       });
     }
   </script>
+
+<!-- Supplement Modal -->
+<div id="supplementModal" class="supplement-modal hidden">
+  <div class="supplement-box">
+    <h3 id="supplementTitle">补充词汇信息</h3>
+    <div id="supplementFields"></div>
+    <div class="supplement-actions">
+      <button class="btn-primary" onclick="saveSupplementModal()" style="font-size:13px;padding:8px 18px;">保存</button>
+      <button class="btn-base" onclick="closeSupplementModal()" style="font-size:13px;padding:8px 16px;">取消</button>
+    </div>
+  </div>
+</div>
 </body>
 
 </html>
