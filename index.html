@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark" />
+  <title>FinRead · Financial English Daily Loop</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#6366f1" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="FinRead" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+
+  <!-- ✦ DARK MODE FLICKER FIX — Must run before any render -->
+  <script>
+    (function () {
+      const saved = localStorage.getItem('finread:theme');
+      const prefer = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = saved || (prefer ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
+  <!-- ① Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    if (typeof tailwind !== 'undefined') tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Fraunces', 'Newsreader', 'Georgia', 'serif'],
+            sans: ['"Noto Sans SC"', '"PingFang SC"', '"Microsoft YaHei"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Inter:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500&display=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <!-- ============================================================
+     HEADER
+     ============================================================ -->
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="brand">
+        <div class="logo">FinRead<span class="dot">.</span></div>
+        <span class="ver" id="verBadge">v7.1</span>
+        <span class="streak-badge streak-0" id="streakBadge" title="连续打卡天数">🔥 0天</span>
+        <div class="tag">4-Tier Engine</div>
+      </div>
+      <div class="nav-controls">
+        <nav class="tabs">
+          <button data-view="input" class="active">首页</button>
+          <button data-view="analysis" class="hidden" id="tabAnalysis">精读</button>
+          <button data-view="vocab">卡组 <span class="count" id="vocabCount">0</span></button>
+          <button data-view="history">档案 <span class="count" id="articleCount">0</span></button>
+          <button data-view="stats">统计</button>
+        </nav>
+        <button class="icon-toggle hdr-util" id="btnImport" title="导入 JSON">↑ 导入</button>
+        <button class="icon-toggle hdr-util" id="btnSettings" title="引擎配置">⚙ 配置</button>
+        <button class="icon-toggle hdr-util" id="btnClearAll" title="清空全部缓存">⊘ 清空</button>
+        <button class="icon-toggle" id="btnMore" title="更多功能" style="display:none;font-size:20px;letter-spacing:-.05em;">···</button>
+        <button class="icon-toggle" id="themeToggle" title="主题切换">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="meta-bar">
+      <span id="dateLabel"></span>
+      <div class="meta-stats">
+        <span class="meta-stat">待复习 <strong id="dueToday">0</strong></span>
+        <span class="meta-stat">句式 <strong id="headerPatternCount">0</strong>/80</span>
+        <span class="meta-stat" id="metaStatModel">驱动 <span class="model-badge disconnected"
+            id="modelBadge">未配置</span></span>
+        <span class="sync-status" id="syncStatusInline">·</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================
+     MAIN
+     ============================================================ -->
+  <main>
+
+    <!-- ── HOME / INPUT VIEW ── -->
+    <section id="viewInput">
+      <div class="fr-home">
+
+        <!-- ── Hero ── -->
+        <div class="fr-hero">
+          <div class="fr-hero-text">
+            <div class="fr-eyebrow">Financial English · Daily Loop</div>
+            <h1 class="fr-headline">今日<em>精读</em></h1>
+            <p class="fr-sub">粘贴一篇金融英文文章，开始解析、标注陌生词、加入词库</p>
+          </div>
+        </div>
+
+        <!-- ── Input box ── -->
+        <div class="input-box" id="inputBox">
+          <div class="input-head">
+            <span class="input-label">粘贴文章，开始精读</span>
+            <div class="input-btn-row">
+              <button class="btn-base" id="btnPaste">📋 粘贴</button>
+              <button class="btn-base" id="btnFetchLink">🔗 链接</button>
+              <button class="btn-base" id="btnSample">✦ 示例</button>
+              <button class="btn-base hidden" id="btnClear">✕ 清空</button>
+            </div>
+          </div>
+          <textarea id="newsInput" placeholder="将英文财经文章贴入此处（路透 / 彭博 / WSJ），点击「开始精读」…"></textarea>
+          <div class="input-foot">
+            <div class="word-count">
+              <strong id="wordCount">0</strong> chars ·
+              <span id="lang-detect">--</span> ·
+              预估 <strong id="estTime">--</strong>
+              <span id="chunkWarn" class="chunk-warn hidden"></span>
+            </div>
+            <button class="btn-primary" id="btnAnalyze" disabled>开始精读 →</button>
+          </div>
+          <div id="urlHint" class="hidden"
+            style="margin-top:10px;padding:10px 14px;background:var(--warn-light);border:1px solid var(--warn);border-radius:var(--r-md);font-size:13px;color:var(--text-soft);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+            <span>🔗 检测到网址 — 建议用右侧按钮自动抓取文章正文</span>
+            <button class="btn-base" id="urlHintFetch"
+              style="white-space:nowrap;background:var(--warn);color:white;border-color:var(--warn);">用 🔗 链接 抓取 →</button>
+          </div>
+        </div>
+
+        <!-- ── Progress & errors ── -->
+        <div id="progressBox" class="progress-box hidden">
+          <div class="progress-head">
+            <span class="progress-label" id="progressLabel">解析中...</span>
+            <span class="word-count" id="progressPct">0%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-meta">
+            <span id="progressDetail">建立连接...</span>
+            <span id="progressTokens">--</span>
+          </div>
+          <div class="progress-chunks hidden" id="chunkIndicator"></div>
+          <div class="progress-actions">
+            <button class="btn-base" id="btnGotoAnalysis">实时查看 →</button>
+            <button class="btn-base btn-danger" id="btnCancel">中止</button>
+          </div>
+        </div>
+        <div id="errBox" class="err-box hidden"></div>
+        <div id="aiRecoveryPanel" class="ai-recovery-panel hidden"></div>
+
+        <!-- ── 3 Core action cards ── -->
+        <div class="fr-actions">
+          <button class="fr-action-card fr-action-review" id="frBtnReview" onclick="setView('review')">
+            <span class="fac-icon">↺</span>
+            <span class="fac-title">继续复习</span>
+            <span class="fac-sub" id="frDueCount">加载中…</span>
+          </button>
+          <button class="fr-action-card fr-action-vocab" onclick="setView('vocab')">
+            <span class="fac-icon">◆</span>
+            <span class="fac-title">词汇库</span>
+            <span class="fac-sub" id="frVocabCount">0 个词卡</span>
+          </button>
+        </div>
+
+        <!-- ── More chips ── -->
+        <div class="fr-more-row">
+          <button class="fr-more-chip" onclick="setView('training')">训练中心</button>
+          <button class="fr-more-chip" onclick="setView('mistakes')">错题本</button>
+          <button class="fr-more-chip" onclick="setView('history')">文章档案</button>
+          <button class="fr-more-chip" onclick="setView('stats')">统计</button>
+          <button class="fr-more-chip" id="btnSettingsHome">⚙ 设置</button>
+        </div>
+
+        <!-- ── Recent articles ── -->
+        <div id="homeRecentList" class="fr-recent hidden"></div>
+
+        <!-- Hidden compat elements for JS compatibility -->
+        <div style="display:none">
+          <span id="v64DailyHint"></span>
+          <span id="v64PathTitle"></span>
+          <span id="v64PathLevel"></span>
+          <div id="v64PathSteps"></div>
+          <button id="btnV64LoadDaily"></button>
+          <button id="btnV64StartReview"></button>
+          <div id="v64Dashboard">
+            <div class="hs-card"><div class="hs-val" id="v64ReadsToday">0/1</div><div class="hs-key">今日精读</div></div>
+            <div class="hs-card"><div class="hs-val" id="v64DeckSize">0</div><div class="hs-key">卡组词汇</div></div>
+            <div class="hs-card hs-due" id="hsDueCard"><div class="hs-val" id="v64DueCards">0</div><div class="hs-key">待复习</div></div>
+            <div class="hs-card"><div class="hs-val" id="hsStreak">0</div><div class="hs-key">连续天</div></div>
+          </div>
+          <div id="goalsBanner">
+            <div class="goals-item">
+              <div class="goals-label">今日复习 <span id="goalsReviewVal">0/20</span></div>
+              <div class="goals-progress"><div class="goals-bar" id="goalsReviewBar" style="width:0%"></div></div>
+            </div>
+            <div class="goals-item">
+              <div class="goals-label">今日精读 <span id="goalsArticleVal">0/1</span></div>
+              <div class="goals-progress"><div class="goals-bar" id="goalsArticleBar" style="width:0%"></div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── ANALYSIS VIEW ── -->
+    <section id="viewAnalysis" class="hidden">
+      <div class="grid-layout">
+        <article id="articlePanel">
+          <div id="sentenceList"></div>
+        </article>
+        <aside class="sticky">
+          <div class="card-panel" id="cardPanel">
+            <div class="card-placeholder" id="cardPlaceholder">
+              <div>点击句子中的<b>词汇 / 短语</b>查看详细分析</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ── TRAINING CENTER VIEW ── -->
+    <section id="viewTraining" class="hidden">
+      <div class="tc-layout">
+        <div class="tc-header">
+          <h2 class="tc-title">训练中心</h2>
+          <div class="tc-meta">
+            <div class="tc-stat"><div class="tc-stat-val" id="tcDue">0</div><div class="tc-stat-key">待复习</div></div>
+            <div class="tc-stat"><div class="tc-stat-val" id="tcDoneToday">0</div><div class="tc-stat-key">今日复习</div></div>
+            <div class="tc-stat"><div class="tc-stat-val" id="tcAccuracy">--%</div><div class="tc-stat-key">正确率</div></div>
+            <div class="tc-stat"><div class="tc-stat-val" id="tcStreak">0</div><div class="tc-stat-key">连续天</div></div>
+          </div>
+        </div>
+        <div class="tc-modes" id="tcModes">
+          <button class="tc-mode-btn" id="tcModeDaily" onclick="launchTrainingMode('daily10')">
+            <div class="tc-mode-icon">⚡</div>
+            <div class="tc-mode-label">今日任务</div>
+            <div class="tc-mode-sub">SRS 优先 · 高效</div>
+            <span class="tc-badge" id="tcDailyBadge">0</span>
+          </button>
+          <button class="tc-mode-btn" id="tcModeLeech" onclick="launchTrainingMode('leech')">
+            <div class="tc-mode-icon">🔥</div>
+            <div class="tc-mode-label">易混词专项</div>
+            <div class="tc-mode-sub">难词强化</div>
+            <span class="tc-badge" id="tcLeechBadge">0</span>
+          </button>
+          <button class="tc-mode-btn" id="tcModePattern" onclick="launchTrainingMode('pattern')">
+            <div class="tc-mode-icon">📐</div>
+            <div class="tc-mode-label">句式默写</div>
+            <div class="tc-mode-sub">财经句型</div>
+            <span class="tc-badge" id="tcPatternBadge">0</span>
+          </button>
+          <button class="tc-mode-btn" id="tcModeRetry" onclick="launchTrainingMode('retry')">
+            <div class="tc-mode-icon">↩</div>
+            <div class="tc-mode-label">错题回顾</div>
+            <div class="tc-mode-sub">近 7 天答错</div>
+            <span class="tc-badge" id="tcRetryBadge">0</span>
+          </button>
+          <button class="tc-mode-btn" id="tcModeConfuse" onclick="launchTrainingMode('confuse')">
+            <div class="tc-mode-icon">⚖</div>
+            <div class="tc-mode-label">近义辨析</div>
+            <div class="tc-mode-sub">搭配 · 辨义</div>
+            <span class="tc-badge" id="tcConfuseBadge">0</span>
+          </button>
+          <button class="tc-mode-btn" id="tcModeMistakes" onclick="launchTrainingMode('mistakes')">
+            <div class="tc-mode-icon">📋</div>
+            <div class="tc-mode-label">错题专项</div>
+            <div class="tc-mode-sub">错因针对训练</div>
+            <span class="tc-badge" id="tcMistakeBadge">0</span>
+          </button>
+          <button class="tc-mode-btn" id="tcModeDiagnosis" onclick="launchTrainingMode('diagnosis')">
+            <div class="tc-mode-icon">🔬</div>
+            <div class="tc-mode-label">错因诊断</div>
+            <div class="tc-mode-sub">AI 自适应</div>
+            <span class="tc-badge" id="tcDiagnosisBadge">0</span>
+          </button>
+          <button class="tc-mode-btn" id="tcModeRecall" onclick="launchTrainingMode('recall')">
+            <div class="tc-mode-icon">🧠</div>
+            <div class="tc-mode-label">原文回忆</div>
+            <div class="tc-mode-sub">情境还原</div>
+            <span class="tc-badge" id="tcRecallBadge">0</span>
+          </button>
+          <button class="tc-mode-btn" id="tcModeFull" onclick="launchTrainingMode('full')">
+            <div class="tc-mode-icon">🎯</div>
+            <div class="tc-mode-label">全库复习</div>
+            <div class="tc-mode-sub" id="tcFullDue">共 0 词</div>
+          </button>
+          <button class="tc-mode-btn" id="tcModeCloze" onclick="launchTrainingMode('cloze')">
+            <div class="tc-mode-icon">✏</div>
+            <div class="tc-mode-label">语境挖空</div>
+            <div class="tc-mode-sub">填空训练</div>
+          </button>
+        </div>
+        <div class="tc-empty tc-soon hidden" id="tcEmpty">
+          <div class="memory-empty">卡组为空，先精读一篇文章，词卡自动入库后即可开始训练。</div>
+        </div>
+        <div class="tc-quick hidden" id="tcQuick">
+          <button class="btn-primary" style="width:100%;margin-top:8px;" onclick="launchTrainingMode('daily10')">⚡ 开始今日任务</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── RECALL ENGINE VIEW ── -->
+    <section id="viewRecallEngine" class="hidden">
+      <div class="tc-layout">
+        <div class="tc-header">
+          <h2 class="tc-title" id="recallEngineTitle">诊断训练</h2>
+          <div class="tc-meta" id="recallEngineStats"></div>
+        </div>
+        <div id="recallEngineBox"></div>
+        <div style="margin-top:12px;text-align:center;">
+          <button class="btn-base" onclick="v69_exitRecallEngine()">← 返回训练中心</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CONFUSE QUIZ VIEW ── -->
+    <section id="viewConfuseQuiz" class="hidden">
+      <div class="tc-layout">
+        <div class="tc-header">
+          <h2 class="tc-title">近义辨析训练</h2>
+        </div>
+        <div id="confuseQuizBox"></div>
+        <div style="margin-top:12px;text-align:center;">
+          <button class="btn-base" onclick="setView('training')">← 返回训练中心</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MISTAKES VIEW ── -->
+    <section id="viewMistakes" class="hidden">
+      <div class="tc-layout">
+        <div class="tc-header">
+          <h2 class="tc-title">错题本</h2>
+        </div>
+        <div class="mistake-stats" id="mistakeStats"></div>
+        <div id="mistakeTypeSummary"></div>
+        <div class="mistake-filters">
+          <select id="mistakeReasonFilter" onchange="state.mistakeFilter.reason=this.value;renderMistakeBook()"></select>
+          <select id="mistakeSort" onchange="state.mistakeFilter.sort=this.value;renderMistakeBook()">
+            <option value="wrongCount">按错误次数</option>
+            <option value="recent">按最近时间</option>
+          </select>
+          <label><input type="checkbox" id="mistakeRecentOnly" onchange="state.mistakeFilter.recentOnly=this.checked;renderMistakeBook()"> 近7天</label>
+          <label><input type="checkbox" id="mistakeHighOnly" onchange="state.mistakeFilter.highOnly=this.checked;renderMistakeBook()"> 高频</label>
+        </div>
+        <div class="mistake-actions-top">
+          <button class="btn-primary" onclick="startMistakeTraining()">▶ 开始错题训练</button>
+          <button class="btn-base" onclick="v69_startTraining('diagnosis')">🔬 错因诊断</button>
+        </div>
+        <div id="mistakeList"></div>
+      </div>
+    </section>
+
+    <!-- ── VOCAB VIEW ── -->
+    <section id="viewVocab" class="hidden">
+      <div class="vocab-layout">
+        <div class="vocab-sidebar">
+          <div class="vocab-search-row">
+            <input type="text" id="vocabSearch" class="vocab-search" placeholder="搜索词汇…" />
+            <button class="btn-base" id="btnCustomAdd">+ 手动添加</button>
+          </div>
+          <div class="vocab-filter-tabs">
+            <button class="vf-tab active" data-filter="all">全部</button>
+            <button class="vf-tab" data-filter="vocab">词汇</button>
+            <button class="vf-tab" data-filter="phrase">短语</button>
+            <button class="vf-tab" data-filter="pattern">句式</button>
+            <button class="vf-tab" data-filter="proper">专名</button>
+          </div>
+          <div class="vocab-list" id="vocabList"></div>
+          <div class="vocab-pagination" id="vocabPagination"></div>
+        </div>
+        <div class="flip-card-area">
+          <div class="flip-mode-row">
+            <div class="flip-mode-toggle">
+              <button data-mode="en2zh" class="active">英→中</button>
+              <button data-mode="zh2en">中→英</button>
+              <button data-mode="spell">默写</button>
+            </div>
+            <div class="flip-extra-controls">
+              <label class="toggle-label"><input type="checkbox" id="recallGateToggle"> 回想门</label>
+            </div>
+          </div>
+          <div class="flip-card" id="flipCard">
+            <div class="flip-inner" id="flipInner">
+              <div class="flip-front" id="flipFront"></div>
+              <div class="flip-back" id="flipBack"></div>
+            </div>
+          </div>
+          <div class="flip-actions" id="flipActions"></div>
+          <div id="gestureOnboarding" class="gesture-onboarding hidden">
+            <div class="gesture-onboarding-inner">
+              <div class="gesture-onboarding-title">手势操作提示</div>
+              <div class="gesture-onboarding-list">
+                <div>← 左滑 · 不认识</div>
+                <div>→ 右滑 · 认识</div>
+                <div>↑ 上滑 · 不确定</div>
+                <div>双击 · 发音</div>
+                <div>长按 · 标记重点</div>
+              </div>
+              <button class="btn-primary" onclick="completeGestureOnboarding()">知道了</button>
+            </div>
+          </div>
+          <div class="gesture-overlay" id="gestureOverlay"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── HISTORY VIEW ── -->
+    <section id="viewHistory" class="hidden">
+      <div class="history-layout">
+        <div class="history-search-row">
+          <input type="text" id="historySearch" class="vocab-search" placeholder="搜索文章标题…" />
+        </div>
+        <div id="historyList"></div>
+      </div>
+    </section>
+
+    <!-- ── STATS VIEW ── -->
+    <section id="viewStats" class="hidden">
+      <div class="stats-layout">
+        <div class="stats-grid" id="statsGrid"></div>
+        <div class="stats-charts" id="statsCharts"></div>
+      </div>
+    </section>
+
+    <!-- ── SETTINGS VIEW ── -->
+    <section id="viewSettings" class="hidden">
+      <div class="settings-layout" id="settingsLayout"></div>
+    </section>
+
+  </main>
+
+  <!-- ── UNIFIED DIALOG ── -->
+  <div id="dialogOverlay" role="dialog" aria-modal="true">
+    <div class="dialog-box">
+      <div class="dialog-icon" id="dialogIcon">?</div>
+      <div class="dialog-title" id="dialogTitle">提示</div>
+      <div class="dialog-message" id="dialogMessage"></div>
+      <div class="dialog-list hidden" id="dialogList"></div>
+      <div class="dialog-actions" id="dialogActions"></div>
+    </div>
+  </div>
+
+  <!-- ── TOAST ── -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ── MISTAKE REASON SHEET ── -->
+  <div class="memory-sheet-backdrop" id="memorySheetBackdrop"></div>
+  <div class="mistake-reason-sheet" id="mistakeReasonSheet">
+    <div class="mrs-handle"></div>
+    <div class="mrs-title">标记错因 <span class="mrs-sub" id="mistakeReasonSub"></span></div>
+    <div class="mistake-reason-grid" id="mistakeReasonGrid"></div>
+    <div class="mrs-actions">
+      <button class="btn-primary" onclick="submitMistakeReasons()">确认</button>
+      <button class="btn-base" onclick="submitMistakeReasons(true)">跳过</button>
+    </div>
+  </div>
+
+  <!-- ── SELECTION POPUP ── -->
+  <div id="selectionPopup" class="selection-popup hidden">
+    <button id="selAddBtn">＋ 添加到词库</button>
+  </div>
+
+  <!-- ── POMO BAR ── -->
+  <div id="pomoBar" class="pomo-bar hidden">
+    <div class="pomo-info">
+      <span class="pomo-timer" id="pomoTimer">25:00</span>
+      <span class="pomo-progress" id="pomoProgress">0/0</span>
+    </div>
+    <div class="pomo-controls">
+      <button class="pomo-btn" id="pomoToggle">暂停</button>
+      <button class="pomo-btn" onclick="exitReviewFocus()">退出</button>
+    </div>
+  </div>
+  <div id="pomoStart" class="pomo-start hidden">
+    <button class="btn-primary" id="btnStartPomo">▶ 开始专注</button>
+  </div>
+
+  <!-- ── SESSION REPORT ── -->
+  <div id="sessionReportBackdrop" class="hidden"></div>
+  <div id="sessionReport" class="session-report hidden">
+    <div class="sr-emoji" id="srEmoji">🎉</div>
+    <div class="sr-title" id="srTitle">掌握得不错！</div>
+    <div class="sr-subtitle" id="srSubtitle"></div>
+    <div class="sr-stats">
+      <div class="sr-stat"><div class="sr-val" id="srTotal">0</div><div class="sr-key">总数</div></div>
+      <div class="sr-stat good"><div class="sr-val" id="srGood">0</div><div class="sr-key">掌握</div></div>
+      <div class="sr-stat fuzzy"><div class="sr-val" id="srFuzzy">0</div><div class="sr-key">模糊</div></div>
+      <div class="sr-stat bad"><div class="sr-val" id="srBad">0</div><div class="sr-key">错误</div></div>
+    </div>
+    <div class="sr-bar-bg"><div class="sr-bar-fill" id="srBarFill" style="width:0%"></div></div>
+    <div class="sr-suggest" id="srSuggest"></div>
+    <div class="sr-actions">
+      <button class="btn-primary" id="srBtnContinue">继续复习</button>
+      <button class="btn-base" id="srBtnDone">完成</button>
+    </div>
+  </div>
+
+  <!-- ── BOTTOM TAB BAR (mobile only) ── -->
+  <nav class="bottom-tabbar" id="bottomTabbar" role="navigation" aria-label="主导航">
+    <div class="bottom-tabbar-inner">
+      <button class="bt-btn active" data-view="input">
+        <span class="bt-icon">✎</span>
+        <span class="bt-label">新读</span>
+      </button>
+      <button class="bt-btn hidden" data-view="analysis" id="btTabAnalysis">
+        <span class="bt-icon">⊟</span>
+        <span class="bt-label">精读</span>
+      </button>
+      <button class="bt-btn" data-view="vocab">
+        <span class="bt-icon">◆</span>
+        <span class="bt-label">卡组</span>
+        <span class="bt-badge hidden" id="btVocabBadge">0</span>
+      </button>
+      <button class="bt-btn" data-view="review" id="btTabReview">
+        <span class="bt-icon">↺</span>
+        <span class="bt-label">复习</span>
+        <span class="bt-badge hidden" id="btReviewBadge">0</span>
+      </button>
+      <button class="bt-btn" data-view="mine">
+        <span class="bt-icon">◉</span>
+        <span class="bt-label">我的</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── MORE DRAWER (mobile only) ── -->
+  <div class="more-backdrop" id="moreBackdrop"></div>
+  <div class="more-drawer" id="moreDrawer">
+    <div class="more-drawer-handle"></div>
+    <div class="more-drawer-body">
+      <button class="more-item" id="moreImport">
+        <span class="more-item-icon">↑</span>
+        <span class="more-item-label">导入</span>
+      </button>
+      <button class="more-item" id="moreSettings">
+        <span class="more-item-icon">⚙</span>
+        <span class="more-item-label">配置</span>
+      </button>
+      <button class="more-item" id="moreClear">
+        <span class="more-item-icon">⊘</span>
+        <span class="more-item-label">清空</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-inner">
+      <span id="footerBrand">FINREAD · 四层词库 · 双向训练</span>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+     JAVASCRIPT (modular)
+     ============================================================ -->
+  <script src="ui.js"></script>
+  <script src="storage.js"></script>
+  <script src="mistakes.js"></script>
+  <script src="app.js"></script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    const canRegisterServiceWorker = 'serviceWorker' in navigator && (location.protocol === 'http:' || location.protocol === 'https:');
+    if (canRegisterServiceWorker) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+          reg.addEventListener('updatefound', () => {
+            const next = reg.installing;
+            if (!next) return;
+            next.addEventListener('statechange', () => {
+              if (next.state === 'installed' && navigator.serviceWorker.controller) {
+                next.postMessage({ type: 'SKIP_WAITING' });
+              }
+            });
+          });
+        }).catch(() => { });
+
+        let reloading = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!reloading) { reloading = true; location.reload(); }
+        });
+      });
+    }
+  </script>
+
+  <!-- Supplement Modal -->
+  <div id="supplementModal" class="supplement-modal hidden">
+    <div class="supplement-box">
+      <h3 id="supplementTitle">补充词汇信息</h3>
+      <div id="supplementFields"></div>
+      <div class="supplement-actions">
+        <button class="btn-primary" onclick="saveSupplementModal()" style="font-size:13px;padding:8px 18px;">保存</button>
+        <button class="btn-base" onclick="closeSupplementModal()" style="font-size:13px;padding:8px 16px;">取消</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
