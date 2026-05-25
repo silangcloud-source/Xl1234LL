@@ -7723,6 +7723,530 @@
 
     /* p1/p2 CSS removed */
 
+    /* ================================================================
+       COMPREHENSIVE UI POLISH — Desktop · iPad · Mobile
+       ================================================================ */
+
+    /* ── CSS custom props additions ── */
+    :root {
+      --ease-spring: cubic-bezier(.34,1.56,.64,1);
+      --ease-out: cubic-bezier(.4,0,.2,1);
+      --press-scale: scale(.96);
+      --page-pad: clamp(16px, 4vw, 40px);
+      --card-radius: 16px;
+      --nav-h: 56px;
+      --bottom-nav-h: 64px;
+    }
+
+    /* ── Global base improvements ── */
+    html { -webkit-text-size-adjust: 100%; }
+
+    button { font-family: inherit; }
+
+    /* Scrollbar styling — desktop only */
+    @media (min-width: 901px) {
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+      ::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+    }
+
+    /* ── Masthead global improvements ── */
+    header.masthead {
+      border-bottom: 1px solid var(--border);
+    }
+    .masthead-inner {
+      padding: 10px clamp(16px, 3vw, 40px);
+      min-height: var(--nav-h);
+    }
+    .brand .logo { user-select: none; }
+    .brand .ver { user-select: none; }
+
+    /* ── Meta bar improvements ── */
+    .meta-bar {
+      gap: 8px;
+    }
+
+    /* ── Focus ring improvements ── */
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+    button:focus-visible { outline-offset: 3px; }
+
+    /* ── SRS rating buttons — cleaner and more accessible ── */
+    .srs-rating {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .srs-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 14px 8px;
+      border-radius: 14px;
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform .18s var(--ease-out), box-shadow .18s, background .18s;
+      min-height: 72px;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .srs-btn:active { transform: var(--press-scale); }
+    .srs-btn strong { font-size: 18px; font-weight: 800; line-height: 1; }
+    .srs-btn span:not(.srs-interval) { font-size: 12px; font-weight: 600; line-height: 1; }
+    .srs-interval { font-size: 10px; opacity: .72; font-family: 'JetBrains Mono', monospace; }
+    .srs-btn.again {
+      background: rgba(225,29,72,.08);
+      border-color: rgba(225,29,72,.2);
+      color: var(--bear);
+    }
+    .srs-btn.again:hover { background: rgba(225,29,72,.14); border-color: rgba(225,29,72,.35); }
+    .srs-btn.hard {
+      background: rgba(217,119,6,.08);
+      border-color: rgba(217,119,6,.2);
+      color: var(--warn);
+    }
+    .srs-btn.hard:hover { background: rgba(217,119,6,.14); border-color: rgba(217,119,6,.35); }
+    .srs-btn.good {
+      background: rgba(5,150,105,.08);
+      border-color: rgba(5,150,105,.2);
+      color: var(--bull);
+    }
+    .srs-btn.good:hover { background: rgba(5,150,105,.14); border-color: rgba(5,150,105,.35); }
+
+    /* ── Flip card back: improved readability ── */
+    .flip-back .flip-zh {
+      font-size: 21px;
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+    .flip-back .flip-note {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--text-soft);
+    }
+    .flip-progress {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 4px;
+      font-size: 11.5px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+    }
+
+    /* ── Vocab card actions row — prevent overflow ── */
+    .vocab-card .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .vocab-card .actions .btn-base {
+      font-size: 12px;
+      padding: 6px 12px;
+      min-height: 36px;
+    }
+    .completeness-bar {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Home layout ── */
+    .home-layout {
+      padding-bottom: max(80px, calc(60px + env(safe-area-inset-bottom)));
+    }
+
+    /* ── Article card improvements ── */
+    .article-card {
+      cursor: pointer;
+    }
+
+    /* ── History grid improvement ── */
+    .history-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Root affix — better on all sizes ── */
+    .root-affix-box {
+      max-width: 100%;
+    }
+
+    /* ── Supplement modal — mobile bottom sheet ── */
+    @media (max-width: 600px) {
+      .supplement-modal {
+        align-items: flex-end;
+        padding: 0;
+      }
+      .supplement-box {
+        border-radius: 20px 20px 0 0;
+        max-height: 85svh;
+        max-height: 85vh;
+        padding: 20px 20px max(20px, env(safe-area-inset-bottom));
+      }
+    }
+
+    /* ================================================================
+       DESKTOP (≥ 1280px) — refined spacing
+       ================================================================ */
+    @media (min-width: 1280px) {
+      .grid-layout {
+        grid-template-columns: minmax(0, 1fr) 440px;
+        gap: 52px;
+      }
+      .flip-card { height: 480px; }
+      .flip-word { font-size: 44px; }
+    }
+
+    /* ================================================================
+       LARGE DESKTOP (≥ 1440px)
+       ================================================================ */
+    @media (min-width: 1440px) {
+      .grid-layout {
+        grid-template-columns: minmax(0, 1fr) 460px;
+        gap: 60px;
+      }
+    }
+
+    /* ================================================================
+       TABLET / iPad (769px – 1024px)
+       ================================================================ */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      main {
+        padding: 32px clamp(20px, 3vw, 32px) 72px;
+      }
+      .masthead-inner {
+        padding: 10px clamp(20px, 3vw, 32px);
+        gap: 10px;
+      }
+      /* Grid: article + narrower sidebar side-by-side */
+      .grid-layout {
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 28px;
+      }
+      /* Sidebar stays sticky but shorter */
+      aside.sticky {
+        top: calc(var(--nav-h) + 8px);
+        max-height: calc(100svh - var(--nav-h) - 20px);
+        max-height: calc(100vh - var(--nav-h) - 20px);
+      }
+      /* Flip card */
+      .flip-card { height: 430px; }
+      .flip-word { font-size: 36px; }
+      /* Nav tabs scroll on iPad landscape narrower */
+      nav.tabs {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      nav.tabs::-webkit-scrollbar { display: none; }
+      /* Utility label collapse */
+      .hdr-util { font-size: 0; padding: 0 9px; min-width: 36px; }
+      #btnImport::before { content: '↑'; font-size: 13px; font-weight: 700; }
+      #btnSettings::before { content: '⚙'; font-size: 14px; }
+      #btnClearAll::before { content: '⊘'; font-size: 14px; }
+      /* Home grid */
+      .home-status { grid-template-columns: repeat(4, 1fr); }
+      /* tier stats */
+      .tier-stats { grid-template-columns: repeat(4, 1fr); }
+      /* History */
+      .history-grid { grid-template-columns: repeat(2, 1fr); }
+      /* SRS buttons */
+      .srs-btn { min-height: 64px; }
+    }
+
+    /* ================================================================
+       TABLET + wide phones (481px – 768px)
+       ================================================================ */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+      .home-status { grid-template-columns: repeat(4, 1fr); }
+      .tier-stats { grid-template-columns: repeat(3, 1fr); }
+      .history-grid { grid-template-columns: repeat(2, 1fr); }
+      .srs-btn { min-height: 60px; }
+      .flip-card { height: 390px; }
+      .flip-word { font-size: 32px; }
+    }
+
+    /* ================================================================
+       MOBILE (≤ 480px) — comprehensive polish
+       ================================================================ */
+    @media (max-width: 480px) {
+
+      /* ── Variables ── */
+      :root {
+        --card-radius: 14px;
+      }
+
+      /* ── Header ── */
+      header.masthead {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        z-index: 50;
+      }
+      .masthead-inner {
+        padding: 8px max(14px, env(safe-area-inset-left)) 8px max(14px, env(safe-area-inset-right));
+        min-height: 52px;
+        gap: 6px;
+      }
+      .brand .ver { font-size: 8px; padding: 2px 5px; }
+      .brand .tag { display: none; }
+      .brand .logo { font-size: 19px; }
+      .streak-badge { font-size: 9px; padding: 2px 6px; }
+      .meta-bar { display: none; }
+
+      /* ── Body padding for fixed header + bottom nav ── */
+      main {
+        padding: calc(58px + env(safe-area-inset-top)) max(14px, env(safe-area-inset-left))
+                 max(100px, calc(72px + env(safe-area-inset-bottom)))
+                 max(14px, env(safe-area-inset-right));
+      }
+      body { padding-bottom: 0; }
+
+      /* ── Home view ── */
+      .home-layout {
+        padding: 12px 0 max(100px, calc(72px + env(safe-area-inset-bottom)));
+        gap: 12px;
+      }
+      .home-welcome { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .home-eyebrow { font-size: 9px; margin-bottom: 4px; }
+      .home-headline { font-size: 26px; letter-spacing: -.02em; }
+      .home-review-cta { width: 100%; justify-content: center; }
+      .home-status {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .hs-card { padding: 14px 12px; border-radius: 14px; }
+      .hs-val { font-size: 22px; }
+      .hs-key { font-size: 10px; }
+
+      /* ── Input box ── */
+      textarea#newsInput {
+        min-height: 150px;
+        font-size: 16px;
+        padding: 16px;
+      }
+      .input-head, .input-foot {
+        padding: 10px 14px;
+        gap: 8px;
+      }
+
+      /* ── Guide strip ── */
+      .guide-strip > summary { padding: 10px 14px; font-size: 10px; }
+      .guide-strip .steps { padding: 4px 14px 14px; }
+
+      /* ── Progress box ── */
+      .progress-box { padding: 14px 16px; }
+
+      /* ── Article view ── */
+      .article-header { margin-bottom: 18px; padding-bottom: 14px; }
+      h1.title { font-size: 22px; line-height: 1.3; }
+      .article-body { font-size: 16px; line-height: 1.8; }
+      .sent { padding: 12px 2px; }
+      .full-translation-box { padding: 14px 16px; margin-bottom: 18px; }
+
+      /* ── Vocab list / sidebars ── */
+      .vocab-card { padding: 16px; border-radius: var(--card-radius); }
+      .vocab-card .word { font-size: 22px !important; }
+      .vocab-card .zh { font-size: 14px; }
+      .vocab-card .note { font-size: 12px; }
+      .vocab-card .actions { gap: 5px; margin-top: 8px; }
+      .vocab-card .actions .btn-base {
+        font-size: 11px;
+        padding: 5px 10px;
+        min-height: 34px;
+      }
+      .root-affix-box { font-size: 12px; }
+      .root-affix-chip { font-size: 10px; }
+
+      /* ── Flip card ── */
+      .flip-card {
+        height: min(400px, 50svh);
+        height: min(400px, 50vh);
+        margin-bottom: 12px;
+      }
+      .flip-front, .flip-back {
+        padding: 36px 20px 28px;
+      }
+      .flip-word { font-size: 30px; }
+      .flip-word.pattern { font-size: 16px !important; }
+      .flip-word.long { font-size: 22px !important; }
+      .flip-zh { font-size: 17px; }
+      .flip-note { font-size: 12.5px; }
+      .flip-phonetic { font-size: 13px; }
+      .flip-pos { font-size: 11.5px; }
+
+      /* ── SRS buttons ── */
+      .srs-rating {
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .srs-btn {
+        min-height: 64px;
+        padding: 10px 6px;
+        border-radius: 12px;
+      }
+      .srs-btn strong { font-size: 16px; }
+      .srs-btn span:not(.srs-interval) { font-size: 11px; }
+      .srs-interval { font-size: 9px; }
+
+      /* ── Flip progress ── */
+      .flip-progress { font-size: 10px; padding: 6px 2px; }
+      .gesture-hint { font-size: 10px; margin-top: 6px; }
+
+      /* ── Goals banner ── */
+      .goals-banner {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 16px;
+        padding: 12px 14px;
+        border-radius: 14px;
+      }
+
+      /* ── Vocab book header ── */
+      .vocab-head h1 { font-size: 26px; }
+      .vocab-head .kicker { font-size: 9.5px; }
+
+      /* ── Tier stats ── */
+      .tier-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .tier-stat { padding: 12px; border-radius: 12px; }
+      .tier-stat .value { font-size: 24px; }
+      .tier-stat .label { font-size: 10px; }
+      .tier-stat.t-due { grid-column: span 2; }
+
+      /* ── Search inputs ── */
+      .history-search-wrap input {
+        font-size: 16px;
+        padding: 12px 14px;
+      }
+      #searchInput {
+        font-size: 16px;
+      }
+
+      /* ── History grid ── */
+      .history-grid { grid-template-columns: 1fr; gap: 10px; }
+
+      /* ── Stats grid ── */
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .stat-block { padding: 14px 16px; border-radius: 14px; }
+      .stat-block .big { font-size: 28px; }
+
+      /* ── Training center ── */
+      .tc-stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .tc-stat-card { padding: 12px; border-radius: 12px; }
+      .tc-modes { grid-template-columns: 1fr; gap: 8px; }
+      .tc-mode-card { padding: 14px 16px; border-radius: 14px; }
+
+      /* ── Settings ── */
+      .sc-title { font-size: 28px; }
+      .sc-layout { padding: 20px 0 max(100px, calc(72px + env(safe-area-inset-bottom))); gap: 14px; }
+
+      /* ── Modals ── */
+      .dialog-box {
+        padding: 22px 18px 18px;
+        border-radius: 18px;
+      }
+      .modal {
+        max-height: calc(100svh - 32px);
+        max-height: calc(100vh - 32px);
+        margin: 16px;
+        border-radius: 18px;
+      }
+
+      /* ── Word detail popup ── */
+      #wordDetailPopup {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        top: auto !important;
+        transform: none !important;
+        border-radius: 20px 20px 0 0;
+        max-width: 100%;
+        max-height: 65svh;
+        max-height: 65vh;
+        overflow-y: auto;
+        padding: 16px 16px max(16px, env(safe-area-inset-bottom));
+      }
+
+      /* ── Bottom tab bar ── */
+      .bt-btn { min-height: 52px; padding: 8px 2px 6px; }
+      .bt-icon { font-size: 18px; }
+      .bt-label { font-size: 9.5px; }
+
+      /* ── Completeness tags ── */
+      .completeness-tag { font-size: 9px; padding: 2px 5px; }
+
+      /* ── Spelling input ── */
+      .spell-input { font-size: 16px; }
+
+      /* ── Heatmap ── */
+      .heatmap-grid { overflow-x: auto; }
+
+      /* ── Story modal ── */
+      #storyModal .modal { max-height: 80vh; }
+    }
+
+    /* ================================================================
+       MOBILE LANDSCAPE (≤ 812px height, landscape)
+       ================================================================ */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .flip-card {
+        height: min(280px, 60vw);
+      }
+      .flip-front, .flip-back { padding: 24px 20px; }
+      .flip-word { font-size: 26px; }
+      main {
+        padding-top: calc(48px + env(safe-area-inset-top));
+        padding-bottom: max(80px, calc(64px + env(safe-area-inset-bottom)));
+      }
+      .srs-btn { min-height: 48px; padding: 6px; }
+      .srs-btn strong { font-size: 14px; }
+      .srs-rating { gap: 6px; }
+    }
+
+    /* ================================================================
+       DARK MODE extra polish
+       ================================================================ */
+    [data-theme="dark"] .flip-front {
+      background: linear-gradient(160deg, #141d35 0%, #08101e 45%, #040810 100%);
+    }
+    [data-theme="dark"] .srs-btn.again { background: rgba(248,113,113,.1); border-color: rgba(248,113,113,.22); }
+    [data-theme="dark"] .srs-btn.hard  { background: rgba(251,191,36,.1); border-color: rgba(251,191,36,.22); }
+    [data-theme="dark"] .srs-btn.good  { background: rgba(52,211,153,.1); border-color: rgba(52,211,153,.22); }
+
+    /* ── Bottom tabbar dark ── */
+    [data-theme="dark"] .bottom-tabbar {
+      box-shadow: 0 -1px 0 var(--border), 0 -6px 20px rgba(0,0,0,.35);
+    }
+
+    /* ── Improved card hover on non-touch ── */
+    @media (hover: hover) {
+      .vocab-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+      .article-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+      .srs-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+    }
+    @media (hover: none) {
+      /* Remove hover effects on touch devices */
+      .vocab-card:hover, .article-card:hover { transform: none; box-shadow: var(--shadow-sm); }
+    }
 
   </style>
 </head>
