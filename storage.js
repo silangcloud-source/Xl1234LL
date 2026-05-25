@@ -383,8 +383,8 @@
     }
     function persistArticles() {
       persistJsonStore(STORE.articles, state.articles);
-      $('#articleCount').textContent = state.articles.length;
-      renderV64Dashboard();
+      const acEl = $('#articleCount'); if (acEl) acEl.textContent = state.articles.length;
+      if (typeof renderV64Dashboard === 'function') renderV64Dashboard();
     }
     function persistWordHistory() {
       persistJsonStore(STORE.wordHistory, state.wordHistory);
@@ -393,20 +393,20 @@
       const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
       state.reviewLog = state.reviewLog.filter(r => r.ts > cutoff);
       persistJsonStore(STORE.reviewLog, state.reviewLog);
-      renderV64Dashboard();
+      if (typeof renderV64Dashboard === 'function') renderV64Dashboard();
     }
     function persistJsonbin() { safeLocalStorageSet(STORE.jsonbin, JSON.stringify(state.jsonbin)); }
     function persistWebdav() { safeLocalStorageSet(STORE.webdav, JSON.stringify(state.webdav)); }
 
     function countByTier(tier) { return state.vocab.filter(v => v.tier === tier).length; }
     function getReviewPool() { return state.vocab.filter(v => !v.lastReview || v.due <= Date.now()); }
+    function _setEl(sel, prop, val) { const el = $(sel); if (el) el[prop] = val; }
     function updateAllCounts() {
       const total = state.vocab.length;
-      $('#vocabCount').textContent = total;
-      $('#vocabTotal').textContent = total;
+      _setEl('#vocabCount', 'textContent', total);
+      _setEl('#vocabTotal', 'textContent', total);
       const due = getReviewPool().length;
-      $('#dueToday').textContent = due;
-      // Bottom tab bar due badge
+      _setEl('#dueToday', 'textContent', due);
       const badge = $('#btVocabBadge');
       if (badge) {
         if (due > 0) { badge.textContent = due > 99 ? '99+' : due; badge.classList.remove('hidden'); }
@@ -419,20 +419,20 @@
       }
       const pCount = countByTier('pattern');
       const phCount = countByTier('phrase');
-      $('#headerPatternCount').textContent = pCount;
-      $('#statPattern').textContent = pCount;
-      $('#statPhrase').textContent = phCount;
-      $('#statProper').textContent = countByTier('proper');
-      $('#statVocab').textContent = countByTier('vocab');
-      $('#statDue').textContent = getReviewPool().length;
+      _setEl('#headerPatternCount', 'textContent', pCount);
+      _setEl('#statPattern', 'textContent', pCount);
+      _setEl('#statPhrase', 'textContent', phCount);
+      _setEl('#statProper', 'textContent', countByTier('proper'));
+      _setEl('#statVocab', 'textContent', countByTier('vocab'));
+      _setEl('#statDue', 'textContent', getReviewPool().length);
       const pPct = Math.min(100, Math.round(pCount / PATTERN_GOAL * 100));
-      $('#patternProgressFill').style.width = pPct + '%';
-      $('#patternProgressLabel').textContent = `完成度 ${pPct}%`;
+      const pFill = $('#patternProgressFill'); if (pFill) pFill.style.width = pPct + '%';
+      _setEl('#patternProgressLabel', 'textContent', `完成度 ${pPct}%`);
       const phPct = Math.min(100, Math.round(phCount / PHRASE_GOAL * 100));
-      $('#phraseProgressFill').style.width = phPct + '%';
-      $('#phraseProgressLabel').textContent = `完成度 ${phPct}%`;
-      pomoUpdateStartHint();
-      renderV64Dashboard();
+      const phFill = $('#phraseProgressFill'); if (phFill) phFill.style.width = phPct + '%';
+      _setEl('#phraseProgressLabel', 'textContent', `完成度 ${phPct}%`);
+      if (typeof pomoUpdateStartHint === 'function') pomoUpdateStartHint();
+      if (typeof renderV64Dashboard === 'function') renderV64Dashboard();
       if (typeof updateHomeStats === 'function') updateHomeStats();
     }
 
